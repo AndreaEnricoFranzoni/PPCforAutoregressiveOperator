@@ -98,9 +98,11 @@ data = t(CanadianWeather$monthlyTemp)
 data_used = data[,1:11]
 exact_result = data[,12]
 
+#run from here
 start_time_KO <- Sys.time()
 pred_KO = PPCKO::PPC_KO(data_used,cv,threshold,alpha,n_disc)
 end_time_KO <- Sys.time()
+#to here with only one command to measure computational time properly
 
 mse_KO = mse(pred_KO$predictions,exact_result)
 
@@ -115,10 +117,13 @@ print(mse_KO)
 
 
 
-
+#run from here
 start_time_KO_fun <- Sys.time()
 rho_KO_fun = PPCdiscretized_KO(data_used)
 end_time_KO_fun <- Sys.time()
+#to here with only one command to measure computational time properly
+
+
 pred_KO_fun = rho_KO_fun%*%data_used[,11]
 
 mse_KO_fun = mse(pred_KO_fun,exact_result)
