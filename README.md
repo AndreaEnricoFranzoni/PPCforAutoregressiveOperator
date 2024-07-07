@@ -3,7 +3,7 @@ Creating an R package for estimating autoregressive operator using Principal Pre
 
 # Running the code
 Simply go to the R script `Test.R`, change the working directory and run it as usual.
-It contains a simply test to check that the package has been installed, and then a comparison between the package and an R function for the PPC.
+It contains a simply test to check that the package has been installed, and then a comparison between the package and an R function for the PPC. Comparison is made for MSE and computational time (to measure it properly, run it only with one command as said in the script).
 Data are taken from `CanadianWeather`. Although the error is yet quite big, performance are improved yet for MSE yet for computational time.
 This big MSE could be due to the small amount of time instants?
 
