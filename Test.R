@@ -65,7 +65,7 @@ mse = function(x1,x2)
 }
 
 
-
+set.seed(230300)
 library(Rcpp)
 library(RcppEigen)
 
