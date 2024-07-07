@@ -7,5 +7,10 @@ It contains a simply test to check that the package has been installed, and then
 Data are taken from `CanadianWeather`. Although the error is yet quite big, performance are improved yet for MSE yet for computational time.
 This big MSE could be due to the small amount of time instants?
 
+# Feats
+ - Exploitation of Eigen library for matrix computations and linear algebra
+ - Exploitation of Rcpp for creating an R package using C++ languagde
+ - In practice, data are approximated from functional to discrete: each statistical unit is a time serie, while each feature is a time instant. So every datum is the value of the function in a specific time instant
+
 # What's missing
 The code has been developed only for the algorithm given a parameter (CV version not yet implemented).
