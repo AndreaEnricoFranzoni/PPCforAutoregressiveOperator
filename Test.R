@@ -1,3 +1,4 @@
+#PPC_KO version with R function
 PPCdiscretized_KO <- function(X, p.thresh=0.95, alpha=NULL, K=NULL)
 {
   n <- dim(X)[2]
@@ -68,10 +69,12 @@ mse = function(x1,x2)
 library(Rcpp)
 library(RcppEigen)
 
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/pacs-project")
-Rcpp::compileAttributes("PPCKO") 
-devtools::install("PPCKO")
+#change here the directory
+setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
 
+#installing the package
+#Rcpp::compileAttributes("PPCKO") 
+devtools::install("PPCKO")
 
 #leave these parameters like that for now
 cv = "NoCV"
@@ -79,6 +82,9 @@ threshold=0.95
 alpha=0.75
 n_disc=100
 
+
+
+#simple test
 data_test = matrix(c(1,4,7,10,6,9,12,15,3,6,9,12),4,3)
 result_test = PPCKO::PPC_KO(data_test,cv,threshold,alpha,n_disc)
 result_test$predictions
