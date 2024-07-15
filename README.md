@@ -2,16 +2,10 @@
 
 Creating an R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to Kargin-Onatski algorithm.
 
-# Running the code
+# Installation
+Run the script `T_Installing.R`, simply changing the working directory according to yours.
 
-Simply go to the R script `Test.R`, change the working directory and run it as usual. It contains a simply test to check that the package has been installed, and then a comparison between the package and an R function for the PPC. Comparison is made for MSE and computational time (to measure it properly, run it only with one command as said in the script). Data are taken from `CanadianWeather`. Although the error is yet quite big, performance are improved yet for MSE yet for computational time. This big MSE could be due to the small amount of time instants?
-
-# Feats
-
--   Exploitation of Eigen library for matrix computations and linear algebra
--   Exploitation of Rcpp for creating an R package using C++ languagde
--   In practice, data are approximated from functional to discrete: each statistical unit is a time serie, while each feature is a time instant. So every datum is the value of the function in a specific time instant
-
-# What's missing
-
-The code has been developed only for the algorithm given a parameter (CV version not yet implemented).
+# Testing
+In the script `Test.R`, there is a comparison between the C++ based package and R function based, with respect to the version with and without cv.
+Follow the comments in order to run it properly and being able to notice the difference in terms yet of goodness of forecasting yet on computational time.
+The test is done on `CanadianWeather` dataset, on `monthlyPrecip`. The last month is used as test set.
