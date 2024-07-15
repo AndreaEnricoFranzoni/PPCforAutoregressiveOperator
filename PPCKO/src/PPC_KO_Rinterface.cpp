@@ -23,17 +23,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
 
   
   //!!using std::move() to move the data (better if there are big data)!!
-  std::unique_ptr<PPC::PPC_KO_base> ko = KO_Factory::KO_solver(id_CV,std::move(x));
+  std::unique_ptr<PPC::PPC_KO_base> ko = KO_Factory::KO_solver(id_CV,std::move(x),alpha);
 
   ko->solve();
-  
-  Rcpp::List l;
-  
   //estimate of the predictions
   auto pred = ko->prediction();
-  l["predictions"] = pred;
+  double alpha_used = ko->alpha();
   
-  //Rcout << "Attempt 42" << std::endl;
+  auto valid_err = ko->ValidErr();
+  
+  Rcout << "The regularization parameter used is " << alpha_used << std::endl;
+  
+  //saving results in a list
+  Rcpp::List l;
+  l["predictions"] = pred;
+  l["alpha"] = alpha_used;
+  l["valid_errors"] = valid_err;
   
   return l;
 }

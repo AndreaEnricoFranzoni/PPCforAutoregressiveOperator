@@ -22,15 +22,15 @@ public:
   //! Static method that takes a string as identifier and builds a pointer to the right object for the cross-validation requested
   static 
   std::unique_ptr<PPC::PPC_KO_base> 
-  KO_solver(const std::string &id, KO_Traits::StoringMatrix && X)
+  KO_solver(const std::string &id, KO_Traits::StoringMatrix && X, double alpha)
   {
     if (id == "NoCV")
     {
-      return make_unique<PPC::KO_NO_CV>(std::move(X));
+      return make_unique<PPC::KO_NO_CV>(std::move(X), alpha);
     }
     if (id == "CV")
     {
-      return make_unique<PPC::KO_CV>(std::move(X));
+      return make_unique<PPC::KO_CV>(std::move(X), alpha);
     }
     else
     {

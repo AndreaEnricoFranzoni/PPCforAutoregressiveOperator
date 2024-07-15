@@ -3,8 +3,9 @@
 
 #include <Eigen/Dense>
 
+
 // Defining common types for homogeneity
-class KO_Traits
+struct KO_Traits
 {
 public:
   
@@ -18,7 +19,5 @@ public:
   using StoringArray = Eigen::ArrayXd;
   
 };
-
-
 
 #endif /*KO_TRAITS_HPP*/

@@ -1,12 +1,15 @@
 #ifndef KO_PPC_HPP
 #define KO_PPC_HPP
 
-#include "KO_Traits.hpp"
 #include <iostream>
 #include <algorithm>
 #include <iterator>
 #include <numeric>
 #include <execution>
+#include <vector>
+
+#include "KO_Traits.hpp"
+#include "CV_KO.hpp"
 
 namespace PPC       //PrincipalPredictiveComponents
 {
@@ -36,17 +39,20 @@ private:
   KO_Traits::StoringMatrix m_rho;             //matrix containing the estimate of the operator for doing 1-step ahead prediction (m x m)
   double m_p_threshold = 0.95;                //threshold according to how much predictive power has to be reatined by the PPCs
   double m_alpha = 0.75;                      //regularization parameter  
-  int m_k;                                    //number of PPCs retained                  
+  int m_k;                                    //number of PPCs retained
+  
+  std::vector<double> m_valid_err;        //just for debugging
   
 public:
   
-  PPC_KO_base(KO_Traits::StoringMatrix&& X)
+  PPC_KO_base(KO_Traits::StoringMatrix&& X, double alpha)
     :   
     m_X{std::forward<KO_Traits::StoringMatrix>(X)},
     m_m(X.rows()),
-    m_n(X.cols())  
+    m_n(X.cols()),
+    m_alpha(alpha)  
   
-    {
+    { 
       //evaluating row mean and saving it in the m_means
       m_means = (m_X.rowwise().sum())/m_n;
       
@@ -57,15 +63,18 @@ public:
       }
       
       // X * X' 
-      m_Cov =  ((m_X*m_X.transpose()).array())/static_cast<double>(m_n);              
+      m_Cov =  ((m_X*m_X.transpose()).array())/static_cast<double>(m_n);
       
       // (X[,2:n]*(X[,1:(n-1)])')/(n-1)
-      m_CrossCov =  ((m_X.rightCols(m_n-1)*m_X.leftCols(m_n-1).transpose()).array())/(static_cast<double>(m_n-1));      
+      m_CrossCov =  ((m_X.rightCols(m_n-1)*m_X.leftCols(m_n-1).transpose()).array())/(static_cast<double>(m_n-1));
       
+      
+      //squared of cross covariance
+      m_GammaSquared = m_CrossCov.transpose()*m_CrossCov;
     }
   
   /*!
-   * Virtual destructor
+   * Virtual destructor (needed for inheritance)
    */
   virtual ~PPC_KO_base() = default;
   
@@ -73,6 +82,22 @@ public:
    * Virtual method to do prediction: will be defined in the children classes
    */
   virtual void solve() = 0; 
+  
+  
+  
+  /*!
+   * Getter for m_valid_err
+   */
+  inline auto ValidErr() const {return m_valid_err;};
+  
+  /*!
+   * Setter for m_CovReg (needed for CV)
+   */
+  inline auto & ValidErr() {return m_valid_err;};
+  
+  
+  
+  
   
   /*!
    * Getter for m_m
@@ -192,7 +217,7 @@ public:
   //number of PPCs retained
   int PPC_retained(const KO_Traits::StoringArray & cov_reg_eigvals);
   
-  //Inverse square for reg covariance
+  //Inverse square for regularized covariance (k is chosen in this function)
   KO_Traits::StoringMatrix matrix_inverse_root(const KO_Traits::StoringMatrix& gamma_alpha);
   
   //operator Phi estimate
@@ -208,58 +233,65 @@ public:
 
 
 //version without CV
+//TODO: to add initialization of alpha as it is passed as parameter
 class KO_NO_CV final : public PPC_KO_base
 {
-  
 public:
   
-  KO_NO_CV(KO_Traits::StoringMatrix&& X)
+  KO_NO_CV(KO_Traits::StoringMatrix&& X, double alpha)
     :   
-    PPC::PPC_KO_base(std::move(X))
+    PPC::PPC_KO_base(std::move(X), alpha)
     {   
-      this->CovReg() = this->Cov().array() + this->alpha()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array()); 
-      this->GammaSquared() = (this->CrossCov().transpose())*this->CrossCov();
+      //for the case without CV, covariance regularized will be evaluated only once since regularization parameter has been passed as input parameter
+      this->CovReg() = this->Cov().array() + this->alpha()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
     }
   //virtual ~KO_NO_CV(){};
-  
-  
-  void solve() override;
-  
-  
+  void solve() override;              //overrided method to solve without CV
 };
 
 
 
 //version with CV
+//TODO: to add initialization of n_disc as it is passed as parameter
 class KO_CV final : public PPC_KO_base
 {
 private:
-  static constexpr double alpha_min = 1.7e-308;
-  static constexpr double alpha_max = 1.5;
-  std::size_t m_n_disc = 100;
+  KO_Traits::StoringMatrix m_X_non_norm;          //data non normalized, necessary since is necessary to pass them at every cv iteration
+  std::size_t m_n_disc = 1000;
+  
+  
   
 public:
   
-  KO_CV(KO_Traits::StoringMatrix&& X)
+  KO_CV(KO_Traits::StoringMatrix&& X, double alpha)
     :   
-    PPC::PPC_KO_base(std::move(X))
-    {}
+    PPC::PPC_KO_base(std::move(X), alpha),
+    m_X_non_norm(this->m(),this->n())
+    {
+      for (size_t i = 0; i < this->n(); ++i)
+      {
+        m_X_non_norm.col(i) = this->X().col(i).array() + this->means();
+      }
+    }
   
-  void CV();
-  void solve() override;
+  /*!
+   * Getter for m_X_non_norm
+   */
+  inline KO_Traits::StoringMatrix X_non_norm() const {return m_X_non_norm;};
   
   /*!
    * Getter for m_n_disc
    */
-  inline auto n_disc() const {return m_n_disc;};
+  inline std::size_t n_disc() const {return m_n_disc;};
   
-  /*!
-   * Setter for m_n_disc
-   */
-  inline auto & n_disc() {return m_n_disc;};
+  
+  //to obtain the best alpha parameter for regularization
+  double alpha_best_CV();
+  void solve() override;              //overrided method to solve with CV
+  
 };
 
-}           //end namespace PPC
+}//end namespace PPC
 
 
 #endif /*KO_PPC_HPP*/
