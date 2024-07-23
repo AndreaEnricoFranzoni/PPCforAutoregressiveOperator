@@ -29,6 +29,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   //estimate of the predictions
   auto pred = ko->prediction();
   double alpha_used = ko->alpha();
+  int k = ko->k();
   
   auto valid_err = ko->ValidErr();
   
@@ -38,6 +39,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   Rcpp::List l;
   l["predictions"] = pred;
   l["alpha"] = alpha_used;
+  l["PPCs_retained"] = k;
   l["valid_errors"] = valid_err;
   
   return l;
