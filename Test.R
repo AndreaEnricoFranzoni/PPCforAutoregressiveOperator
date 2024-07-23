@@ -7,6 +7,12 @@ alpha = 0.75
 n_disc = 1000
 alpha_max = 10
 
+#change here the directory
+setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
+
+
+
+
 
 #simple test
 #data_test = matrix(c(1,4,7,10,6,9,12,15,3,6,9,12),4,3)
@@ -19,8 +25,18 @@ library(fda)
 data = t(CanadianWeather$monthlyPrecip)
 #data = t(CanadianWeather$monthlyTemp)
 
-data_used = data[,1:11]
-exact_result = data[,12]
+#to read that extern dataset
+#data = read.csv("Daily-test.csv", fileEncoding = "Latin1", check.names = F,header=T, sep = ",",colClasses=c("NULL",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA))
+#data = t(data[2:dim(data)[1],])
+
+
+
+m = dim(data)[1]
+n = dim(data)[2]
+
+data_used = data[,1:(n-1)]
+exact_result = data[,n]
+
 
 
 ###################
