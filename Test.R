@@ -17,6 +17,7 @@ alpha_max = 10
 
 library(fda)
 data = t(CanadianWeather$monthlyPrecip)
+#data = t(CanadianWeather$monthlyTemp)
 
 data_used = data[,1:11]
 exact_result = data[,12]
@@ -121,11 +122,20 @@ for (i in 1:n_disc) {
 
 
 y_low = min(min(min(mses_ko),min(mses_fun)),min(KO_cv$valid_errors))
-y_up = max(max(max(mses_ko),max(mses_fun)),max(KO_cv$valid_errors))
+y_up = max(max(max(mses_ko),max(mses_fun)),max(KO_cv$valid_errors)) + 30
+#run from there to the end all together
 quartz()
-plot(alpha.vec,mses_ko,cex=0.5,xlab = "Alpha",ylab="Errors",main="MSE",ylim=c(y_low,y_up),col='black')
+plot(alpha.vec,mses_ko,col='black',cex=0.5,
+     xlab="Alpha",ylab="Errors",ylim=c(y_low,y_up))
+abline(v=alpha.vec[which(mses_ko==min(mses_ko))],col='black')
 points(alpha.vec,KO_cv$valid_errors,cex=0.5,col='green')
+abline(v=alpha.vec[which(KO_cv$valid_errors==min(KO_cv$valid_errors))],col='green')
 points(alpha.vec,mses_fun,cex=0.5,col='blue')
-names = c("Test error KO C++ based","Validation error KO C++ based","Test error KO R function based")
-names = factor(names)
-legend("topright", legend=levels(names), fill=c('black','green','blue'), cex=.7)
+abline(v=alpha.vec[which(mses_fun==min(mses_fun))],col='blue')
+legend("topright",
+       legend = c("Test error KO C++ based",
+                  "Validation error KO C++ based",
+                  "Test error KO R fun based"),
+       fill  = c("black","green","blue")
+        )
+
