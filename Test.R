@@ -125,7 +125,7 @@ print(mse_KO_fun)
 
 
 #nb
-alpha.vec = seq(0,alpha_max,length.out = n_disc )
+alpha.vec = seq(0.001,alpha_max,length.out = n_disc )
 mses_ko = numeric(n_disc)
 mses_fun = numeric(n_disc)
 
@@ -138,7 +138,7 @@ for (i in 1:n_disc) {
 
 
 y_low = min(min(min(mses_ko),min(mses_fun)),min(KO_cv$valid_errors))
-y_up = max(max(max(mses_ko),max(mses_fun)),max(KO_cv$valid_errors)) + 30
+y_up = max(max(max(mses_ko),max(mses_fun)),max(KO_cv$valid_errors)) 
 #run from there to the end all together
 quartz()
 plot(alpha.vec,mses_ko,col='black',cex=0.5,
@@ -154,4 +154,3 @@ legend("topright",
                   "Test error KO R fun based"),
        fill  = c("black","green","blue")
         )
-

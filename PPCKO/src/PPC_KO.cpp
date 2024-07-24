@@ -40,8 +40,10 @@ PPC::PPC_KO_base::matrix_inverse_root(const KO_Traits::StoringMatrix& gamma_alph
   //eigenvectors (ordererd wrt ascending order of their eigenvalues)
   KO_Traits::StoringMatrix eigvcts = eigensolver.eigenvectors().rowwise().reverse();
   
-  //retained components: first p
-  int p = this->PPC_retained(eigvals);
+  //if PPCs retained are chosen in the square root inverse of cov reg
+  //int p = this->PPC_retained(eigvals);
+  //if PPCs retained are chosen from phi
+  int p = this->m();
   
   //taking inverse square root of the eigenvalues as diagonal matrix (only of the p biggest)
   //NB: PAR, DA SISTEMARE PER R (std::execution::par non funziona)
@@ -75,6 +77,11 @@ PPC::PPC_KO_base::KO_algo()
   
   //Spectral decomposition of phi_hat: self-adjoint, so exploiting it 
   Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_phi(phi_hat);
+
+  
+  //if we choose numbers of PPCs retained from phi
+  int p = this->PPC_retained(eigensolver_phi.eigenvalues().reverse());
+  
   
   //reatining only the first k components of eigenvalues and eigenvectors
   const KO_Traits::StoringVector D_hat = eigensolver_phi.eigenvalues().reverse().head(this->k());

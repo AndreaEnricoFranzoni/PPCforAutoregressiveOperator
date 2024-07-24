@@ -5,7 +5,7 @@ library(RcppEigen)
 setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
 
 #installing the package
-#Rcpp::compileAttributes("PPCKO") 
+Rcpp::compileAttributes("PPCKO") 
 devtools::install("PPCKO")
 
 

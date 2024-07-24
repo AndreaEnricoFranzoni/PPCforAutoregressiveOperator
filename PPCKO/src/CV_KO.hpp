@@ -30,7 +30,7 @@ private:
   double m_alpha_best;
   std::size_t m_n_disc;
   static constexpr double alpha_max = 10.0;
-  static constexpr double alpha_min = 0.0;
+  static constexpr double alpha_min = 0.001;
   
 public:
   CV_KO(KO_Traits::StoringMatrix&& X, std::size_t n_disc)
