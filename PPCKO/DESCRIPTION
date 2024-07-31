@@ -1,12 +1,12 @@
 Package: PPCKO
 Type: Package
-Title: What the package does (short line)
+Title: Principal Predictive Components for estimating an autoregressive operator
 Version: 1.0
 Date: 2024-07-05
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: Andrea Enrico Franzoni [aut, cre], Simone Vantini [aut], Alessandra Menafoglio [aut], Teresa Bortolotti [aut]
+Maintainer: Andrea Enrico Franzoni <andreaenrico.franzoni@gmail.com>
+Description: PPCKO provides one-step ahead prediction, predictive factors and loading for an functional order-1 autoregressive process
 License: What license is it under?
 Imports: Rcpp (>= 1.0.12)
 LinkingTo: Rcpp, RcppEigen
-
+SystemRequirements: C++20
