@@ -4,17 +4,12 @@
 
 //mse between a given training and validation set, alpha fixed
 double
-  CV_PPC::CV_KO::single_cv(double alpha,int dim_train_set, const std::function<double(KO_Traits::StoringVector)> &lf) const
+  CV_PPC::CV_KO::single_cv(double alpha,int dim_train_set, const std::function<double(KO_Traits::StoringVector)> &lf) 
+  const
   {   
     //a single ko with a given alpha parameter on a specific training set
     PPC::KO_NO_CV ko_single_cv(std::move(this->X().leftCols(dim_train_set)),alpha);
     ko_single_cv.solve();
-    
-    //std::cout << "Prediction for instant " << dim_train_set << std::endl;
-    //std::cout << ko_single_cv.prediction() << std::endl;
-    //std::cout << "Real values at instant" << dim_train_set << std::endl;
-    //std::cout << m_X.col(dim_train_set) <<  std::endl;
-    //std::cout << "Mse with train set of " << dim_train_set << " time series and alpha equal to "<< alpha << " is " << lf(ko_single_cv.prediction() - m_X.col(dim_train_set).array()) << std::endl;
     
     //prediction with mean already added on non-normalized real values
     return lf(ko_single_cv.prediction() - m_X.col(dim_train_set).array());
@@ -23,7 +18,8 @@ double
 
 //mean of all the mse, alpha fixed, given all the exploited training set
 double
-  CV_PPC::CV_KO::moving_window_cv(double alpha, const std::vector<int> & t_i, const std::function<double(KO_Traits::StoringVector)> &lf) const
+  CV_PPC::CV_KO::moving_window_cv(double alpha, const std::vector<int> & t_i, const std::function<double(KO_Traits::StoringVector)> &lf) 
+  const
   {   
     //given alpha, evaluating all the mses
     double errors = std::transform_reduce(t_i.cbegin(),
@@ -71,7 +67,7 @@ CV_PPC::CV_KO::best_param()
   
   //returning the optimal alpha
   m_alpha_best = m_alphas[std::distance(m_errors.begin(),std::min_element(m_errors.begin(),m_errors.end()))];
-  //std::cout << "Alpha opt is: " << m_alpha_best << std::endl;
+  std::cout << "Alpha opt is: " << m_alpha_best << std::endl;
   
   //free memory (these vector are useless from now on)
   time_instants_cv.clear();

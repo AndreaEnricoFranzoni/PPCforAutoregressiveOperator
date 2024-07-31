@@ -52,7 +52,7 @@ public:
     m_n(X.cols()),
     m_alpha(alpha)  
   
-    { 
+    {  
       //evaluating row mean and saving it in the m_means
       m_means = (m_X.rowwise().sum())/m_n;
       
@@ -67,7 +67,6 @@ public:
       
       // (X[,2:n]*(X[,1:(n-1)])')/(n-1)
       m_CrossCov =  ((m_X.rightCols(m_n-1)*m_X.leftCols(m_n-1).transpose()).array())/(static_cast<double>(m_n-1));
-      
       
       //squared of cross covariance
       m_GammaSquared = m_CrossCov.transpose()*m_CrossCov;
@@ -215,13 +214,13 @@ public:
   inline int & k() {return m_k;};
   
   //number of PPCs retained
-  int PPC_retained(const KO_Traits::StoringArray & cov_reg_eigvals);
+  int PPC_retained(const KO_Traits::StoringArray & cov_reg_eigvals) const;
   
   //Inverse square for regularized covariance (k is chosen in this function)
-  KO_Traits::StoringMatrix matrix_inverse_root(const KO_Traits::StoringMatrix& gamma_alpha);
+  KO_Traits::StoringMatrix matrix_inverse_root(const KO_Traits::StoringMatrix& gamma_alpha) const;
   
   //operator Phi estimate
-  KO_Traits::StoringMatrix const phi_estimate(const KO_Traits::StoringMatrix& gamma_alpha_rooted);
+  KO_Traits::StoringMatrix phi_estimate() const;
   
   //KO algorithm: called by the method solve(); if no CV: it is simply called once. If there is CV, it is called for each value of alpha
   void KO_algo();
@@ -257,7 +256,7 @@ class KO_CV final : public PPC_KO_base
 {
 private:
   KO_Traits::StoringMatrix m_X_non_norm;          //data non normalized, necessary since is necessary to pass them at every cv iteration
-  std::size_t m_n_disc = 1000;
+  std::size_t m_n_disc = 3;
   
   
   
