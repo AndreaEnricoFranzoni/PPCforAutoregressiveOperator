@@ -3,6 +3,7 @@
 Creating an R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to Kargin-Onatski algorithm.
 
 # Installation
+If you have MacOS, be sure to have Fortran installed. In case, follow the instructions in this link `https://cran.r-project.org/bin/macosx/tools/`.
 Run the script `T_Installing.R`, simply changing the working directory according to yours.
 
 # Testing
