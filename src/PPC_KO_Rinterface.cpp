@@ -18,6 +18,10 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
                   int n_disc
                   )
 { 
+<<<<<<< HEAD
+=======
+  Rcout << "Version 5655" << std::endl;
+>>>>>>> e9f642e91c5135471cf4581b5d36597c550b2d0d
   KO_Traits::StoringMatrix x = reading_data(X);
 
   
