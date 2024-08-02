@@ -1,3 +1,8 @@
+library(devtools)
+install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator")
+
+
+
 library(Rcpp)
 library(RcppEigen)
 
