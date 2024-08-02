@@ -1,7 +1,7 @@
 #to uploda the packages
 #change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
-Rcpp::compileAttributes(".") 
+#setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
+#Rcpp::compileAttributes(".") 
 
 
 library(devtools)
