@@ -1,12 +1,11 @@
 #to uploda the packages
 #change here the directory
 setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/PPCforAutoregressiveOperator")
-Rcpp::compileAttributes() 
+Rcpp::compileAttributes(".") 
 
 
 library(devtools)
-Rcpp::compileAttributes()
-install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator")
+install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 
 
 #function to evaluate mse on the predictions
