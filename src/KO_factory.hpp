@@ -42,6 +42,3 @@ public:
 
 
 #endif /* KO_FACTORY_HPP */
-
-
-

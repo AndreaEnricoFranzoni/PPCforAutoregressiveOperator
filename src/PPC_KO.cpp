@@ -44,6 +44,7 @@ const
                  eigvals.begin(),
                  [](double s){return static_cast<double>(1)/std::sqrt(s);});
   
+  
   //spectral theorem for inverse square root    
   return eigvcts*(eigvals.asDiagonal())*(eigvcts.transpose());
   
