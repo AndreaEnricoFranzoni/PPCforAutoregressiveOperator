@@ -4,9 +4,15 @@
 #Rcpp::compileAttributes(".") 
 
 
-library(devtools)
-install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
+install.packages("Rcpp", type = "source")
+install.packages("RcppEigen", type = "source")
+library(Rcpp)
+library(RcppEigen)
 
+
+
+library(devtools)
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 
 #function to evaluate mse on the predictions
 mse = function(x1,x2)

@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PPC_KO
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double threshold_k, double alpha, int n_disc);
-RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP threshold_kSEXP, SEXP alphaSEXP, SEXP n_discSEXP) {
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double threshold_k, double alpha, int n_disc, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP threshold_kSEXP, SEXP alphaSEXP, SEXP n_discSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,13 +22,26 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type threshold_k(threshold_kSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type n_disc(n_discSEXP);
-    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, threshold_k, alpha, n_disc));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
+    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, threshold_k, alpha, n_disc, id_rem_nan));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_data_na
+Rcpp::List read_data_na(Rcpp::NumericMatrix X);
+RcppExport SEXP _PPCKO_read_data_na(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_data_na(X));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 5},
+    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 6},
+    {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 1},
     {NULL, NULL, 0}
 };
 
