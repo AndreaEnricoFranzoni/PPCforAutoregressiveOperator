@@ -9,9 +9,6 @@
 
 library(Rcpp)
 library(RcppEigen)
-
-
-
 library(devtools)
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 
