@@ -71,7 +71,7 @@ Rcpp::List read_data_na(Rcpp::NumericMatrix X)
 { 
   using T = double;       //version for double
   
-  DEF_PARAMS_PPC::MA_type id_RN = DEF_PARAMS_PPC::MA_type::EMA;
+  DEF_PARAMS_PPC::MA_type id_RN = DEF_PARAMS_PPC::MA_type::MR;
   KO_Traits::StoringMatrix x = reading_data<T>(X, id_RN);
   
   

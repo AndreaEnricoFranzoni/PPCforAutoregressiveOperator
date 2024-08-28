@@ -7,8 +7,6 @@ alpha = 0.75
 n_disc = 1000
 alpha_max = 10
 
-#change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
 
 #building the dataset
 n_ts = 20
