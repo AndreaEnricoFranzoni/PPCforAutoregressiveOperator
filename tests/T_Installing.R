@@ -6,8 +6,7 @@
 # and then push the changes to modify the exports
 
 
-install.packages("Rcpp", type = "source")
-install.packages("RcppEigen", type = "source")
+
 library(Rcpp)
 library(RcppEigen)
 
