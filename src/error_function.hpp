@@ -6,14 +6,14 @@
 #include <algorithm>
 #include <numeric>
 
+
 namespace EF_PPC
 {
 
 template<typename T>
 double mse(const Eigen::Matrix<T,Eigen::Dynamic,1> &diff)
 {
-  
-  double mse = std::transform_reduce(
+    double mse = std::transform_reduce(
     diff.begin(),
     diff.end(),
     0.0,

@@ -22,7 +22,7 @@ const KO_Traits::StoringMatrix
 reading_data(Rcpp::NumericMatrix X,
               const DEF_PARAMS_PPC::MA_type MA_t)
 {
-  std::cout << "Local version 90" << std::endl;
+  //std::cout << "Local version 162" << std::endl;
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();

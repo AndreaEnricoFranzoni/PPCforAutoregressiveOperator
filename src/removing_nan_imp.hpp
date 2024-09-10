@@ -57,4 +57,4 @@ REM_NAN_PPC::removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-
 {
   std::cout << "I am using ZR with td" << std::endl;
   std::replace_if(row.begin(),row.end(),[](T el){return isnan(el);},static_cast<T>(0)); 
-}    
+}   

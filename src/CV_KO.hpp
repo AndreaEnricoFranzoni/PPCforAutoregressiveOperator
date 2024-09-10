@@ -9,52 +9,112 @@
 #include <algorithm>
 #include <iterator>
 #include <numeric>
+#include <concepts>
 
 #include "KO_Traits.hpp"
-#include "PPC_KO.hpp"
-#include "error_function.hpp"
+
 
 
 namespace CV_PPC            //CrossValidation for PPC
 {
 
+using singleCV_t = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)>;
+using ef_t = std::function<double(KO_Traits::StoringVector)>;
+
+
 /*!
  * Class for doing CV within the context of PPC KO algo
  */
+template<typename T>                         //double if for alpha, int if for k
 class CV_KO
 {
 private:
   KO_Traits::StoringMatrix m_X;
-  std::vector<double> m_alphas;
-  std::vector<double> m_errors;           //the error in the position i-th is relative to the parameter in the position i-th in m_alphas
-  double m_alpha_best;
-  std::size_t m_n_disc;
-  static constexpr double alpha_max = 10.0;
-  static constexpr double alpha_min = 0.000001;
+  std::vector<T> m_params;
+  std::vector<double> m_errors;           //the error in the position i-th is relative to the parameter in the position i-th in m_params
+  std::size_t m_grid_dim;
+  T m_param_min;
+  T m_param_max;
+  T m_param_best;
+  singleCV_t m_singleCV;
+  ef_t m_ef;
   
+  //parameters needed for making KO working
+  double m_threshold_ppc;
+  bool m_p_as_k;
+  bool m_p_imposed;
+  double m_alpha;
+  int m_k;
+  
+
 public:
-  CV_KO(KO_Traits::StoringMatrix&& X, std::size_t n_disc)
+  CV_KO(KO_Traits::StoringMatrix&& X,
+        std::size_t grid_dim,
+        T param_min,
+        T param_max,
+        double threshold_ppc,
+        bool p_as_k,
+        bool p_imposed,
+        double alpha,
+        int k,
+        const singleCV_t & singleCV,
+        const ef_t & ef
+       )
     :   
     m_X{std::forward<KO_Traits::StoringMatrix>(X)},
-    m_errors(n_disc,0.0),
-    m_n_disc(n_disc)
-    { 
-      //the values of alpha tested
-      const double step = (alpha_max-alpha_min)/static_cast<double>(n_disc-1);
-      m_alphas.resize(m_n_disc);
-      double count = 0;
-      std::generate(m_alphas.begin(),m_alphas.end(),[&step,&count](){count++; return (alpha_min+step*(count-1));});
+    m_errors(grid_dim,static_cast<double>(0)),
+    m_grid_dim(grid_dim),
+    m_param_min(param_min),
+    m_param_max(param_max),
+    m_threshold_ppc(threshold_ppc),
+    m_p_as_k(p_as_k),
+    m_p_imposed(p_imposed),
+    m_alpha(alpha),
+    m_k(k),
+    m_singleCV(singleCV),
+    m_ef(ef)
+  
+    {
+      m_params.resize(m_grid_dim);
+      std::iota(m_params.begin(),m_params.end(),static_cast<T>(1));
+      
+      if constexpr(std::is_same<T,double>::value)   
+      { 
+        const T step = (m_param_max - m_param_min)/static_cast<T>(m_grid_dim-1);
+        std::transform(m_params.begin(),m_params.end(),m_params.begin(),[this,&step](T el){return(this->param_min() + step*(el-static_cast<T>(1)));});
+      }
     }
   
+
   /*!
    * Getter for m_X
    */
   inline KO_Traits::StoringMatrix X() const {return m_X;};
   
   /*!
-   * Getter for m_alpha_best (only one needed)
+   * Getter for m_param_min
    */
-  inline double alpha_best() const {return m_alpha_best;};
+  inline T param_min() const {return m_param_min;};
+  
+  /*!
+   * Getter for m_param_max
+   */
+  inline T param_max() const {return m_param_max;};
+  
+  /*!
+   * Getter for m_param_best
+   */
+  inline T param_best() const {return m_param_best;};
+  
+  /*!
+   * Getter for m_singleCV
+   */
+  inline singleCV_t singleCV() const {return m_singleCV;};
+  
+  /*!
+   * Getter for m_ef
+   */
+  inline ef_t ef() const {return m_ef;};
   
   
   
@@ -64,18 +124,19 @@ public:
   inline std::vector<double> errors() const {return m_errors;};
   
   
+  //doing a single CV, for a given param (returns the error evaluated using the error function m_ef for a given parameter and a given training set)
+  double single_cv(T param, int dim_train_set) const;
   
-  //doing a single CV, for a given alpha (returns the mse for a given alpha and a given training set)
-  double single_cv(double alpha, int dim_train_set,const std::function<double(KO_Traits::StoringVector)> &lf) const;
+  //returns the mean of the m_ef for a given parameter evaluated on the different training set (obtained moving the window, adding every time one time instant, and using the following one as validation set)
+  double moving_window_cv(T param, const std::vector<int> & t_i) const;
   
-  //for doing a single CV for a given alpha, is necessary to move the window, using different train and test set
-  //(returns the mean of the mses for a given alpha)
-  double moving_window_cv(double alpha, const std::vector<int> & t_i, const std::function<double(KO_Traits::StoringVector)> &lf) const;
-  
-  //choose best param, evaluating all the alphas
+  //find best param according to average of mse of the predictions on the moving window
   void best_param();
 };
 
 }   //end namespace CV_PPC
+
+
+#include "CV_KO_imp.hpp"
 
 #endif  /*CV_PPC_HPP*/
