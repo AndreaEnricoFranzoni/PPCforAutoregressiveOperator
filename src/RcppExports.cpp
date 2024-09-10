@@ -12,18 +12,23 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PPC_KO
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double threshold_k, double alpha, int n_disc, Rcpp::Nullable<std::string> id_rem_nan);
-RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP threshold_kSEXP, SEXP alphaSEXP, SEXP n_discSEXP, SEXP id_rem_nanSEXP) {
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, std::string id_p_for_k, double threshold_k, double alpha, int n_disc, int k, double alpha_min, double alpha_max, std::string id_p_imposed, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP id_p_for_kSEXP, SEXP threshold_kSEXP, SEXP alphaSEXP, SEXP n_discSEXP, SEXP kSEXP, SEXP alpha_minSEXP, SEXP alpha_maxSEXP, SEXP id_p_imposedSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
     Rcpp::traits::input_parameter< std::string >::type id_CV(id_CVSEXP);
+    Rcpp::traits::input_parameter< std::string >::type id_p_for_k(id_p_for_kSEXP);
     Rcpp::traits::input_parameter< double >::type threshold_k(threshold_kSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type n_disc(n_discSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_min(alpha_minSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha_max(alpha_maxSEXP);
+    Rcpp::traits::input_parameter< std::string >::type id_p_imposed(id_p_imposedSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
-    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, threshold_k, alpha, n_disc, id_rem_nan));
+    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, id_p_for_k, threshold_k, alpha, n_disc, k, alpha_min, alpha_max, id_p_imposed, id_rem_nan));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -40,7 +45,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 6},
+    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 11},
     {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 1},
     {NULL, NULL, 0}
 };
