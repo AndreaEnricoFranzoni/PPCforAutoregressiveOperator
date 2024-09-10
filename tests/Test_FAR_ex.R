@@ -47,9 +47,6 @@ alpha_max = 10
 
 quartz()
 #x11()
-#change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
-
 m = 50    #number of temporal series
 n = 100   #number of time instants
 

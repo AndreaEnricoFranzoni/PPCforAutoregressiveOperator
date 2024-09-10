@@ -8,9 +8,6 @@ m = dim(data)[1]      #number of temporal series
 n = dim(data)[2]      #number of time instants
 
 quartz()
-#change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
-
 set.seed(230300)
 #leave these parameters like that for now
 cv = "CV_alpha"

@@ -138,3 +138,103 @@ dalpha_select <- function(alpha.vec, XX, K=1)
               "alpha.vec" = alpha.vec)
   return(out)
 }
+
+dK_select <- function(XX, alpha)
+{
+  n <- dim(XX)[2]
+  TT <- dim(XX)[1]
+  n.train <- round(n/2)
+  
+  X.train <- XX[,1:n.train]
+  autocov <- tcrossprod(X.train)/n.train
+  crosscov <- tcrossprod(X.train[,2:n.train], X.train[,1:(n.train-1)])/(n.train-1)
+  
+  ## Define and solve the generalized eigenvalues problem
+  Gamma1_2 <- t(crosscov) %*% crosscov
+  Gamma0 <- autocov
+  geigendec <- geigen::geigen(Gamma1_2, Gamma0 + alpha*diag(TT))
+  V1 <- geigendec$vectors
+  D1 <- geigendec$values
+  V1 <- V1[,order(D1, decreasing=TRUE)]
+  D1 <- sort(D1, decreasing=TRUE)
+  
+  nppc.vec <- which(D1>=1e-4)
+  nppc.vec <- which(cumsum(D1)/sum(D1) < 1)
+  err.vec <- numeric(length(nppc.vec))
+  
+  for(l in 1:length(nppc.vec)) # l=1
+  {
+    K <- nppc.vec[l]
+    
+    Vhat1 <- V1[,1:K]
+    Dhat1 <- D1[1:K]
+    
+    Psi.hat <- crosscov %*% Vhat1 %*% t(Vhat1)
+    
+    ## Evaluate the error on the test set with alpha
+    ## Psi
+    y.true <- XX[,(n.train+2):n]
+    ## Psi hat
+    y.hat <- Psi.hat %*% XX[,(n.train+1):(n-1)]
+    
+    err <- y.true - y.hat
+    err.vec[l] <- sqrt(sum(err^2))
+    
+  }
+  
+  nppc.opt <- nppc.vec[which.min(err.vec)]
+  
+  out <- list("nppc.opt" = nppc.opt,
+              "err.vec"   = err.vec,
+              "nppc.vec" = nppc.vec)
+  return(out)
+  
+}
+
+dharm_select <- function(XX)
+{
+  n <- dim(XX)[2]
+  n.train <- round(n/2)
+  X.train <- XX[,1:n.train]
+  
+  autocov <- tcrossprod(X.train)/n.train
+  crosscov <- tcrossprod(X.train[,2:n.train], X.train[,1:(n.train-1)])/(n.train-1)
+  eigendec <- eigen(autocov)
+  
+  nharm.vec <- which(eigendec$values >= 1e-4)
+  err.vec <- numeric(length(nharm.vec))
+  for(l in 1:length(nharm.vec))
+  {
+    nharm <- nharm.vec[l]
+    
+    D <- eigendec$values[1:nharm]
+    Vhat <- eigendec$vectors[,1:nharm]
+    D.inv <- 1/D
+    
+    if(nharm > 1){
+      acovinv <- Vhat %*% diag(D.inv) %*% t(Vhat)
+    } else {
+      acovinv <- D.inv * tcrossprod(Vhat)
+    }
+    
+    ## Estimation of the cross covariance and the autocorrelation
+    Psi.hat <- tcrossprod(Vhat) %*% crosscov %*% acovinv
+    
+    ## Evaluate the error on the test set with nharm
+    ## Psi
+    y.true <- XX[,(n.train+2):n]
+    ## Psi hat
+    y.hat <- Psi.hat %*% XX[,(n.train+1):(n-1)]
+    
+    err <- y.true - y.hat
+    err.vec[l] <- sqrt(sum(err^2))
+    
+  }
+  
+  nharm.opt <- nharm.vec[which.min(err.vec)]
+  
+  out <- list("nharm.opt" = nharm.opt,
+              "err.vec"   = err.vec,
+              "nharm.vec" = nharm.vec)
+  return(out)
+}

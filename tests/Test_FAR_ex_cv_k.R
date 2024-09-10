@@ -72,9 +72,6 @@ for (n_t in seq(from=2,to=n,by=1))
 
 
 quartz()
-#change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
-
 set.seed(230300)
 #leave these parameters like that for now
 cv = "CV_k"

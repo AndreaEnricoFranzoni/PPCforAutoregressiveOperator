@@ -18,8 +18,7 @@ alpha_max = 10
 
 quartz()
 #x11()
-#change here the directory
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
+
 
 
 
