@@ -1,6 +1,6 @@
 # PPRforEstimatingAutoregressiveOperator
 
-R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to Kargin-Onatski algorithm, in order to compute one step ahead prediction for time series. Assumption on data: Functional AutoRegressive process.
+R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series. Assumption on data: Functional AutoRegressive process.
 
 # Installation
 
@@ -35,9 +35,9 @@ PPCKO::PPC_KO( X = data,
                id_rem_nan = "EMA"
               )
 ~~~
-`X` is the training dataset: each row (m) is a time serie, each column (n) is a time instant.
+`X` is the training dataset: each row (total: m) is the evaaluation of the functional element at a specific instant in a point of its doamin, each column (n) is a time instant.
 
-`id_CV` is a string that indicates which algorithm has to be used: can assume values `NoCV` (`alpha` given, `k` can be imposed as parameter (`k` in range {1,...,m}) or searched imposing the variance explained by the PPCs (`k`=0)), `CV_alpha` (the optimal alpha is searched using CV: as training set is used a subset of the time instants, and as validation set is used the next time instants. The mse of the prediction is evaluated. The window is moved up until having the last time instant as validation set; the average of the mse is computed for each value of the parameter into [`alpha_min`,`alpha_max`], discretized using `n_disc` subintervals) and `CV_k` (the optimal value of `k` is searched using the same strategy used for `alpha`. `alpha` in this case is given).
+`id_CV` is a string that indicates which algorithm has to be used: can assume values `NoCV` (`alpha` given, `k` can be imposed as parameter (`k` in range {1,...,m}) or searched imposing the variance explained by the PPCs (`k`=0)), `CV_alpha` (the optimal alpha is searched using CV: as training set is used a subset of the time instants, and as validation set is used the next time instants. The mse of the prediction is evaluated. The window is moved up until having the last time instant as validation set; the average of the mse is computed for each value of the parameter into [`alpha_min`,`alpha_max`], discretized using `n_disc` subintervals), `CV_k` (the optimal value of `k` is searched using the same strategy used for `alpha`. `alpha` in this case is given) and `CV` (where a brute force is used to find the best pair `alpha`-`k`). For `alpha`, the algorithm looks for its magnitude.
 
 `id_p_for_k` can assume values `Yes` or `No`: in the first case, the variance explained by the PPCs is already retained from the regularized covariance, while in the latter is done only on the estimate of the `phi` operator.
 
@@ -48,9 +48,4 @@ PPCKO::PPC_KO( X = data,
 `id_rem_nan` indicates which strategy is used to remove eventually NaNs values: `EMA` (default, exponential moving average), `WMA` (weighted moving average), `SMA` (simple moving average), `MR` (mean replacement) and `ZR` (replacement with `0`).
 
 # Testing
-In the folder `tests`, there is a comparison between the C++ based package and R function based, with respect to the version with and without cv.
-Follow the comments in order to run it properly and being able to notice the difference in terms yet of goodness of forecasting yet on computational time, after having installed the package.
-
-In the files whose name contains `_data_`, the test is run over the datasets in `CanadianWeather` of the `fda` library, while the ones containing `_ex_` over simulation of FAR(1) processes. 
-
-Tests are conducted for all the three types of the KO algorithm (no cv, cv for alpha, cv for k).
+In the folder `tests`, the implementation of KO is used to try to reconstruct the result obtained by [Didericksen, Kokoszka & Zhang](https://www.semanticscholar.org/paper/Empirical-properties-of-forecasts-with-the-model-Didericksen-Kokoszka/c1fae9f292c2b42beffe4e4146a2bf9ca005f060), trying to demonstrate the goodness of KO.
