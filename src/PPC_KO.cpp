@@ -211,7 +211,7 @@ PPC::KO_CV_alpha::solve()
   this->alpha() = this->alpha_best_CV();      //finding the best alpha using CV
   
   //only the evaluation of the regularized covariance was missing since there was not any regularization parameter before
-  this->CovReg() = this->Cov().array() + this->alpha()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+  this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
   
   this->KO_algo(); 
 }
@@ -254,6 +254,39 @@ void
 PPC::KO_CV_k::solve()
 {
   this->k() = this->k_best_CV();
+  this->k_imposed() = true;
+  
+  this->KO_algo();
+}
+
+
+
+/**********************************
+ ********  CV    *****************
+ ***********************************/
+
+std::pair<double,int>
+PPC::KO_CV::params_best_CV()
+{
+  
+  CV_PPC::CV_KO_2 ko_cv(std::move(this->X_non_norm()), this->n_disc(), this->p_threshold(), this->p_as_k(), this->p_imposed(), this->cv_iter_k_f());
+  
+  ko_cv.best_params();
+  
+  return ko_cv.params_best();
+}
+
+
+void 
+PPC::KO_CV::solve()
+{
+  //find the best parameters alpha and k
+  auto best_parameters_KO = this->params_best_CV();
+  
+  this->alpha() = best_parameters_KO.first;
+  this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+  
+  this->k() = best_parameters_KO.second;
   this->k_imposed() = true;
   
   this->KO_algo();

@@ -33,18 +33,27 @@ public:
             double alpha_max,
             int k)
   {
+    
     if (id == "NoCV")
     {
       return make_unique<PPC::KO_NO_CV>(std::move(X), threshold_ppc, p_as_k, p_imposed, alpha, k);
     }
+    
     if (id == "CV_alpha")
     {
       return make_unique<PPC::KO_CV_alpha>(std::move(X), threshold_ppc, p_as_k, p_imposed, n_disc, alpha_min, alpha_max, k);
     }
+    
     if (id == "CV_k")
     {
       return make_unique<PPC::KO_CV_k>(std::move(X), threshold_ppc, p_as_k, p_imposed, alpha);
     }
+    
+    if (id == "CV")
+    {
+      return make_unique<PPC::KO_CV>(std::move(X), threshold_ppc, p_as_k, p_imposed, n_disc, alpha_min, alpha_max);
+    }
+    
     else
     {
       std::string error_message = "Wrong input string";

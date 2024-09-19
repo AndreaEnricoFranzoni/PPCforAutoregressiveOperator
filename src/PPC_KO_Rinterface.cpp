@@ -24,7 +24,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
                   std::string id_p_for_k,
                   double threshold_k,
                   double alpha = 0.75,
-                  int n_disc = 1000,
+                  int n_disc = 21,
                   int k = 0,
                   double alpha_min = 0.00000000001,
                   double alpha_max = 10,
@@ -57,6 +57,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   double alpha_used = ko->alpha();
   //number of PPC retained
   int n_PPC = ko->k();
+  //estimate of rho
+  auto rho_estimate = ko->rho();
   
   auto valid_err = ko->ValidErr();
   
@@ -66,6 +68,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   l["predictions"] = one_step_ahead_pred;
   l["alpha"] = alpha_used;
   l["PPCs_retained"] = n_PPC;
+  l["rho_hat"] = rho_estimate;
   l["valid_errors"] = valid_err;
   
   return l;

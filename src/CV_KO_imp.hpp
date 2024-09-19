@@ -49,7 +49,7 @@ template<typename T>
 void
 CV_PPC::CV_KO<T>::best_param()
 {   
-  
+  constexpr double m_toll = 1e-4;
   //defining the moving window for the train and validation sets 
   //how many, from the start, contiguos time instants: taking the ceil of half of the time instants as the smallest one
   int min_dim_ts = static_cast<int>(std::ceil(static_cast<double>(this->X().cols())/static_cast<double>(2)));
@@ -61,13 +61,38 @@ CV_PPC::CV_KO<T>::best_param()
   time_instants_cv.resize(max_dim_ts-min_dim_ts);
   std::iota(time_instants_cv.begin(),time_instants_cv.end(),min_dim_ts);
   
-
-  //looping over all the parameters
-  std::transform(m_params.cbegin(),
-                 m_params.cend(),
-                 m_errors.begin(),
-                 [this,&time_instants_cv](T const &param_i){return this->moving_window_cv(param_i,time_instants_cv);}
-                );
+  
+  
+  if constexpr(std::is_same<T,double>::value)     //alpha
+  { 
+    //looping over all the parameters
+    std::transform(m_params.cbegin(),
+                   m_params.cend(),
+                   m_errors.begin(),
+                   [this,&time_instants_cv](T const &param_i){return this->moving_window_cv(param_i,time_instants_cv);}
+    );
+  }
+  else if constexpr(std::is_same<T,int>::value)   //k
+  { 
+    std::size_t counter_k = 0;
+    double previous_error = static_cast<double>(0);
+    
+    //if adding another PPC does not improve too much the validation error: break
+    for(const auto & el : m_params)
+    {
+      m_errors[counter_k] = this->moving_window_cv(el,time_instants_cv);
+      if(std::abs(m_errors[counter_k] - previous_error) < m_toll)     //already found a point in which you do not improve anymore
+      {
+        m_errors.resize(el);
+        break;
+      }
+      else
+      {
+        previous_error = m_errors[counter_k];
+        counter_k++;
+      }
+    }
+  }
   
   //optimal param
   m_param_best = m_params[std::distance(m_errors.begin(),std::min_element(m_errors.begin(),m_errors.end()))];
