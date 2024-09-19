@@ -10,7 +10,3 @@ library(ggplot2)
 library(tidyverse)
 library(geigen)
 library(fdapace)
-
-rm(list=ls())
-graphics.off()
-cat("\014")

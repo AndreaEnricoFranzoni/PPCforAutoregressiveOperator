@@ -1,8 +1,17 @@
+rm(list=ls())
+graphics.off()
+
+library(here)
+setwd(here())
+wd=getwd()
 #functions and utilities needed
-source("data/far_1_generation/requirements.R")
-source("data/far_1_generation/far_1.R")
-source("data/far_1_generation/functions.R")
-source("data/far_1_generation/prediction_error.R")
+source(paste0(wd,"/data/far_1_generation/requirements.R"))
+source(paste0(wd,"/data/far_1_generation/far_1.R"))
+source(paste0(wd,"/data/far_1_generation/functions.R"))
+source(paste0(wd,"/data/far_1_generation/prediction_error.R"))
+
+rm(wd)
+cat("\014")
 
 
 id_CV_ko = "CV"           #Ko algorithm
