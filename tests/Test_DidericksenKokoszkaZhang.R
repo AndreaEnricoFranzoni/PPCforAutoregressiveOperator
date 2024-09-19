@@ -1,10 +1,8 @@
-setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PPCforAutoregressiveOperator_local")
-
-#functions
-source("far_1_generation/requirements.R")
-source("far_1_generation/far_1.R")
-source("far_1_generation/functions.R")
-source("far_1_generation/prediction_error.R")
+#functions and utilities needed
+source("data/far_1_generation/requirements.R")
+source("data/far_1_generation/far_1.R")
+source("data/far_1_generation/functions.R")
+source("data/far_1_generation/prediction_error.R")
 
 
 id_CV_ko = "CV"           #Ko algorithm
