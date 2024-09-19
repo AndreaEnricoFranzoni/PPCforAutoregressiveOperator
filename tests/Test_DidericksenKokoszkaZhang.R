@@ -1,14 +1,13 @@
 rm(list=ls())
 graphics.off()
 
-library(here)
-setwd(here())
+#set working directory to source file location
 wd=getwd()
 #functions and utilities needed
-source(paste0(wd,"/data/far_1_generation/requirements.R"))
-source(paste0(wd,"/data/far_1_generation/far_1.R"))
-source(paste0(wd,"/data/far_1_generation/functions.R"))
-source(paste0(wd,"/data/far_1_generation/prediction_error.R"))
+source(paste0(wd,"/Data/far_1_generation/requirements.R"))
+source(paste0(wd,"/Data/far_1_generation/far_1.R"))
+source(paste0(wd,"/Data/far_1_generation/functions.R"))
+source(paste0(wd,"/Data/far_1_generation/prediction_error.R"))
 
 rm(wd)
 cat("\014")
