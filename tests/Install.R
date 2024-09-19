@@ -6,7 +6,6 @@
 # and then push the changes to modify the exports
 
 
-
 library(Rcpp)
 library(RcppEigen)
 library(devtools)
