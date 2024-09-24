@@ -1,5 +1,5 @@
 #include "PPC_KO.hpp"
-#include <execution>
+
 
 /**********************************
  ********    BASE    ***************
@@ -151,9 +151,23 @@ PPC::PPC_KO_base::KO_algo()
 
 KO_Traits::StoringArray
 PPC::PPC_KO_base::prediction()
-  const 
+const 
 {
   return (this->rho()*this->X().rightCols(1)).array() + this->means();
+}
+
+
+std::vector<double>
+PPC::PPC_KO_base::scores()
+const
+{
+  //devo calcolarli su dati centrati?
+  constexpr int N = 250;
+  PPC::scores scores_(this->X().col(m_n-1),this->a(),static_cast<double>(0),static_cast<double>(1),N);
+  scores_.evaluating_scores();
+  
+  return scores_.scores_evaluations();
+  
 }
 
 

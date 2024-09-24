@@ -76,13 +76,16 @@ public:
   
     {
       m_params.resize(m_grid_dim);
-      if constexpr(std::is_same<T,int>::value)    //k
+      if constexpr(std::is_same<T,int>::value)
       {
         std::iota(m_params.begin(),m_params.end(),static_cast<T>(1));
       }
-      if constexpr(std::is_same<T,double>::value) //for alpha is only needed its magnitude  
+      
+      
+      if constexpr(std::is_same<T,double>::value)   
       { 
         std::iota(m_params.begin(),m_params.end(),static_cast<T>(-10));
+        //const T step = (m_param_max - m_param_min)/static_cast<T>(m_grid_dim-1);
         std::transform(m_params.begin(),m_params.end(),m_params.begin(),[](T el){return(pow(static_cast<T>(10),el));});
       }
     }

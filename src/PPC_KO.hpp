@@ -14,6 +14,7 @@
 #include "error_function.hpp"
 #include "CV_KO.hpp"
 #include "CV_KO_2.hpp"
+#include "scores.hpp"
 
 
 
@@ -299,6 +300,9 @@ public:
   
   //doing one-step ahead prediction
   KO_Traits::StoringArray prediction() const;
+  
+  //scores
+  std::vector<double> scores() const;
 };
 
 

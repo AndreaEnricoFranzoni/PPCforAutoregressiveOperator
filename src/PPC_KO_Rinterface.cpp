@@ -50,26 +50,29 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   std::unique_ptr<PPC::PPC_KO_base> ko = KO_Factory::KO_solver(id_CV,std::move(x),threshold_k,p_for_k,p_imposed,alpha,n_disc,alpha_min,alpha_max,k_w);
   //solving
   ko->solve();
-  
+
   //estimate of the predictions
-  auto one_step_ahead_pred = ko->prediction();
+  auto one_step_ahead_pred  = ko->prediction();
   //alpha used
-  double alpha_used = ko->alpha();
+  double alpha_used         = ko->alpha();
   //number of PPC retained
-  int n_PPC = ko->k();
+  int n_PPC                 = ko->k();
+  //scores along the k PPCs
+  auto scores_PPC           = ko->scores();
   //estimate of rho
-  auto rho_estimate = ko->rho();
+  auto rho_estimate         = ko->rho();
   
   auto valid_err = ko->ValidErr();
   
 
   //saving results in a list
   Rcpp::List l;
-  l["predictions"] = one_step_ahead_pred;
-  l["alpha"] = alpha_used;
-  l["PPCs_retained"] = n_PPC;
-  l["rho_hat"] = rho_estimate;
-  l["valid_errors"] = valid_err;
+  l["predictions"]    = one_step_ahead_pred;
+  l["alpha"]          = alpha_used;
+  l["PPCs_retained"]  = n_PPC;
+  l["scores"]         = scores_PPC;
+  l["rho_hat"]        = rho_estimate;
+  l["valid_errors"]   = valid_err;
   
   return l;
 }
