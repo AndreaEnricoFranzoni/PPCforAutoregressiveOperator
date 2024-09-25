@@ -5,6 +5,7 @@
  ********    BASE    ***************
  ***********************************/
 
+
 int
 PPC::PPC_KO_base::PPC_retained(const KO_Traits::StoringArray& eigvals)
 const
@@ -15,10 +16,9 @@ const
   explained_power = explained_power/explained_power(this->m()-1); //normalizing
   
   //retaining the number of components that explained a fixed threshold
-  int p = std::distance(explained_power.begin(),std::find_if(explained_power.begin(),explained_power.end(),[this](double s){return s > this->p_threshold();})) + static_cast<int>(1);
-  
-  return p;
+  return std::distance(explained_power.begin(),std::find_if(explained_power.begin(),explained_power.end(),[this](double s){return s > this->p_threshold();})) + static_cast<int>(1);
 }
+
 
 
 KO_Traits::StoringMatrix
@@ -33,58 +33,18 @@ PPC::PPC_KO_base::matrix_inverse_root(const KO_Traits::StoringMatrix& gamma_alph
   //eigenvalues (descending order)
   KO_Traits::StoringVector eigvals = eigensolver.eigenvalues().reverse();
   
-  //eigenvectors (ordererd wrt ascending order of their eigenvalues)
+  //eigenvectors (ordererd wrt descending order of their eigenvalues)
   KO_Traits::StoringMatrix eigvcts = eigensolver.eigenvectors().rowwise().reverse();
   
+  //spectral theorem
+  std::transform(eigvals.begin(),eigvals.end(),
+                 eigvals.begin(),
+                 [](double s){return static_cast<double>(1)/std::sqrt(s);});
   
-  
-  if(this->p_imposed())       //I impose the number of components to invert cov reg
-  { 
-    
-    m_p = this->k();    //TODO: CHECK THAT IF P_IMPOSED, K >= 1
-    std::transform(eigvals.head(m_p).begin(),eigvals.head(m_p).end(),
-                   eigvals.head(m_p).begin(),
-                   [](double s){return static_cast<double>(1)/std::sqrt(s);});
-    
-    //spectral theorem for inverse square root    
-    return (eigvcts.leftCols(m_p))*(eigvals.head(m_p).asDiagonal())*(eigvcts.leftCols(m_p).transpose());
-  }
-  else                        //I have to find the numbe rof components to invert cov reg
-  {
-
-    if(m_p_as_k==true)
-    {
-      //if PPCs retained are chosen in the square root inverse of cov reg
-      int p = this->PPC_retained(eigvals);
-      m_p = p;
-      //if PPCs retained are chosen from phi
-      //int p = this->m();
-      
-      //taking inverse square root of the eigenvalues as diagonal matrix (only of the p biggest)
-      //NB: PAR, DA SISTEMARE PER R (std::execution::par non funziona)
-      std::transform(eigvals.head(p).begin(),eigvals.head(p).end(),
-                     eigvals.head(p).begin(),
-                     [](double s){return static_cast<double>(1)/std::sqrt(s);});
-      
-      //spectral theorem for inverse square root    
-      return (eigvcts.leftCols(p))*(eigvals.head(p).asDiagonal())*(eigvcts.leftCols(p).transpose());
-      
-    }
-    else if(m_p_as_k==false)
-    { 
-      m_p = this->m();
-      //taking inverse square root of the eigenvalues as diagonal matrix (only of the p biggest)
-      //NB: PAR, DA SISTEMARE PER R (std::execution::par non funziona)
-      std::transform(eigvals.begin(),eigvals.end(),
-                     eigvals.begin(),
-                     [](double s){return static_cast<double>(1)/std::sqrt(s);});
-      
-      
-      //spectral theorem for inverse square root    
-      return eigvcts*(eigvals.asDiagonal())*(eigvcts.transpose());
-    }
-  }
+  //spectral theorem for inverse square root    
+  return eigvcts*(eigvals.asDiagonal())*(eigvcts.transpose());
 }
+
 
 
 KO_Traits::StoringMatrix
@@ -94,6 +54,7 @@ const
   //gamma_alpha rooted inverse is self-adjoint
   return this->CovRegRoot()*this->GammaSquared()*this->CovRegRoot().transpose();
 }
+
 
 
 void
@@ -109,33 +70,15 @@ PPC::PPC_KO_base::KO_algo()
   Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_phi(phi_hat);
   KO_Traits::StoringVector eigvals_phi = eigensolver_phi.eigenvalues().reverse();
   
-  if(!m_k_imposed)
+  if(!m_k_imposed)  //if k not imposed form user: to be retrieved from phi
   {
-    if(m_p_as_k==true)
-    {
-      this->k() = this->p();
-    }
-    else if(m_p_as_k==false)
-    {
-      //PPCs retained from phi
-      int p = this->PPC_retained(eigvals_phi);
-      //setting number of retained PPCs
-      this->k() = p;
-    }
+    //PPCs retained from phi
+    int number_PPCs = this->PPC_retained(eigvals_phi);
+    //setting number of retained PPCs
+    this->k() = number_PPCs;
   }
 
-
-
-  /*
-   * //PPCs retained from phi
-   int p = this->PPC_retained(eigvals_phi);
-   //setting number of retained PPCs
-   this->k() = p;
-   */
-  
-  
-  
-  //reatining only the first k components of eigenvalues and eigenvectors
+  //retaining only the first k components of eigenvalues and eigenvectors
   const KO_Traits::StoringVector D_hat = eigvals_phi.head(this->k());
   const KO_Traits::StoringMatrix V_hat = eigensolver_phi.eigenvectors().rowwise().reverse().leftCols(this->k());
   
@@ -149,6 +92,7 @@ PPC::PPC_KO_base::KO_algo()
 }
 
 
+
 KO_Traits::StoringArray
 PPC::PPC_KO_base::prediction()
 const 
@@ -157,13 +101,14 @@ const
 }
 
 
+
 std::vector<double>
 PPC::PPC_KO_base::scores()
 const
-{
+{ 
+  //constexpr int N = 250;
   //devo calcolarli su dati centrati?
-  constexpr int N = 250;
-  PPC::scores scores_(this->X().col(m_n-1),this->a(),static_cast<double>(0),static_cast<double>(1),N);
+  PPC::scores scores_(this->X().col(m_n-1),this->a(), DEF_PARAMS_PPC::a_interval, DEF_PARAMS_PPC::b_interval, DEF_PARAMS_PPC::dim_grid_int);
   scores_.evaluating_scores();
   
   return scores_.scores_evaluations();
@@ -172,9 +117,12 @@ const
 
 
 
+
+
 /**********************************
  ********    NO CV   ***************
  ***********************************/
+
 
 void
 PPC::KO_NO_CV::solve()
@@ -184,24 +132,25 @@ PPC::KO_NO_CV::solve()
 
 
 
+
+
 /**********************************
  ********  CV alpha   ***************
  ***********************************/
-
 
 
 double
 PPC::KO_CV_alpha::alpha_best_CV() 
 { 
   //passing data that are non normalized to make CV
-  CV_PPC::CV_KO<double> ko_cv(std::move(this->X_non_norm()),this->n_disc(), m_alpha_min, m_alpha_max, this->p_threshold(), this->p_as_k(), this->p_imposed(), 0.75, this->k(), this->cv_iter_f(), this->ef());
+  CV_PPC::CV_KO<double> ko_cv(std::move(this->X_non_norm()),DEF_PARAMS_PPC::dim_grid_alpha, this->p_threshold(), 0.75, this->k(), this->cv_iter_f(), this->ef());
   //doing Cv to retrieve the best alpha
   ko_cv.best_param();
     
     
     
     //da qui
-    this->ValidErr().reserve(m_n_disc);
+    this->ValidErr().reserve(DEF_PARAMS_PPC::dim_grid_alpha);
     for (size_t i = 0; i < ko_cv.errors().size(); ++i)
     {
       this->ValidErr().push_back(ko_cv.errors()[i]);
@@ -233,6 +182,7 @@ PPC::KO_CV_alpha::solve()
 
 
 
+
 /**********************************
  ********  CV k   ***************
  ***********************************/
@@ -241,8 +191,8 @@ int
 PPC::KO_CV_k::k_best_CV()
 { 
   //passing data that are non normalized to make CV
-  CV_PPC::CV_KO<int> ko_cv(std::move(this->X_non_norm()),this->X().rows(), static_cast<int>(1), static_cast<int>(this->m()), this->p_threshold(), this->p_as_k(), this->p_imposed(), this->alpha(), static_cast<int>(1), this->cv_iter_f(), this->ef());
-  //doing Cv to retrieve the best alpha
+  CV_PPC::CV_KO<int> ko_cv(std::move(this->X_non_norm()), this->m(), this->p_threshold(), this->alpha(), static_cast<int>(1), this->cv_iter_f(), this->ef());
+  //doing Cv to retrieve the best k
   ko_cv.best_param();
   
   
@@ -259,9 +209,10 @@ PPC::KO_CV_k::k_best_CV()
   
   
   
-  //returning the best alpha
+  //returning the best k
   return ko_cv.param_best();
 }
+
 
 
 void
@@ -275,6 +226,8 @@ PPC::KO_CV_k::solve()
 
 
 
+
+
 /**********************************
  ********  CV    *****************
  ***********************************/
@@ -283,12 +236,13 @@ std::pair<double,int>
 PPC::KO_CV::params_best_CV()
 {
   
-  CV_PPC::CV_KO_2 ko_cv(std::move(this->X_non_norm()), this->n_disc(), this->p_threshold(), this->p_as_k(), this->p_imposed(), this->cv_iter_k_f());
+  CV_PPC::CV_KO_2 ko_cv(std::move(this->X_non_norm()), DEF_PARAMS_PPC::dim_grid_alpha, this->p_threshold(), this->cv_iter_on_k_f());
   
   ko_cv.best_params();
   
   return ko_cv.params_best();
 }
+
 
 
 void 

@@ -50,7 +50,7 @@ public:
   const
   cond_rem_row(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row)
   { 
-    //condition for removing a row since there are too many nans
+    //condition for removing a row since there are too many nans: TODO: change this?
     //all nans in the row
     return std::count_if(row.begin(),row.end(),[](T el){return isnan(el);}) == m_n  ?  true  :  false;
   };
@@ -75,10 +75,7 @@ private:
   std::size_t m_last_ti;
   std::vector<double> m_weights;
   
-  
-  void row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::EMA>);
-  void row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::WMA>);
-  void row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::SMA>);
+
   void row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::MR>);
   void row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::ZR>);
   

@@ -4,11 +4,15 @@ double
 CV_PPC::CV_KO_2::single_cv_brute_force(double alpha)
 {   
   //given alpha, performs CV on k: gives back the best k and its validation error
-  std::pair<int,double> p = this->singleCV_k()(this->X(),m_threshold_ppc,m_p_as_k,m_p_imposed,alpha);
+  std::pair<int,double> p = this->singleCV_on_k()(this->X(),m_threshold_ppc,alpha);
   
+  //storing, for a given alpha, the best pair alpha-k
   m_best_pairs.insert(std::make_pair(alpha,p.first));
+  
+  //return the validation error for, for a given alpha, the best pair alpha-k
   return p.second;
 }
+
 
 void
 CV_PPC::CV_KO_2::best_params()
@@ -18,8 +22,7 @@ CV_PPC::CV_KO_2::best_params()
   std::transform(m_alphas.cbegin(),
                  m_alphas.cend(),
                  m_errors.begin(),
-                 [this](double const &alpha_i){return this->single_cv_brute_force(alpha_i);}
-                );
+                 [this](double const &alpha_i){return this->single_cv_brute_force(alpha_i);});
   
   //best pair: the one associated to the smaller paramter
   double best_alpha = m_alphas[std::distance(m_errors.begin(),std::min_element(m_errors.begin(),m_errors.end()))];

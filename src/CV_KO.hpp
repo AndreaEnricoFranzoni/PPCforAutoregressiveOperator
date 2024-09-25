@@ -12,18 +12,19 @@
 #include <concepts>
 
 #include "KO_Traits.hpp"
+#include "default_parameters.hpp"
 
 
 
 namespace CV_PPC            //CrossValidation for PPC
 {
 
-using singleCV_t = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)>;
+using singleCV_t = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)>;
 using ef_t = std::function<double(KO_Traits::StoringVector)>;
 
 
 /*!
- * Class for doing CV within the context of PPC KO algo
+ * Class for doing CV within the context of PPC KO algo, for only one of the parameters
  */
 template<typename T>                         //double if for alpha, int if for k
 class CV_KO
@@ -33,16 +34,12 @@ private:
   std::vector<T> m_params;
   std::vector<double> m_errors;           //the error in the position i-th is relative to the parameter in the position i-th in m_params
   std::size_t m_grid_dim;
-  T m_param_min;
-  T m_param_max;
   T m_param_best;
   singleCV_t m_singleCV;
   ef_t m_ef;
   
   //parameters needed for making KO working
   double m_threshold_ppc;
-  bool m_p_as_k;
-  bool m_p_imposed;
   double m_alpha;
   int m_k;
   
@@ -50,25 +47,16 @@ private:
 public:
   CV_KO(KO_Traits::StoringMatrix&& X,
         std::size_t grid_dim,
-        T param_min,
-        T param_max,
         double threshold_ppc,
-        bool p_as_k,
-        bool p_imposed,
         double alpha,
         int k,
         const singleCV_t & singleCV,
-        const ef_t & ef
-       )
+        const ef_t & ef)
     :   
     m_X{std::forward<KO_Traits::StoringMatrix>(X)},
     m_errors(grid_dim,static_cast<double>(0)),
     m_grid_dim(grid_dim),
-    m_param_min(param_min),
-    m_param_max(param_max),
     m_threshold_ppc(threshold_ppc),
-    m_p_as_k(p_as_k),
-    m_p_imposed(p_imposed),
     m_alpha(alpha),
     m_k(k),
     m_singleCV(singleCV),
@@ -76,16 +64,15 @@ public:
   
     {
       m_params.resize(m_grid_dim);
-      if constexpr(std::is_same<T,int>::value)
+      
+      if constexpr(std::is_same<T,int>::value)      //CV su k: try values from 1 to m
       {
         std::iota(m_params.begin(),m_params.end(),static_cast<T>(1));
       }
       
-      
-      if constexpr(std::is_same<T,double>::value)   
+      if constexpr(std::is_same<T,double>::value)   //CV su alpha 
       { 
-        std::iota(m_params.begin(),m_params.end(),static_cast<T>(-10));
-        //const T step = (m_param_max - m_param_min)/static_cast<T>(m_grid_dim-1);
+        std::iota(m_params.begin(),m_params.end(),static_cast<T>(DEF_PARAMS_PPC::min_exp_alphas));
         std::transform(m_params.begin(),m_params.end(),m_params.begin(),[](T el){return(pow(static_cast<T>(10),el));});
       }
     }
@@ -95,16 +82,6 @@ public:
    * Getter for m_X
    */
   inline KO_Traits::StoringMatrix X() const {return m_X;};
-  
-  /*!
-   * Getter for m_param_min
-   */
-  inline T param_min() const {return m_param_min;};
-  
-  /*!
-   * Getter for m_param_max
-   */
-  inline T param_max() const {return m_param_max;};
   
   /*!
    * Getter for m_param_best

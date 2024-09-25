@@ -20,35 +20,33 @@ using namespace Rcpp;
 //
 // [[Rcpp::export]]
 Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
-                  std::string id_CV,
-                  std::string id_p_for_k,
-                  double threshold_k,
+                  std::string id_CV = "NoCV",
+                  double threshold_ppc = 0.95,
                   double alpha = 0.75,
-                  int n_disc = 21,
                   int k = 0,
-                  double alpha_min = 0.00000000001,
-                  double alpha_max = 10,
-                  std::string id_p_imposed = "No",
                   Rcpp::Nullable<std::string> id_rem_nan = R_NilValue
                   )
 { 
   using T = double;       //version for real-values time series
   
-  //wrapping all the parameters
+  //wrapping parameters
   const DEF_PARAMS_PPC::MA_type id_RN = WRAP_PARAMS_PPC::wrap_id_rem_nans(id_rem_nan);
-  const int k_w = WRAP_PARAMS_PPC::wrap_k(k);
-  
-  
-  const bool p_for_k = WRAP_PARAMS_PPC::wrap_id_p_for_k(id_p_for_k);
-  const bool p_imposed = WRAP_PARAMS_PPC::wrap_id_p_imposed(id_p_imposed);
   
   
   //reading data, handling NANs
   KO_Traits::StoringMatrix x = reading_data<T>(X,id_RN);
   
+  
+  //checking parameters
+  WRAP_PARAMS_PPC::check_threshold_ppc(threshold_ppc);
+  WRAP_PARAMS_PPC::check_alpha(alpha);
+  WRAP_PARAMS_PPC::check_k(k,x.rows());
+  
+  
   //object solver  !!using std::move() to move the data (better if there are big data)!!
-  std::unique_ptr<PPC::PPC_KO_base> ko = KO_Factory::KO_solver(id_CV,std::move(x),threshold_k,p_for_k,p_imposed,alpha,n_disc,alpha_min,alpha_max,k_w);
-  //solving
+  std::unique_ptr<PPC::PPC_KO_base> ko = KO_Factory::KO_solver(id_CV,std::move(x),threshold_ppc,alpha,k);
+  
+  //solving using the requested KO algo
   ko->solve();
 
   //estimate of the predictions

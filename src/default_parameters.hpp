@@ -5,20 +5,33 @@
 namespace DEF_PARAMS_PPC
 {
 
-enum CV_type
-{
-  NoCV = 0,
-  CV   = 1,
-};
+//CV parameters
+//dimension of the grid to make CV on alpha on log scale
+constexpr std::size_t dim_grid_alpha = 21;
 
-//type for which strategy is used to remove nans
+//lower exponent for the log grid of alphas
+constexpr int min_exp_alphas = -10;
+
+//tolerance for CV on k
+constexpr double toll_cv_k = 1e-4;
+
+
+//integration parameters
+//left extreme
+constexpr double a_interval = 0.0;
+
+//right extreme
+constexpr double b_interval = 1.0;
+
+//dimension of the ingtegration gird for using MC
+constexpr int dim_grid_int = 250;
+
+
+//removing NaNs
 enum MA_type
 {
-  EMA = 0,      //replacing nans with exponential moving average
-  WMA = 1,      //replacing nans with weighted moving average
-  SMA = 2,      //replacing nans with simple moving average
-  MR  = 3,      //replacing nans with mean (easily changes the mean of the distribution)
-  ZR  = 4,      //replacing nans with 0s (easily changes the sd of the distribution)
+  MR  = 0,      //replacing nans with mean (easily changes the mean of the distribution)
+  ZR  = 1,      //replacing nans with 0s (easily changes the sd of the distribution)
 };
 
 

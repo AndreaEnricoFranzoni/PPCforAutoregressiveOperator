@@ -12,70 +12,52 @@ namespace WRAP_PARAMS_PPC         //utilities to wrap the input parameters of th
 {
 
 
-
+//check that threshold_ppc is in the correct range
 inline
-const int
-wrap_k(int k)
+void
+check_threshold_ppc(double threshold_ppc)
 {
-
-  if(k < 0)
+  if(threshold_ppc<=0 || threshold_ppc>=1)
   {
-    std::string error_message = "k has to be a positive integer";
-    throw std::invalid_argument(error_message);
-  }
-  else 
-  {  
-    return static_cast<int>(k);
-  }
-  
-};
-
-
-//reads the input string that says if you impone p during CV k
-inline
-const bool
-wrap_id_p_imposed(const std::string &id_p_imposed)
-{
-  if(id_p_imposed=="Yes")     //I am imposing that we are using k components to invert cov reg
-  {
-    return true;
-  }
-  if(id_p_imposed=="No")    //all components are used to invert rg, and then k is imposed on phi
-  {
-    return false;
-  }
-  else
-  {
-    std::string error_message = "Wrong input string for if you impone p";
+    std::string error_message = "threshold_ppc has to be in (0,1)";
     throw std::invalid_argument(error_message);
   }
 }
 
 
 
-
-
-
-
-//reads the input string that says how to choose the number of PPC
+//check that alpha is in the correct range
 inline
-const bool
-wrap_id_p_for_k(const std::string &id_p_for_k)
+void
+check_alpha(double alpha)
 {
-  if(id_p_for_k=="Yes")     //only the p biggest components are used to invert rg, and then k=p
+  if( alpha<= 0 )
   {
-    return true;
-  }
-  if(id_p_for_k=="No")    //all components are used to invert rg, and then k is evaluated on phi
-  {
-    return false;
-  }
-  else
-  {
-    std::string error_message = "Wrong input string for handling number of PPC";
+    std::string error_message = "alpha has to be a positive real number";
     throw std::invalid_argument(error_message);
   }
 }
+
+
+
+//check that k is in the correct range
+inline
+void
+check_k(int k, int max_k)
+{
+  if( k < 0 )
+  {
+    std::string error_message = "k has to be a positive integer or 0";
+    throw std::invalid_argument(error_message);
+  }
+  if( k > max_k )
+  {
+    std::string error_message = "k has to be lower than the maximum number of PPCs";
+    throw std::invalid_argument(error_message);
+  }
+}
+
+
 
 //reads the input string an gives back the correct value of the enumerator for replacing nans
 inline
@@ -84,19 +66,7 @@ wrap_id_rem_nans(Rcpp::Nullable<std::string> id_rem_nan)
 {
   if(id_rem_nan.isNull())
   { 
-    return DEF_PARAMS_PPC::MA_type::EMA;
-  }
-  if(Rcpp::as< std::string >(id_rem_nan) == "EMA")
-  {
-    return DEF_PARAMS_PPC::MA_type::EMA;
-  }
-  if(Rcpp::as< std::string >(id_rem_nan) == "WMA")
-  {
-    return DEF_PARAMS_PPC::MA_type::WMA;
-  }
-  if(Rcpp::as< std::string >(id_rem_nan) == "SMA")
-  {
-    return DEF_PARAMS_PPC::MA_type::SMA;
+    return DEF_PARAMS_PPC::MA_type::MR;
   }
   if(Rcpp::as< std::string >(id_rem_nan) == "MR")
   {

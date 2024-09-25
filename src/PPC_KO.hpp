@@ -11,6 +11,7 @@
 #include <utility>
 
 #include "KO_Traits.hpp"
+#include "default_parameters.hpp"
 #include "error_function.hpp"
 #include "CV_KO.hpp"
 #include "CV_KO_2.hpp"
@@ -37,44 +38,31 @@ private:
   KO_Traits::StoringMatrix m_X;               //matrix storing time series (m x n)
   KO_Traits::StoringArray m_means;            //vector storing the time series means (m x 1)  
   KO_Traits::StoringMatrix m_Cov;             //matrix estimating the covariance operator (m x m)
-  double m_trace_cov;
+  double m_trace_cov;                         //trace of the covariance estimator
   KO_Traits::StoringMatrix m_CrossCov;        //matrix estimating the cross-covariance operator (m x m)
-  KO_Traits::StoringMatrix m_CovReg;          //matrix containing the covariance + alpha*I (m x m) (used only for the non-CV version)
-  KO_Traits::StoringMatrix m_GammaSquared;    //matrix containing the squared of the cross-covariance matrix (m x m) (used only for the non-CV version)
+  KO_Traits::StoringMatrix m_CovReg;          //matrix containing the covariance + alpha*trace(cov)*I (m x m)
+  KO_Traits::StoringMatrix m_GammaSquared;    //matrix containing the squared of the cross-covariance matrix (m x m)
   KO_Traits::StoringMatrix m_CovRegRoot;      //matrix containing the inverse squared root of regularized covariance (m x m)
   KO_Traits::StoringMatrix m_a;               //matrix containing predictive loadings (each col)  (m x k)
   KO_Traits::StoringMatrix m_b;               //matrix containing predictive factors (each col)   (m x k)        
   KO_Traits::StoringMatrix m_rho;             //matrix containing the estimate of the operator for doing 1-step ahead prediction (m x m)
   double m_p_threshold;                       //threshold according to how much predictive power has to be retained by the PPCs
   double m_alpha;                             //regularization parameter
-  int m_p;                                    //number of components used in the spectral th
   int m_k;                                    //number of PPCs retained
-  
-  bool m_p_as_k;                             //bool that indicates if k is taken from p: DA TOGLIERE, PERCHE' TANTO LE RITROVO SU PHI, E USO TUTTO PER INVERTIRE GAMMA_ALPHA
-                                              //if true: only some components (p) are used to invert reg covariance, and then k is equal to p
-                                              //if false: all the components are used to invert cov reg, and k is evaluated on phi
-                                              
   bool m_k_imposed;                           //if true: it means that k has been passed as parameter, it is imposed from outside
                                               //if false: k has to be found (or from p or from eigvalus of phi) DA TENERE PERCHE' MI SERVE PER FARE CV
-                                              
-  bool m_p_imposed;                           //if true: p is passed as parameter (is k)  ASSOLUTAMENTE DA TOGLIERE
-                                              //if false: or p is m, or p is found looking for explanatory power
-  
+
   std::vector<double> m_valid_err;        //just for debugging
   
 public:
   
   PPC_KO_base(KO_Traits::StoringMatrix&& X,
-              double threshold_ppc,
-              bool p_as_k,
-              bool p_imposed)
+              double threshold_ppc)
     :   
     m_X{std::forward<KO_Traits::StoringMatrix>(X)},
     m_m(X.rows()),
     m_n(X.cols()),
-    m_p_threshold(threshold_ppc),
-    m_p_as_k(p_as_k),
-    m_p_imposed(p_imposed)
+    m_p_threshold(threshold_ppc)
   
     {  
       
@@ -237,16 +225,6 @@ public:
   inline double & alpha() {return m_alpha;};
   
   /*!
-   * Getter for m_p
-   */
-  inline int p() const {return m_p;};
-  
-  /*!
-   * Setter for m_p
-   */
-  inline int & p() {return m_p;};
-  
-  /*!
    * Getter for m_k
    */
   inline int k() const {return m_k;};
@@ -255,16 +233,6 @@ public:
    * Setter for m_k
    */
   inline int & k() {return m_k;};
-  
-  /*!
-   * Getter for m_p_as_k
-   */
-  inline bool p_as_k() const {return m_p_as_k;};
-  
-  /*!
-   * Setter for m_p_as_k
-   */
-  inline bool & p_as_k() {return m_p_as_k;};
   
   /*!
    * Getter for m_k_imposed
@@ -276,16 +244,7 @@ public:
    */
   inline bool & k_imposed() {return m_k_imposed;};
   
-  /*!
-   * Getter for m_p_imposed
-   */
-  inline bool p_imposed() const {return m_p_imposed;};
-  
-  /*!
-   * Setter for m_p_imposed
-   */
-  inline bool & p_imposed() {return m_p_imposed;};
-  
+
   //number of PPCs retained
   int PPC_retained(const KO_Traits::StoringArray & eigvals) const;
   
@@ -295,7 +254,7 @@ public:
   //operator Phi estimate
   KO_Traits::StoringMatrix phi_estimate() const;
   
-  //KO algorithm: called by the method solve(); if no CV: it is simply called once. If there is CV, it is called for each value of alpha
+  //KO algorithm: called by the method solve(); if no CV: it is simply called once. If there is CV, it is called for each value of the parameters
   void KO_algo();
   
   //doing one-step ahead prediction
@@ -308,28 +267,28 @@ public:
 
 
 //version without CV
-//TODO: to add initialization of alpha as it is passed as parameter
 class KO_NO_CV final : public PPC_KO_base
 {
+  
 public:
   
   KO_NO_CV(KO_Traits::StoringMatrix&& X,
            double threshold_ppc,
-           bool p_as_k,
-           bool p_imposed,
            double alpha,
            int k)
     :   
-    PPC::PPC_KO_base(std::move(X), threshold_ppc, p_as_k, p_imposed)
+    PPC::PPC_KO_base(std::move(X), threshold_ppc)
+  
     { 
       this->alpha() = alpha;
       this->k() = k;
       this->k()==0 ? this->k_imposed() = false : this->k_imposed() = true;
       //for the case without CV, covariance regularized will be evaluated only once since regularization parameter has been passed as input parameter
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
-
     }
+  
   //virtual ~KO_NO_CV(){};
+  
   void solve() override;              //overrided method to solve without CV
 };
 
@@ -337,17 +296,15 @@ public:
 
 
 
-
+//function neede do a single run of CV for one parameter, fixing the other one
 inline
 KO_Traits::StoringVector 
 ko_single_cv(KO_Traits::StoringMatrix && training_data,
              double threshold_ppc, 
-             bool p_as_k,
-             bool p_imposed,
              double alpha,
              int k)
 {
-  PPC::KO_NO_CV iter(std::move(training_data),threshold_ppc,p_as_k,p_imposed,alpha,k);
+  PPC::KO_NO_CV iter(std::move(training_data),threshold_ppc,alpha,k);
   iter.solve();
  
   return iter.prediction();
@@ -357,42 +314,33 @@ ko_single_cv(KO_Traits::StoringMatrix && training_data,
 
 
 //version with CV for alpha
-//TODO: to add initialization of n_disc as it is passed as parameter
 class KO_CV_alpha final : public PPC_KO_base
 {
+  
 private:
   KO_Traits::StoringMatrix m_X_non_norm;          //data non normalized, necessary since is necessary to pass them at every cv iteration
-  std::size_t m_n_disc;
-  double m_alpha_min;
-  double m_alpha_max;
-  std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)> m_cv_iter_f = ko_single_cv;
+  std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)> m_cv_iter_f = ko_single_cv;
   std::function<double(KO_Traits::StoringVector)> m_ef = EF_PPC::mse<double>;
   
 public:
   
   KO_CV_alpha(KO_Traits::StoringMatrix&& X,
               double threshold_ppc,
-              bool p_as_k,
-              bool p_imposed,
-              std::size_t n_disc,
-              double alpha_min,
-              double alpha_max,
               int k)
     :   
-    PPC::PPC_KO_base(std::move(X), threshold_ppc, p_as_k, p_imposed),
-    m_X_non_norm(this->m(),this->n()),
-    m_n_disc(n_disc),
-    m_alpha_min(alpha_min),
-    m_alpha_max(alpha_max)
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
+    m_X_non_norm(this->m(),this->n())
+  
     {
       for (size_t i = 0; i < this->n(); ++i)
       {
         m_X_non_norm.col(i) = this->X().col(i).array() + this->means();
       }
       
-      this->k() = k;
+      this->k() = k;            //k può essere passato, ma se non dovesse essere passato, significa che per l'alpha, guardo la explanatory power, non che ci faccia CV
       this->k()==0 ? this->k_imposed() = false : this->k_imposed() = true;
     }
+  
   //virtual ~KO_CV_alpha(){};
   
   /*!
@@ -401,14 +349,9 @@ public:
   inline KO_Traits::StoringMatrix X_non_norm() const {return m_X_non_norm;};
   
   /*!
-   * Getter for m_n_disc
-   */
-  inline std::size_t n_disc() const {return m_n_disc;};
-  
-  /*!
    * Getter for m_cv_iter_f
    */
-  inline std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)> cv_iter_f() const {return m_cv_iter_f;};
+  inline std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)> cv_iter_f() const {return m_cv_iter_f;};
   
   /*!
    * Getter for m_ef
@@ -426,27 +369,24 @@ public:
 //version with CV for k
 class KO_CV_k final : public PPC_KO_base
 {
+  
 private:
   KO_Traits::StoringMatrix m_X_non_norm;          //data non normalized, necessary since is necessary to pass them at every cv iteration
-  std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)> m_cv_iter_f = ko_single_cv;
+  std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)> m_cv_iter_f = ko_single_cv;
   std::function<double(KO_Traits::StoringVector)> m_ef = EF_PPC::mse<double>;
   
 public:
   
   KO_CV_k(KO_Traits::StoringMatrix&& X,
           double threshold_ppc,
-          bool p_as_k,
-          bool p_imposed,
           double alpha)
     :   
-    PPC::PPC_KO_base(std::move(X), threshold_ppc, p_as_k, p_imposed),
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
     m_X_non_norm(this->m(),this->n())
+  
     {
       this->alpha() = alpha;
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
-      
-      
-      
       
       for (size_t i = 0; i < this->n(); ++i)
       {
@@ -464,7 +404,7 @@ public:
   /*!
    * Getter for m_cv_iter_f
    */
-  inline std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,bool,bool,double,int)> cv_iter_f() const {return m_cv_iter_f;};
+  inline std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)> cv_iter_f() const {return m_cv_iter_f;};
   
   /*!
    * Getter for m_ef
@@ -472,7 +412,7 @@ public:
   inline std::function<double(KO_Traits::StoringVector)> ef() const {return m_ef;};
   
 
-  int k_best_CV();                    //to obtain the best alpha parameter for regularization
+  int k_best_CV();                    //to obtain the best number k of PPCs
   void solve() override;              //overrided method to solve with CV
   
 };
@@ -483,18 +423,15 @@ public:
 
 
 
-
+//function needed in the cv for pair alpha-k: for every alpha, the CV on k begins: gives back the best pair
 inline
 std::pair<int,double>
-ko_single_cv_k(KO_Traits::StoringMatrix && training_data,
-               double threshold_ppc, 
-               bool p_as_k,
-               bool p_imposed,
-               double alpha
-               )
+ko_single_cv_on_k(KO_Traits::StoringMatrix && training_data,
+                  double threshold_ppc, 
+                  double alpha)
 {
   //given an alpha, do the CV on k
-  PPC::KO_CV_k iter(std::move(training_data),threshold_ppc,p_as_k,p_imposed,alpha);
+  PPC::KO_CV_k iter(std::move(training_data),threshold_ppc,alpha);
   iter.solve();
   
   //find the best k associated to that alpha and its validation error
@@ -513,27 +450,16 @@ ko_single_cv_k(KO_Traits::StoringMatrix && training_data,
 class KO_CV final : public PPC_KO_base
 {
   KO_Traits::StoringMatrix m_X_non_norm;          //data non normalized, necessary since is necessary to pass them at every cv iteration
-  std::size_t m_n_disc;
-  double m_alpha_min;
-  double m_alpha_max;
-  std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,bool,bool,double)> m_cv_iter_k_f = ko_single_cv_k;
+  std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,double)> m_cv_iter_on_k_f = ko_single_cv_on_k;
 
 public:
   
   KO_CV(KO_Traits::StoringMatrix&& X,
-        double threshold_ppc,
-        bool p_as_k,
-        bool p_imposed,
-        std::size_t n_disc,
-        double alpha_min,
-        double alpha_max
-       )
+        double threshold_ppc)
     :   
-    PPC::PPC_KO_base(std::move(X), threshold_ppc, p_as_k, p_imposed),
-    m_X_non_norm(this->m(),this->n()),
-    m_n_disc(n_disc),
-    m_alpha_min(alpha_min),
-    m_alpha_max(alpha_max)
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
+    m_X_non_norm(this->m(),this->n())
+  
     {
       for (size_t i = 0; i < this->n(); ++i)
       {
@@ -546,15 +472,11 @@ public:
    */
   inline KO_Traits::StoringMatrix X_non_norm() const {return m_X_non_norm;};
   
+
   /*!
-   * Getter for m_n_disc
+   * Getter for m_cv_iter_on_k_f
    */
-  inline std::size_t n_disc() const {return m_n_disc;};
-  
-  /*!
-   * Getter for m_cv_iter_k_f
-   */
-  inline std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,bool,bool,double)> cv_iter_k_f() const {return m_cv_iter_k_f;};
+  inline std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,double)> cv_iter_on_k_f() const {return m_cv_iter_on_k_f;};
   
 
   std::pair<double,int> params_best_CV();             //to obtain the best parameters (alpha for regularization and k for number of PPCs)

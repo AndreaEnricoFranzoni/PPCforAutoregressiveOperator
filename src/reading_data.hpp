@@ -22,7 +22,7 @@ const KO_Traits::StoringMatrix
 reading_data(Rcpp::NumericMatrix X,
               const DEF_PARAMS_PPC::MA_type MA_t)
 {
-  //std::cout << "Local version 162" << std::endl;
+  std::cout << "Remote version 65" << std::endl;
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();
@@ -37,25 +37,6 @@ reading_data(Rcpp::NumericMatrix X,
   //if there are nans: remove them
   if (check_nan!=x.reshaped().end())
   {
-
-    if(MA_t == DEF_PARAMS_PPC::MA_type::EMA)    //replacing nans with exponential moving average
-    {
-      REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::EMA> temp(std::move(x));
-      temp.remove_nan();
-      return temp.data();
-    }
-    if(MA_t == DEF_PARAMS_PPC::MA_type::WMA)    //replacing nans with weighted moving average
-    {
-      REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::WMA> temp(std::move(x));
-      temp.remove_nan();
-      return temp.data();
-    }
-    if(MA_t == DEF_PARAMS_PPC::MA_type::SMA)    //replacing nans with simple moving average
-    {
-      REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::SMA> temp(std::move(x));
-      temp.remove_nan();
-      return temp.data();
-    }
     if(MA_t == DEF_PARAMS_PPC::MA_type::MR)     //replacing nans with the mean
     {
       REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::MR> temp(std::move(x));
@@ -69,7 +50,6 @@ reading_data(Rcpp::NumericMatrix X,
       return temp.data();
     }
   }
-
 
   return x;
 }

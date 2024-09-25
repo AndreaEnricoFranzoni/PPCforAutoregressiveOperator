@@ -12,11 +12,14 @@
 #include <concepts>
 
 #include "KO_Traits.hpp"
+#include "default_parameters.hpp"
+
+
 
 namespace CV_PPC
 {
   
-using singleCV_k_t = std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,bool,bool,double)>;
+using singleCV_on_k_t = std::function<std::pair<int,double>(KO_Traits::StoringMatrix,double,double)>;
 
 
 class CV_KO_2
@@ -28,12 +31,10 @@ private:
   std::map<double,int> m_best_pairs;       //each alphas with its best k
   std::vector<double> m_errors;            //the error in the position i-th is relative to the pair alpha-k in the map, where alpha is the i-th in m_alphas, and k is the one that gives the best validation error given the alpha
   std::pair<double,int> m_params_best;      //best pair in absolute
-  singleCV_k_t m_singleCV_k;
+  singleCV_on_k_t m_singleCV_on_k;
 
   //parameters needed for making KO working
   double m_threshold_ppc;
-  bool m_p_as_k;
-  bool m_p_imposed;
   double m_alpha;
   int m_k;
   
@@ -42,22 +43,17 @@ public:
   CV_KO_2(KO_Traits::StoringMatrix&& X,
           std::size_t grid_dim,
           double threshold_ppc,
-          bool p_as_k,
-          bool p_imposed,
-          const singleCV_k_t & singleCV_k
-          )
+          const singleCV_on_k_t & singleCV_on_k)
       :   
       m_X{std::forward<KO_Traits::StoringMatrix>(X)},
       m_grid_dim(grid_dim),
       m_errors(grid_dim,static_cast<double>(0)),
       m_threshold_ppc(threshold_ppc),
-      m_p_as_k(p_as_k),
-      m_p_imposed(p_imposed),
-      m_singleCV_k(singleCV_k)
+      m_singleCV_on_k(singleCV_on_k)
 
     {
       m_alphas.resize(m_grid_dim);
-      std::iota(m_alphas.begin(),m_alphas.end(),static_cast<double>(-10));
+      std::iota(m_alphas.begin(),m_alphas.end(),static_cast<double>(DEF_PARAMS_PPC::min_exp_alphas));
       std::transform(m_alphas.begin(),m_alphas.end(),m_alphas.begin(),[](double el){return(pow(static_cast<double>(10),el));});
     }
   
@@ -74,7 +70,7 @@ public:
   /*!
    * Getter for m_singleCV
    */
-  inline singleCV_k_t singleCV_k() const {return m_singleCV_k;};
+  inline singleCV_on_k_t singleCV_on_k() const {return m_singleCV_on_k;};
 
   
   //given an alpha, does CV on k: returns the best k given that alpha and its validation error
