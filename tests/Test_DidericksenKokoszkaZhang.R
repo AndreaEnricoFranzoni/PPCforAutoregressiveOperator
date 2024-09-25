@@ -1,7 +1,7 @@
 rm(list=ls())
 graphics.off()
 
-#set working directory to source file location
+#set working directory to source file location to relay on the functions
 wd=getwd()
 #functions and utilities needed
 source(paste0(wd,"/Data/far_1_generation/requirements.R"))
@@ -12,8 +12,11 @@ source(paste0(wd,"/Data/far_1_generation/prediction_error.R"))
 rm(wd)
 cat("\014")
 
-
-id_CV_ko = "CV"           #Ko algorithm
+#Ko algorithm parameters
+id_CV_ko      <- "CV"           
+threshold_ppc <- 0.95 
+alpha         <- 0.75
+k             <- 0
 
 #data: look at "far_1.R" for this parameters (only four kernels, two norm, three errors implemented)
 id_kernel <- "gaussian"   #way of generating data 
@@ -82,7 +85,7 @@ set.seed(23032000)
     
     
     ## 3. Estimate Psi with different methods
-    KO_algo        <- PPCKO::PPC_KO( X = X.train_no_cent, id_CV = id_CV_ko, id_p_for_k = "No", threshold_k = 0.95)
+    KO_algo        <- PPCKO::PPC_KO( X = X.train_no_cent, id_CV = id_CV_ko, threshold_ppc = threshold_ppc, alpha = alpha, k = k)
     Psihat.dPPC.KO <- KO_algo$rho_hat   
     Psihat.dEK     <- EKdiscretized(X=X.train,p=3)
     Psihat.dEKI    <- EKimproved(X=X.train,p=3)
