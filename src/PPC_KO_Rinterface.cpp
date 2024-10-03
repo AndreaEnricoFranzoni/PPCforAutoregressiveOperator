@@ -8,7 +8,7 @@
 #include "PPC_KO.hpp"
 #include "KO_factory.hpp"
 
-
+#include "ztest_reg.hpp"
 
 
 using namespace Rcpp;
@@ -16,6 +16,7 @@ using namespace Rcpp;
 
 //
 // [[Rcpp::depends(RcppEigen)]]
+
 
 //
 // [[Rcpp::export]]
@@ -92,5 +93,26 @@ Rcpp::List read_data_na(Rcpp::NumericMatrix X)
   Rcpp::List l;
   l["data_read"] = x;
 
+  return l;
+}
+
+
+//
+// [[Rcpp::export]]
+Rcpp::List test_lr(Rcpp::NumericMatrix X, Rcpp::NumericMatrix Y)
+{
+  using T = double; 
+  
+  KO_Traits::StoringMatrix x = reading_data<T>(X, DEF_PARAMS_PPC::MA_type::MR);
+  KO_Traits::StoringMatrix y = reading_data<T>(Y, DEF_PARAMS_PPC::MA_type::MR);
+  
+  reg_test rg(std::move(x),std::move(y));
+  
+  rg.solve();
+  
+  auto coeff = rg.coeff();
+  
+  Rcpp::List l;
+  l["coeff"] = coeff;
   return l;
 }
