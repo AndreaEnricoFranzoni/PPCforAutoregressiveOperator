@@ -1,3 +1,4 @@
+Package: PPCKO
 Type: Package
 Title: Principal Predictive Components for estimating an autoregressive operator
 Version: 1.0
