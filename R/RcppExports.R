@@ -9,3 +9,7 @@ read_data_na <- function(X) {
     .Call('_PPCKO_read_data_na', PACKAGE = 'PPCKO', X)
 }
 
+test_lr <- function(X, Y) {
+    .Call('_PPCKO_test_lr', PACKAGE = 'PPCKO', X, Y)
+}
+

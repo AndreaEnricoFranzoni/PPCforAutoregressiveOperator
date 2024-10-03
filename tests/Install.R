@@ -5,8 +5,5 @@
 #Rcpp::compileAttributes(".") 
 # and then push the changes to modify the exports
 
-
-library(Rcpp)
-library(RcppEigen)
 library(devtools)
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
