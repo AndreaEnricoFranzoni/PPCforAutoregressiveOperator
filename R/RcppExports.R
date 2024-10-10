@@ -13,3 +13,7 @@ test_lr <- function(X, Y) {
     .Call('_PPCKO_test_lr', PACKAGE = 'PPCKO', X, Y)
 }
 
+test_adf <- function(X, lag_order) {
+    .Call('_PPCKO_test_adf', PACKAGE = 'PPCKO', X, lag_order)
+}
+

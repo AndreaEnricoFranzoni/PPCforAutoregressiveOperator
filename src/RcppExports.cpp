@@ -50,11 +50,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_adf
+Rcpp::List test_adf(Rcpp::NumericMatrix X, int lag_order);
+RcppExport SEXP _PPCKO_test_adf(SEXP XSEXP, SEXP lag_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type lag_order(lag_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_adf(X, lag_order));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 6},
     {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 1},
     {"_PPCKO_test_lr", (DL_FUNC) &_PPCKO_test_lr, 2},
+    {"_PPCKO_test_adf", (DL_FUNC) &_PPCKO_test_adf, 2},
     {NULL, NULL, 0}
 };
 
