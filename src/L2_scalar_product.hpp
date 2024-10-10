@@ -6,7 +6,7 @@
 
 #include "mesh.hpp"
 #include "integrand_interp.hpp"
-#include "montecarlo.hpp"
+#include "Adams_rule.hpp"
 #include "numerical_integration.hpp"
 
 namespace PPC_util

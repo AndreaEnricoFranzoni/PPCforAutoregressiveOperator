@@ -16,7 +16,7 @@ public:
   
   using StoringVector = Eigen::VectorXd;    //col-wise
   
-  using StoringArray = Eigen::ArrayXd;
+  using StoringArray  = Eigen::ArrayXd;
   
 };
 

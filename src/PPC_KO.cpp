@@ -108,7 +108,7 @@ const
 { 
   //constexpr int N = 250;
   //devo calcolarli su dati centrati?
-  PPC::scores scores_(this->X().col(m_n-1),this->a(), DEF_PARAMS_PPC::a_interval, DEF_PARAMS_PPC::b_interval, DEF_PARAMS_PPC::dim_grid_int);
+  PPC::scores scores_(this->X().col(m_n-1),this->a(), DEF_PARAMS_PPC::a_interval, DEF_PARAMS_PPC::b_interval, m_m - static_cast<int>(1));
   scores_.evaluating_scores();
   
   return scores_.scores_evaluations();
@@ -255,6 +255,151 @@ PPC::KO_CV::solve()
   this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
   
   this->k() = best_parameters_KO.second;
+  this->k_imposed() = true;
+  
+  this->KO_algo();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**********************************
+ ********  CV CRTP ALPHA    *****************
+ ***********************************/
+
+
+void
+PPC::KO_CV_CRTP_ALPHA::solve()
+{
+  std::vector<double> alphas;
+  alphas.resize(21);
+  
+  std::iota(alphas.begin(),alphas.end(),static_cast<double>(DEF_PARAMS_PPC::min_exp_alphas));
+  std::transform(alphas.begin(),alphas.end(),alphas.begin(),[](double el){return(pow(static_cast<double>(10),el));});
+  
+  
+  
+  
+  CV_PPC::CV_KO_PPC_alpha_CRTP<DEF_PARAMS_PPC::cv_strat_type::AUGMENTING_WINDOW,DEF_PARAMS_PPC::cv_err_eval_type::MSE> cv(std::move(this->X_non_cent()), alphas, this->p_threshold(), this->k(), PPC::ko_single_cv);
+  cv.best_param_search();
+  
+  
+  
+  //da qui
+  this->ValidErr().resize(21);
+  for (size_t i = 0; i < 21; ++i)
+  {
+    this->ValidErr()[i]=cv.valid_errors()[i];
+  }
+  
+  
+  
+  
+  
+  this->alpha() = cv.param_best();      //finding the best alpha using CV
+  
+  //only the evaluation of the regularized covariance was missing since there was not any regularization parameter before
+  this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+  
+  this->KO_algo(); 
+}
+
+
+
+
+
+
+/**********************************
+ ********  CV CRTP k    *****************
+ ***********************************/
+void
+PPC::KO_CV_CRTP_K::solve()
+{
+  std::vector<int> k_s;
+  k_s.resize(this->m());
+  std::iota(k_s.begin(),k_s.end(),static_cast<int>(1));
+  
+  
+  CV_PPC::CV_KO_PPC_k_CRTP<DEF_PARAMS_PPC::cv_strat_type::AUGMENTING_WINDOW,DEF_PARAMS_PPC::cv_err_eval_type::MSE> cv(std::move(this->X_non_cent()), k_s, DEF_PARAMS_PPC::toll_cv_k, this->p_threshold(), this->alpha(), PPC::ko_single_cv);
+  
+  cv.best_param_search();
+  
+  
+  
+  
+  //da qui
+  this->ValidErr().resize(cv.valid_errors().size());
+  for (size_t i = 0; i < cv.valid_errors().size(); ++i)
+  {
+    this->ValidErr()[i]=(cv.valid_errors()[i]);
+  }
+  
+  
+  
+  
+  
+  this->k() = cv.param_best();
+  this->k_imposed() = true;
+  
+  this->KO_algo();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**********************************
+ ********  CV CRTP ALPHA k    *****************
+ ***********************************/
+void 
+PPC::KO_CV_CRTP_ALPHA_K::solve()
+{
+  
+  std::vector<double> alphas;
+  alphas.resize(21);
+  
+  std::iota(alphas.begin(),alphas.end(),static_cast<double>(DEF_PARAMS_PPC::min_exp_alphas));
+  std::transform(alphas.begin(),alphas.end(),alphas.begin(),[](double el){return(pow(static_cast<double>(10),el));});
+  
+  std::vector<int> k_s;
+  k_s.resize(this->m());
+  std::iota(k_s.begin(),k_s.end(),static_cast<int>(1));
+  
+  
+  
+  
+  
+  
+  CV_PPC::CV_KO_PPC_alpha_k_CRTP<DEF_PARAMS_PPC::cv_strat_type::AUGMENTING_WINDOW,DEF_PARAMS_PPC::cv_err_eval_type::MSE> cv(std::move(this->X_non_cent()), alphas, k_s, DEF_PARAMS_PPC::toll_cv_k, this->p_threshold(), PPC::ko_single_cv);
+  cv.best_param_search();
+  
+  
+  this->alpha() = cv.alpha_best();
+  this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+  
+  this->k() = cv.k_best();
   this->k_imposed() = true;
   
   this->KO_algo();

@@ -11,5 +11,4 @@ PPC::scores::evaluating_scores()
     PPC_util::L2_scalar_product<double> scalar_prod((m_grid_evaluations),(m_grid_integration),el.second);
     m_scores_evaluations.emplace_back(scalar_prod.value());
   }
-  
 }

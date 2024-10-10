@@ -49,6 +49,21 @@ public:
       return make_unique<PPC::KO_CV>(std::move(X), threshold_ppc);
     }
     
+    if (id == "CV_alpha_CRTP")
+    {
+      return make_unique<PPC::KO_CV_CRTP_ALPHA>(std::move(X), threshold_ppc);
+    }
+    
+    if (id == "CV_k_CRTP")
+    {
+      return make_unique<PPC::KO_CV_CRTP_K>(std::move(X), threshold_ppc, alpha);
+    }
+    
+    if (id == "CV_alpha_k_CRTP")
+    {
+      return make_unique<PPC::KO_CV_CRTP_ALPHA_K>(std::move(X), threshold_ppc);
+    }
+    
     else
     {
       std::string error_message = "Wrong input string";

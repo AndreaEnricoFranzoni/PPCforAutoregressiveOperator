@@ -15,7 +15,7 @@ namespace WRAP_PARAMS_PPC         //utilities to wrap the input parameters of th
 //check that threshold_ppc is in the correct range
 inline
 void
-check_threshold_ppc(double threshold_ppc)
+check_threshold_ppc(const double &threshold_ppc)
 {
   if(threshold_ppc<=0 || threshold_ppc>=1)
   {
@@ -29,7 +29,7 @@ check_threshold_ppc(double threshold_ppc)
 //check that alpha is in the correct range
 inline
 void
-check_alpha(double alpha)
+check_alpha(const double &alpha)
 {
   if( alpha<= 0 )
   {
@@ -43,7 +43,7 @@ check_alpha(double alpha)
 //check that k is in the correct range
 inline
 void
-check_k(int k, int max_k)
+check_k(const int &k, const int &max_k)
 {
   if( k < 0 )
   {

@@ -22,4 +22,4 @@ void
 REM_NAN_PPC::removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::ZR>)
 {
   std::replace_if(row.begin(),row.end(),[](T el){return isnan(el);},static_cast<T>(0)); 
-} 
+}  

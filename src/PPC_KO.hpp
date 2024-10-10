@@ -18,6 +18,9 @@
 #include "scores.hpp"
 
 
+#include "CV_CRTP_include.hpp"
+
+
 
 namespace PPC       //PrincipalPredictiveComponents
 {
@@ -481,6 +484,112 @@ public:
 
   std::pair<double,int> params_best_CV();             //to obtain the best parameters (alpha for regularization and k for number of PPCs)
   void solve() override;                              //overrided method to solve with CV
+};
+
+
+
+
+
+
+//test for CV CRTP alpha
+class KO_CV_CRTP_ALPHA : public  PPC_KO_base
+{
+private:
+  KO_Traits::StoringMatrix m_X_non_cent; 
+  
+public:
+  KO_CV_CRTP_ALPHA(KO_Traits::StoringMatrix&& X, double threshold_ppc) 
+    : 
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
+    m_X_non_cent(this->m(),this->n())
+    {
+      for (size_t i = 0; i < this->n(); ++i)
+      {
+        m_X_non_cent.col(i) = this->X().col(i).array() + this->means();
+      }
+    }
+  
+  
+  /*!
+   * Getter for m_X_non_cent
+   */
+  inline KO_Traits::StoringMatrix X_non_cent() const {return m_X_non_cent;};
+  
+  void solve() override;
+};
+
+
+
+
+
+
+
+
+
+
+//test for CV CRTP k
+class KO_CV_CRTP_K : public  PPC_KO_base
+{
+private:
+  KO_Traits::StoringMatrix m_X_non_cent; 
+  
+public:
+  KO_CV_CRTP_K(KO_Traits::StoringMatrix&& X, double threshold_ppc, double alpha) 
+    : 
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
+    m_X_non_cent(this->m(),this->n())
+    {
+      this->alpha() = alpha;
+      this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+      
+      for (size_t i = 0; i < this->n(); ++i)
+      {
+        m_X_non_cent.col(i) = this->X().col(i).array() + this->means();
+      }
+    }
+  
+  
+  /*!
+   * Getter for m_X_non_cent
+   */
+  inline KO_Traits::StoringMatrix X_non_cent() const {return m_X_non_cent;};
+  
+  void solve() override;
+};
+
+
+
+
+
+
+
+
+
+//test for CV CRTP alpha-k
+class KO_CV_CRTP_ALPHA_K : public  PPC_KO_base
+{
+private:
+  KO_Traits::StoringMatrix m_X_non_cent; 
+  
+public:
+  KO_CV_CRTP_ALPHA_K(KO_Traits::StoringMatrix&& X, double threshold_ppc) 
+    : 
+    PPC::PPC_KO_base(std::move(X), threshold_ppc),
+    m_X_non_cent(this->m(),this->n())
+    {
+      for (size_t i = 0; i < this->n(); ++i)
+      {
+        m_X_non_cent.col(i) = this->X().col(i).array() + this->means();
+      }
+    }
+  
+  
+  /*!
+   * Getter for m_X_non_cent
+   */
+  inline KO_Traits::StoringMatrix X_non_cent() const {return m_X_non_cent;};
+  
+  void solve() override;
 };
 
 
