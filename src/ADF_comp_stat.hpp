@@ -3,8 +3,6 @@
 
 #include <array>
 
-namespace ADF_util
-{
 
 //using a functor and the template parameter as policy
 //computing the test statistic for the adf
@@ -25,6 +23,5 @@ private:
   LAG_policy lag_order;
 };
 
-}   //end namespace ADF_util
 
 #endif  //ADF_PPC_STAT_HPP

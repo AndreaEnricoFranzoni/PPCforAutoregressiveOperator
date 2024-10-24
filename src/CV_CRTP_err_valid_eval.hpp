@@ -1,11 +1,11 @@
-#include "CV_CRTP.hpp"
+#include "CV.hpp"
 
 //error evaluation on a single cv iteration
-template<class D, DEF_PARAMS_PPC::cv_strat_type cv_strat, DEF_PARAMS_PPC::cv_err_eval_type err_eval>
+template< class D, CV_STRAT cv_strat, CV_ERR_EVAL err_eval, K_IMP k_imp, VALID_ERR_RET valid_err_ret >
 double
-CV_PPC::CV_KO_PPC_CRTP<D,cv_strat,err_eval>::err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid, ERR_EVAL_T<DEF_PARAMS_PPC::cv_err_eval_type::MSE>)
+CV_base<D,cv_strat,err_eval,k_imp,valid_err_ret>::err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid, ERR_EVAL_T<CV_ERR_EVAL::MSE>)
 const
 {
   //using mse between predicted and validation
-  return EF_PPC::mse<double>( pred.array() - valid.array() );
+  return mse<double>( pred.array() - valid.array() );
 }

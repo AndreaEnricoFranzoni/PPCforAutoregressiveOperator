@@ -9,20 +9,19 @@
 #include <cmath>
 #include <iostream>
 
-#include "KO_Traits.hpp"
-#include "default_parameters.hpp"
+#include "traits_ko.hpp"
 #include "removing_nan.hpp"
-#include "wrapper_params.hpp"
+#include "parameters_wrapper.hpp"
 
 
 //
 // [[Rcpp::depends(RcppEigen)]]
 template<typename T> 
 const KO_Traits::StoringMatrix 
-reading_data(Rcpp::NumericMatrix X,
-              const DEF_PARAMS_PPC::MA_type MA_t)
+reader_data(Rcpp::NumericMatrix X,
+              const REM_NAN MA_t)
 {
-  std::cout << "Local version 195" << std::endl;
+  std::cout << "Local version 695" << std::endl;
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();
@@ -37,15 +36,15 @@ reading_data(Rcpp::NumericMatrix X,
   //if there are nans: remove them
   if (check_nan!=x.reshaped().end())
   {
-    if(MA_t == DEF_PARAMS_PPC::MA_type::MR)     //replacing nans with the mean
+    if(MA_t == REM_NAN::MR)     //replacing nans with the mean
     {
-      REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::MR> temp(std::move(x));
+      removing_nan<T,REM_NAN::MR> temp(std::move(x));
       temp.remove_nan();
       return temp.data();
     }
-    if(MA_t == DEF_PARAMS_PPC::MA_type::ZR)     //replacing nans with 0s
+    if(MA_t == REM_NAN::ZR)     //replacing nans with 0s
     {
-      REM_NAN_PPC::removing_nan<T,DEF_PARAMS_PPC::MA_type::ZR> temp(std::move(x));
+      removing_nan<T,REM_NAN::ZR> temp(std::move(x));
       temp.remove_nan();
       return temp.data();
     }

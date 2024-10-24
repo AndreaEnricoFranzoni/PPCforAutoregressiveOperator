@@ -5,7 +5,7 @@
 //function to evaluate the one time step differences of the time series
 template<class LAG_policy>
 std::vector<double>
-PPC_util::adf<LAG_policy>::one_step_diff(const KO_Traits::StoringVector &ts)
+adf<LAG_policy>::one_step_diff(const KO_Traits::StoringVector &ts)
 const
 {
   std::vector<double> diff;
@@ -21,7 +21,7 @@ const
 //function to embed the time series x into a low-dimensional Euclidean space
 template<class LAG_policy>
 KO_Traits::StoringMatrix
-PPC_util::adf<LAG_policy>::embed(const KO_Traits::StoringVector &ts, int dimension)
+adf<LAG_policy>::embed(const KO_Traits::StoringVector &ts, int dimension)
 const
 { 
   //evaluate one step differences for the time serie
@@ -57,14 +57,14 @@ const
 //evaluation of the test statistics depending on the lag
 template<class LAG_policy>
 double
-PPC_util::adf<LAG_policy>::statistic_eval(const KO_Traits::StoringVector &ts)
+adf<LAG_policy>::statistic_eval(const KO_Traits::StoringVector &ts)
 const
 {
   //embedding of the time serie in an Euclidean space
   KO_Traits::StoringMatrix z = this->embed(ts,m_k_used);
   
   //the design matrix depends on the time lag: Lag_policy will take care of it
-  ADF_util::adf_stat<LAG_policy> statistic_adf;
+  adf_stat<LAG_policy> statistic_adf;
   return statistic_adf(ts,z);
 }
   
@@ -73,7 +73,7 @@ const
 //evaluate the pvalue for the test on a single time serie
 template<class LAG_policy>
 double
-PPC_util::adf<LAG_policy>::p_value_eval(const KO_Traits::StoringVector &ts, const std::vector<double> &tableipl, int i) 
+adf<LAG_policy>::p_value_eval(const KO_Traits::StoringVector &ts, const std::vector<double> &tableipl, int i) 
 const
 { 
   //evaluation of the test statistic
@@ -84,8 +84,8 @@ const
   if(stat>tableipl.back()){return 1.0;}
   
   //pvalue evaluation
-  PPC_util::integrand_interp p_val_int{tableipl};
-  double pval = p_val_int(stat,ADF_util::tablep);
+  interp_func p_val_int{tableipl};
+  double pval = p_val_int(stat,tablep);
   
   return pval;
 }
@@ -95,17 +95,17 @@ const
 //doing the test for each temporal series
 template<class LAG_policy>
 void
-PPC_util::adf<LAG_policy>::test()
+adf<LAG_policy>::test()
 {
   
    //preparing for the p_value evaluation
    m_p_values.reserve(m_x.rows());
-   std::vector<double> tableipl = ADF_util::tableipl(static_cast<double>(m_tot_time_instants-1));
+   std::vector<double> tableipl_ = tableipl(static_cast<double>(m_tot_time_instants-1));
    
    //computing the pvalues for each time serie
    for (int i = 0; i < m_x.rows(); ++i) 
    {
-      m_p_values.emplace_back( this->p_value_eval(m_x.row(i),tableipl,i+1)  );
+      m_p_values.emplace_back( this->p_value_eval(m_x.row(i),tableipl_,i+1)  );
    }
    
 }

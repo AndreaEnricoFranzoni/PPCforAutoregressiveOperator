@@ -1,8 +1,8 @@
 #include "removing_nan.hpp"
 
-template<typename T,DEF_PARAMS_PPC::MA_type MA_t>
+template<typename T,REM_NAN MA_t>
 KO_Traits::StoringMatrix
-REM_NAN_PPC::removing_nan<T,MA_t>::final_clean()
+removing_nan<T,MA_t>::final_clean()
 const
 { 
   std::vector<int> temp;

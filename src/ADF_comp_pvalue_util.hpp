@@ -4,10 +4,8 @@
 #include <vector>
 #include <functional>
 
-#include "integrand_interp.hpp"
+#include "interp_func.hpp"
 
-namespace ADF_util
-{
 
 //tables needed to evaluate the p_value
 //Critical values for Dickey–Fuller t-distribution.
@@ -29,7 +27,7 @@ std::vector<double> tablep = {0.01, 0.025, 0.05, 0.10, 0.90, 0.95, 0.975, 0.99};
 std::vector<double>
 tableipl(const double &n)
 {
-  PPC_util::integrand_interp interp_f{tableT};
+  interp_func interp_f{tableT};
   
   std::vector<double> tableipl_;
   tableipl_.resize(table.size());
@@ -40,9 +38,6 @@ tableipl(const double &n)
   std::transform(table.begin(),table.end(),tableipl_.begin(),[&n,&interp_f](auto el){return interp_f(n,el);});
   
   return tableipl_;
-}
-
-
 }
 
 #endif  //ADF_PPC_PVAL_HPP

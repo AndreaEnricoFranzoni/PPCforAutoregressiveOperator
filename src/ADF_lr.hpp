@@ -4,13 +4,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "KO_Traits.hpp"
+#include "traits_ko.hpp"
 #include "mlpack/src/mlpack.hpp"
 #include "mlpack/src/mlpack/methods/linear_regression/linear_regression.hpp"
 
-
-namespace ADF_util
-{
 
 //class for doing linear regression for adf and taking the right coefficients needed for computing its statistic
 class lr_adf
@@ -26,8 +23,9 @@ private:
 
   
 public:
-  lr_adf(KO_Traits::StoringMatrix&& x, KO_Traits::StoringMatrix&& y)     
-    : m_x{std::forward<KO_Traits::StoringMatrix>(x.transpose())},m_y{std::forward<KO_Traits::StoringMatrix>(y)} {}
+  template<typename STOR_OBJ1, typename STOR_OBJ2>
+  lr_adf(STOR_OBJ1&& x, STOR_OBJ2&& y)     
+    : m_x{std::forward<STOR_OBJ1>(x.transpose())},m_y{std::forward<STOR_OBJ2>(y)} {}
   //pass the covariates and transpose them since it is how mlpack works
   
   
@@ -90,7 +88,5 @@ public:
   inline KO_Traits::StoringVector coeff() const {return m_coeff;};
   inline KO_Traits::StoringVector se_coeff() const {return m_se_coeff;};
 };
-
-}   //end namespace ADF_util
 
 #endif //LIN_REG_PPC_HPP

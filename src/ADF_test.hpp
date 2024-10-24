@@ -1,18 +1,14 @@
 #ifndef ADF_PPC_HPP
 #define ADF_PPC_HPP
 
-
+#include <utility>
 #include <vector>
 #include <algorithm>
 
-#include "KO_Traits.hpp"
+#include "traits_ko.hpp"
 #include "ADF_comp_stat.hpp"
 #include "ADF_comp_pvalue_util.hpp"
 
-
-
-namespace PPC_util
-{
 
 
 //class to make ADF on a dataset such that each one of its row is a time serie
@@ -30,8 +26,9 @@ private:
  
  
 public:
-  adf(KO_Traits::StoringMatrix&& x, int k)      //constructor
-   : m_x{std::forward<KO_Traits::StoringMatrix>(x)}, m_k(k), m_k_used(k+static_cast<int>(1)) 
+  template<typename STOR_OBJ>
+  adf(STOR_OBJ&& x, int k)      //constructor
+   : m_x{std::forward<STOR_OBJ>(x)}, m_k(k), m_k_used(k+static_cast<int>(1)) 
    { m_tot_time_instants = m_x.cols(); } 
   
   /*!
@@ -41,14 +38,14 @@ public:
   
   //function to evaluat one time step differences
   std::vector<double>      one_step_diff(const KO_Traits::StoringVector &ts)        const;
+  //function to embed the temporal series into an Euclidean space
   KO_Traits::StoringMatrix embed(const KO_Traits::StoringVector &ts, int dimension) const;
   double                   statistic_eval(const KO_Traits::StoringVector &ts)       const;      //evaluation of the test statistic for the test on a single ts: it depends on k
-  double                   p_value_eval(const KO_Traits::StoringVector &ts, const std::vector<double> &tableipl, int i)  const;                    //p_value evalution for the test on a single ts
+  double                   p_value_eval(const KO_Traits::StoringVector &ts, const std::vector<double> &tableipl, int i)  const;    //p_value evalution for the test on a single ts
   void                     test();
   
 };
   
-}   //end namespace PPC_util
 
 #include "ADF_test_imp.hpp"
 

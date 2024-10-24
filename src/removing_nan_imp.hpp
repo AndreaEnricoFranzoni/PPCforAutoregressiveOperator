@@ -1,9 +1,9 @@
 #include "removing_nan.hpp"
 
 //MeanReplace
-template<typename T,DEF_PARAMS_PPC::MA_type MA_t>
+template<typename T,REM_NAN MA_t>
 void
-REM_NAN_PPC::removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::MR>)
+removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<REM_NAN::MR>)
 {
   const auto n_not_nan = std::count_if(row.begin(),row.end(),[](T el){return !isnan(el);});
   std::vector<T> el_not_nan;
@@ -17,9 +17,9 @@ REM_NAN_PPC::removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-
 
 
 //ZerosReplace
-template<typename T,DEF_PARAMS_PPC::MA_type MA_t>
+template<typename T,REM_NAN MA_t>
 void
-REM_NAN_PPC::removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<DEF_PARAMS_PPC::MA_type::ZR>)
+removing_nan<T,MA_t>::row_removal(Eigen::Block<Eigen::Matrix<T,-1,-1>,1>& row, MAT<REM_NAN::ZR>)
 {
   std::replace_if(row.begin(),row.end(),[](T el){return isnan(el);},static_cast<T>(0)); 
-}  
+} 

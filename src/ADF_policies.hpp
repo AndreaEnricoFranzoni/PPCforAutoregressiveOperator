@@ -5,12 +5,10 @@
 #include <numeric>
 #include <array>
 
-#include "KO_Traits.hpp"
+#include "traits_ko.hpp"
 #include "ADF_lr.hpp"
 
 
-namespace ADF_util
-{
 
 //returning an array containing the two values needed for computing adf test statistics
 
@@ -28,7 +26,7 @@ struct CaseNoLagOrderADF
     std::iota(covariates.col(1).begin(),covariates.col(1).end(),static_cast<double>(1.0));
     
     //linear regression
-    ADF_util::lr_adf lr(std::move(covariates),std::move(z.col(0)));
+    lr_adf lr(std::move(covariates),std::move(z.col(0)));
     lr.solve();
     
     //returning the values necessary for the test statistics
@@ -58,7 +56,7 @@ struct CaseLagOrderADF
     covariates.rightCols(k-1) = z.rightCols(k-1);
     
     //linear regression
-    ADF_util::lr_adf lr(std::move(covariates),std::move(z.col(0)));
+    lr_adf lr(std::move(covariates),std::move(z.col(0)));
     lr.solve();
     
     //returning the values necessary for the test statistics
@@ -66,7 +64,5 @@ struct CaseLagOrderADF
     return a;
   }
 };
-
-}   //end namespace ADF_util
 
 #endif  //ADF_PPC_POLICIES_HPP
