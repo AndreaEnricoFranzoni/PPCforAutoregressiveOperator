@@ -1,388 +1,200 @@
-#include <RcppEigen.h>
+#ifndef KO_PPC_CRTP_HPP
+#define KO_PPC_CRTP_HPP
 
+#include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <numeric>
+#include <execution>
+#include <vector>
+#include <functional>
+#include <utility>
 
 #include "traits_ko.hpp"
-#include "parameters_wrapper.hpp"
-#include "utils.hpp"
-#include "data_reader.hpp"
-#include "Factory_ko.hpp"
 
 
+#include "CV_include.hpp"
+#include "Factory_cv_strategy.hpp"
+#include "strategy_cv.hpp"
 #include "mesh.hpp"
+//#include "scores.hpp"
 
 
-#include "ADF_test.hpp"
-#include "ADF_policies.hpp"
-
-
-using namespace Rcpp;
-
-
-//
-// [[Rcpp::depends(RcppEigen)]]
-
-
-
-//
-// [[Rcpp::export]]
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
-                  std::string id_CV = "NoCV",
-                  double alpha = 0.75,
-                  int k = 0, 
-                  double threshold_ppc = 0.95,
-                  Rcpp::Nullable<NumericVector> alpha_vec = R_NilValue,
-                  Rcpp::Nullable<IntegerVector> k_vec = R_NilValue,
-                  double toll = 1e-4,
-                  int dom_dim_s = 1,
-                  int err_ret = 0,
-                  Rcpp::Nullable<std::string> id_rem_nan = R_NilValue
-                  )
-{ 
-  using T = double;       //version for real-values time series
-  
-  //wrapping parameters
-  const REM_NAN id_RN = wrap_id_rem_nans(id_rem_nan);
-  
-  
-  //reading data, handling NANs
-  KO_Traits::StoringMatrix x = reader_data<T>(X,id_RN);
-  
-  
-  //grid of function evaluations
-  int a = 0;
-  int b = 1;
-  Geometry::Domain1D domain_func_data(a,b);
-  Geometry::Mesh1D   grid_func_data(domain_func_data,x.rows()-static_cast<int>(1));
-  
-  
-  //checking parameters
-  check_threshold_ppc(threshold_ppc);
-  check_alpha(alpha);
-  check_k(k,x.rows());
-  std::vector<double> alphas = wrap_alpha_vec(alpha_vec);
-  std::vector<int> k_s       = wrap_k_vec(k_vec,x.rows());
-  
-  //checking which 
-  bool dom_dim = dom_dim_s==1 ? false : true;
-  bool err_ret_b = err_ret==1 ? true : false;
-  
-  Rcpp::List l;
-
-  if(!dom_dim)                                //DOMAIN 1D
-  {
-    
-    if(err_ret_b)                                         //VALIDATION ERRORS STORED AND RETURNED
-    {
-      
-      if(k>0)                                                                                   //K IMPOSED
-      { 
-        //1D domain, k imposed, returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
-      }
-      
-      else                                                                                      //K NOT IMPOSED
-      { 
-        //1D domain, k not imposed, returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
-      }
-    }
-    
-    
-    else                                                //VALIDATION ERRORS NOT STORED
-    {
-      
-      if(k>0)                                                                                   //K IMPOSED
-      {
-        //1D domain, k imposed, not returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
-      }
-      
-      else                                                                                      //K NOT IMPOSED
-      {
-        //1D domain, k not imposed, not returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
-      }        
-    }
-  }
-  else                                        //DOMAIN 2D
-  {
-    
-    if(err_ret_b)                                         //VALIDATION ERRORS STORED AND RETURNED
-    {
-      
-      if(k>0)                                                                                   //K IMPOSED
-      {
-        //2D domain, k imposed, returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
-      }
-      
-      else                                                                                      //K NOT IMPOSED
-      {
-        //2D domain, k not imposed, returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
-      }
-    }
-    
-    
-    else                                                //VALIDATION ERRORS NOT STORED
-    {
-      
-      if(k>0)                                                                                   //K IMPOSED
-      { 
-        //2D domain, k imposed, not returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
-      }
-      
-      else                                                                                      //K NOT IMPOSED
-      {
-        //2D domain, k not imposed, not returning errors
-        //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
-        //solving
-        ko->call_ko();
-        //results
-        auto one_step_ahead_pred  = std::get<0>(ko->results());   //estimate of the prediction
-        double alpha_used         = std::get<1>(ko->results());   //alpha used
-        int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
-        auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
-        
-        //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
-      }        
-    }    
-  }
-  
-  return l;
-}
-
-
-
-//
-// [[Rcpp::export]]
-Rcpp::List KO_check_hps(Rcpp::NumericMatrix X, int lag_order)
+//templates params
+//derived class (CRTP), domain dimension, if k is passed as param, if validation errors have to be stored and returned
+template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+class PPC_KO_base
 {
-  using T = double; 
   
-  KO_Traits::StoringMatrix x = reader_data<T>(X, REM_NAN::MR);
+private:
   
-  int number_time_instants = x.cols();
-  
-  std::size_t k = static_cast<std::size_t>(std::trunc(std::cbrt(static_cast<double>(number_time_instants)-1)));
-  
-  Rcpp::List l;
-  
-  if(k > 1)
-  {
-    //ADF with lag order k
-    adf<CaseLagOrderADF> adf_t(std::move(x),k);
-    adf_t.test();
-    auto pv = adf_t.p_values();
-    
-    l["Pvalues ADF"] = pv;
-    return l;
-  }
-  
-  //ADF without lag order
-  adf<CaseLagOrderADF> adf_t(std::move(x),0);
-  adf_t.test();
-  auto pv = adf_t.p_values();
-  
-  l["Pvalues ADF"] = pv;
-  return l;
-}
+  std::size_t m_m;                            //number of evaluation of the functional object (m)
+  std::size_t m_n;                            //number of time instants (n)
+  KO_Traits::StoringMatrix m_X;               //matrix storing time series (m x n), data centered
+  KO_Traits::StoringArray m_means;            //vector storing the time series means (m x 1)  
+  KO_Traits::StoringMatrix m_Cov;             //matrix estimating the covariance operator (m x m)
+  double m_trace_cov;                         //trace of the covariance estimator
+  KO_Traits::StoringMatrix m_CrossCov;        //matrix estimating the cross-covariance operator (m x m)
+  KO_Traits::StoringMatrix m_CovReg;          //matrix containing the covariance + alpha*trace(cov)*I (m x m)
+  KO_Traits::StoringMatrix m_GammaSquared;    //matrix containing the squared of the cross-covariance matrix (m x m)
+  KO_Traits::StoringMatrix m_CovRegRoot;      //matrix containing the inverse squared root of regularized covariance (m x m)
+  KO_Traits::StoringMatrix m_a;               //matrix containing predictive loadings (each col)  (m x k)
+  KO_Traits::StoringMatrix m_b;               //matrix containing predictive factors (each col)   (m x k)        
+  KO_Traits::StoringMatrix m_rho;             //matrix containing the estimate of the operator for doing 1-step ahead prediction (m x m)
+  double m_alpha;                             //regularization parameter
+  int m_k;                                    //number of PPCs retained
+  double m_threshold_ppc;                       //threshold according to how much predictive power has to be retained by the PPCs
 
-
-
-
-
-
-
-//
-// [[Rcpp::export]]
-Rcpp::List read_data_na(Rcpp::NumericMatrix X,std::string id_CV)
-{ 
-  using T = double;       //version for double
+  valid_err_variant m_valid_err;            //just for debugging
   
-  REM_NAN id_RN = REM_NAN::MR;
-  KO_Traits::StoringMatrix x = reader_data<T>(X, id_RN);
   
-  /*
-   * TEST t(id_CV);
-   t.testing();
-   
-   auto alpha = std::get<0>(t.test_res());
-   auto err   = std::get<1>(t.test_res());
-   
-   //saving results in a list
-   
-   l["alpha"] = alpha;
-   
-   Rcpp::List errors = valid_err_disp(err);
-   l["Err"] = errors["Errors"];
+  
+public:
+  
+  template<typename STOR_OBJ>
+  PPC_KO_base(STOR_OBJ&& X)
+    :   
+    m_X{std::forward<STOR_OBJ>(X)},
+    m_m(X.rows()),
+    m_n(X.cols())
+    {  
+      
+      //evaluating row mean and saving it in the m_means
+      m_means = (m_X.rowwise().sum())/m_n;
+      
+      //normalizing
+      for (size_t i = 0; i < m_n; ++i)
+      {
+        m_X.col(i) = m_X.col(i).array() - m_means;
+      }
+      
+      // X * X' 
+      m_Cov =  ((m_X*m_X.transpose()).array())/static_cast<double>(m_n);
+      
+      // trace of covariance
+      m_trace_cov = m_Cov.trace();
+      
+      // (X[,2:n]*(X[,1:(n-1)])')/(n-1)
+      m_CrossCov =  ((m_X.rightCols(m_n-1)*m_X.leftCols(m_n-1).transpose()).array())/(static_cast<double>(m_n-1));
+      
+      //squared of cross covariance
+      m_GammaSquared = m_CrossCov.transpose()*m_CrossCov;
+    }
+  
+  
+  
+  //Getters and setters
+  
+  /*!
+   * Getter for m_m
    */
+  inline std::size_t m() const {return m_m;};
+  
+  /*!
+   * Getter for m_n
+   */
+  inline std::size_t n() const {return m_n;};
+  
+  /*!
+   * Getter for m_X
+   */
+  inline KO_Traits::StoringMatrix X() const {return m_X;};
+  
+  /*!
+   * Getter for m_means
+   */
+  inline KO_Traits::StoringArray means() const {return m_means;};
+  
+  /*!
+   * Getter for m_Cov
+   */
+  inline KO_Traits::StoringMatrix Cov() const {return m_Cov;};
+  
+  /*!
+   * Getter for m_trace_cov
+   */
+  inline double trace_cov() const {return m_trace_cov;};
+  
+  /*!
+   * Setter for m_CovReg (needed for CV)
+   */
+  inline KO_Traits::StoringMatrix & CovReg() {return m_CovReg;};
+  
+  /*!
+   * Getter for m_rho
+   */
+  inline KO_Traits::StoringMatrix rho() const {return m_rho;};
+  
+  /*!
+   * Getter for m_alpha
+   */
+  inline double alpha() const {return m_alpha;};
+  
+  /*!
+   * Setter for m_alpha
+   */
+  inline double & alpha() {return m_alpha;};
+  
+  /*!
+   * Getter for m_k
+   */
+  inline int k() const {return m_k;};
+  
+  /*!
+   * Setter for m_k
+   */
+  inline int & k() {return m_k;};
+  
+  /*!
+   * Getter for m_threshold_ppc
+   */
+  inline double threshold_ppc() const {return m_threshold_ppc;};
+  
+  /*!
+   * Setter for m_threshold_ppc
+   */
+  inline double & threshold_ppc() {return m_threshold_ppc;};
+  
+  
+  /*!
+   * Getter for m_valid_err
+   */
+  inline valid_err_variant ValidErr() const {return m_valid_err;};
+  
+  /*!
+   * Setter for m_CovReg (needed for CV)
+   */
+  inline valid_err_variant & ValidErr() {return m_valid_err;};
+  
+  
+  
 
-  Rcpp::List l;
-  l["data_read"] = x;
-  return l;
-}
+  //methods common to all child classes
+  //number of PPCs retained
+  int PPC_retained(const KO_Traits::StoringArray & eigvals) const;
+  
+  //Inverse square for regularized covariance (k is chosen in this function)
+  KO_Traits::StoringMatrix matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat) const;
+  
+  //KO algorithm, once parameters have been set
+  void KO_algo();
+  
+  //doing one-step ahead prediction
+  KO_Traits::StoringArray prediction() const;
+  
+  //scores evaluation
+  std::vector<double> scores(const Geometry::Mesh1D &grid_eval) const;
+  
+  //solving
+  inline
+  void 
+  solve() 
+  {
+    static_cast<D*>(this)->solving();   //solving depends on child class: downcasting of CRTP
+  }
+};
+  
+
+#include "PPC_KO_imp.hpp"
+
+#endif  //KO_PPC_CRTP_HPP
