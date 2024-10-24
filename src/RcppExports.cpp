@@ -12,62 +12,103 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PPC_KO
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double threshold_ppc, double alpha, int k, Rcpp::Nullable<std::string> id_rem_nan);
-RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP threshold_ppcSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP id_rem_nanSEXP) {
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, int dom_dim_s, int err_ret, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP dom_dim_sSEXP, SEXP err_retSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
     Rcpp::traits::input_parameter< std::string >::type id_CV(id_CVSEXP);
-    Rcpp::traits::input_parameter< double >::type threshold_ppc(threshold_ppcSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold_ppc(threshold_ppcSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<NumericVector> >::type alpha_vec(alpha_vecSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<IntegerVector> >::type k_vec(k_vecSEXP);
+    Rcpp::traits::input_parameter< double >::type toll(tollSEXP);
+    Rcpp::traits::input_parameter< int >::type dom_dim_s(dom_dim_sSEXP);
+    Rcpp::traits::input_parameter< int >::type err_ret(err_retSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
-    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, threshold_ppc, alpha, k, id_rem_nan));
+    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, dom_dim_s, err_ret, id_rem_nan));
     return rcpp_result_gen;
 END_RCPP
 }
-// read_data_na
-Rcpp::List read_data_na(Rcpp::NumericMatrix X);
-RcppExport SEXP _PPCKO_read_data_na(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_data_na(X));
-    return rcpp_result_gen;
-END_RCPP
-}
-// test_lr
-Rcpp::List test_lr(Rcpp::NumericMatrix X, Rcpp::NumericMatrix Y);
-RcppExport SEXP _PPCKO_test_lr(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_lr(X, Y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// test_adf
-Rcpp::List test_adf(Rcpp::NumericMatrix X, int lag_order);
-RcppExport SEXP _PPCKO_test_adf(SEXP XSEXP, SEXP lag_orderSEXP) {
+// KO_check_hps
+Rcpp::List KO_check_hps(Rcpp::NumericMatrix X, int lag_order);
+RcppExport SEXP _PPCKO_KO_check_hps(SEXP XSEXP, SEXP lag_orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
     Rcpp::traits::input_parameter< int >::type lag_order(lag_orderSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_adf(X, lag_order));
+    rcpp_result_gen = Rcpp::wrap(KO_check_hps(X, lag_order));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_data_na
+Rcpp::List read_data_na(Rcpp::NumericMatrix X, std::string id_CV);
+RcppExport SEXP _PPCKO_read_data_na(SEXP XSEXP, SEXP id_CVSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< std::string >::type id_CV(id_CVSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_data_na(X, id_CV));
+    return rcpp_result_gen;
+END_RCPP
+}
+// PPC_KO
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, int dom_dim_s, int err_ret, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP dom_dim_sSEXP, SEXP err_retSEXP, SEXP id_rem_nanSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< std::string >::type id_CV(id_CVSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold_ppc(threshold_ppcSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<NumericVector> >::type alpha_vec(alpha_vecSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<IntegerVector> >::type k_vec(k_vecSEXP);
+    Rcpp::traits::input_parameter< double >::type toll(tollSEXP);
+    Rcpp::traits::input_parameter< int >::type dom_dim_s(dom_dim_sSEXP);
+    Rcpp::traits::input_parameter< int >::type err_ret(err_retSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
+    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, dom_dim_s, err_ret, id_rem_nan));
+    return rcpp_result_gen;
+END_RCPP
+}
+// KO_check_hps
+Rcpp::List KO_check_hps(Rcpp::NumericMatrix X, int lag_order);
+RcppExport SEXP _PPCKO_KO_check_hps(SEXP XSEXP, SEXP lag_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type lag_order(lag_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(KO_check_hps(X, lag_order));
+    return rcpp_result_gen;
+END_RCPP
+}
+// read_data_na
+Rcpp::List read_data_na(Rcpp::NumericMatrix X, std::string id_CV);
+RcppExport SEXP _PPCKO_read_data_na(SEXP XSEXP, SEXP id_CVSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< std::string >::type id_CV(id_CVSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_data_na(X, id_CV));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 6},
-    {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 1},
-    {"_PPCKO_test_lr", (DL_FUNC) &_PPCKO_test_lr, 2},
-    {"_PPCKO_test_adf", (DL_FUNC) &_PPCKO_test_adf, 2},
+    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 11},
+    {"_PPCKO_KO_check_hps", (DL_FUNC) &_PPCKO_KO_check_hps, 2},
+    {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 2},
+    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 11},
+    {"_PPCKO_KO_check_hps", (DL_FUNC) &_PPCKO_KO_check_hps, 2},
+    {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 2},
     {NULL, NULL, 0}
 };
 
