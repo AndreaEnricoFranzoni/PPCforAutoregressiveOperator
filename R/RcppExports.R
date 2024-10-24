@@ -13,15 +13,3 @@ read_data_na <- function(X, id_CV) {
     .Call('_PPCKO_read_data_na', PACKAGE = 'PPCKO', X, id_CV)
 }
 
-PPC_KO <- function(X, id_CV = "NoCV", alpha = 0.75, k = 0L, threshold_ppc = 0.95, alpha_vec = NULL, k_vec = NULL, toll = 1e-4, dom_dim_s = 1L, err_ret = 0L, id_rem_nan = NULL) {
-    .Call('_PPCKO_PPC_KO', PACKAGE = 'PPCKO', X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, dom_dim_s, err_ret, id_rem_nan)
-}
-
-KO_check_hps <- function(X, lag_order) {
-    .Call('_PPCKO_KO_check_hps', PACKAGE = 'PPCKO', X, lag_order)
-}
-
-read_data_na <- function(X, id_CV) {
-    .Call('_PPCKO_read_data_na', PACKAGE = 'PPCKO', X, id_CV)
-}
-
