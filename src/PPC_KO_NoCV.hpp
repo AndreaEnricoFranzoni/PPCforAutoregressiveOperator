@@ -71,9 +71,7 @@ public:
 template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 KO_Traits::StoringVector 
 cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, int k)
-{
-  std::cout << "k imp: " << k << std::endl;
-  
+{  
   PPC_KO_NoCV<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> iter(std::move(training_data),alpha,k);
   iter.solving();
   
@@ -85,9 +83,7 @@ cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, int k)
 template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 KO_Traits::StoringVector 
 cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, double threshold_ppc)
-{
-  std::cout << "thresh: " << threshold_ppc << std::endl;
-  
+{  
   PPC_KO_NoCV<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> iter(std::move(training_data),alpha,threshold_ppc);
   iter.solving();
   
