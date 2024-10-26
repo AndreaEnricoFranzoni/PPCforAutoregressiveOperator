@@ -5,8 +5,8 @@ PPC_KO <- function(X, id_CV = "NoCV", alpha = 0.75, k = 0L, threshold_ppc = 0.95
     .Call('_PPCKO_PPC_KO', PACKAGE = 'PPCKO', X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, disc_ev, left_extreme, right_extreme, dom_dim_s, err_ret, id_rem_nan)
 }
 
-KO_check_hps <- function(X, lag_order) {
-    .Call('_PPCKO_KO_check_hps', PACKAGE = 'PPCKO', X, lag_order)
+KO_check_hps <- function(X) {
+    .Call('_PPCKO_KO_check_hps', PACKAGE = 'PPCKO', X)
 }
 
 read_data_na <- function(X, id_CV) {
