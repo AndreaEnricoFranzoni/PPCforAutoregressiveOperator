@@ -21,7 +21,7 @@ const KO_Traits::StoringMatrix
 reader_data(Rcpp::NumericMatrix X,
               const REM_NAN MA_t)
 {
-  std::cout << "Local version 695" << std::endl;
+  std::cout << "Local version 295" << std::endl;
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();

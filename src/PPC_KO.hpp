@@ -16,8 +16,6 @@
 #include "CV_include.hpp"
 #include "Factory_cv_strategy.hpp"
 #include "strategy_cv.hpp"
-#include "mesh.hpp"
-//#include "scores.hpp"
 
 
 //templates params
@@ -198,7 +196,7 @@ public:
   KO_Traits::StoringArray prediction() const;
   
   //scores evaluation
-  std::vector<double> scores(const Geometry::Mesh1D &grid_eval) const;
+  std::vector<double> scores() const;
   
   //solving
   inline

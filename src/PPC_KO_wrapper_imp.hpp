@@ -1,6 +1,5 @@
 #include "PPC_KO_wrapper.hpp"
 
-#include "mesh.hpp"
 #include <iostream>
 #include <algorithm>
 
@@ -31,13 +30,7 @@ PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko(
     PPC_KO_NoCV<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alpha,m_k);
     
     KO.solve(); 
-    
-    
-    Geometry::Domain1D domain_func_data(0,1);
-    Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-    std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-    //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-    auto scores = KO.scores(grid_func_data);
+    auto scores = KO.scores();
     
     if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),KO.ValidErr());}
     else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
@@ -69,14 +62,7 @@ PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko(
     PPC_KO_NoCV<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alpha,m_threshold_ppc);
     
     KO.solve();
-    
-    
-    
-    Geometry::Domain1D domain_func_data(0,1);
-    Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-    //std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-    //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-    auto scores = KO.scores(grid_func_data);
+    auto scores = KO.scores();
     
     if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),KO.ValidErr());}
     else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
@@ -108,13 +94,7 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
     PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k);
     
     KO.solve();
-    
-    
-    Geometry::Domain1D domain_func_data(0,1);
-    Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-    //std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-    //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-    auto scores = KO.scores(grid_func_data);
+    auto scores = KO.scores();
     
     
     if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
@@ -141,15 +121,7 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
     PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_threshold_ppc);
     
     KO.solve();
-    
-    
-    Geometry::Domain1D domain_func_data(0,1);
-    Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-    //std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-    //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-    auto scores = KO.scores(grid_func_data);
-    
-    
+    auto scores = KO.scores();
     
     if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
     else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}  }
@@ -182,15 +154,7 @@ PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko()
   PPC_KO_CV_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_k_s,m_alpha,m_toll);
   
   KO.solve();
-  
-  
-  Geometry::Domain1D domain_func_data(0,1);
-  Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-  //std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-  //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-  auto scores = KO.scores(grid_func_data);
-  
-  
+  auto scores = KO.scores();
   
   if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
   else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
@@ -221,14 +185,7 @@ PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::cal
   PPC_KO_CV_alpha_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k_s,m_toll);
   
   KO.solve();
-  
-  
-  
-  Geometry::Domain1D domain_func_data(0,1);
-  Geometry::Mesh1D   grid_func_data(domain_func_data,this->data().rows()-static_cast<int>(1));
-  //std::cout << "Grid of nodes" << this->grid_func_data().numNodes() << std::endl;
-  //std::for_each(this->grid_func_data().begin(),this->grid_func_data().end(),[](auto el){std::cout << el << std::endl;});
-  auto scores = KO.scores(grid_func_data);
+  auto scores = KO.scores();
   
   
   if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_2_t>(KO.ValidErr()));}

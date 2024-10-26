@@ -7,8 +7,6 @@
 
 #include "traits_ko.hpp"
 #include "PPC_KO_include.hpp"
-#include "mesh.hpp"
-
 
 
 //base
@@ -21,9 +19,9 @@ private:
   results_t<valid_err_ret> m_results;                  //storing the results
   
 public:
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper(STOR_OBJ&& data, GRID&& grid_func_data)
-    :  m_data{std::forward<STOR_OBJ>(data)}, m_grid_func_data{std::forward<GRID>(grid_func_data)}    {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper(STOR_OBJ&& data)
+    :  m_data{std::forward<STOR_OBJ>(data)}   {}
   
   /*!
    * Virtual destructor
@@ -39,11 +37,6 @@ public:
    * Getter for m_data
    */
   inline KO_Traits::StoringMatrix data() const {return m_data;};
-  
-  /*!
-   * Getter for m_grid_func_data
-   */
-  inline Geometry::Mesh1D grid_func_data() const {return m_grid_func_data;};
   
   /*!
    * Getter for m_results
@@ -69,14 +62,14 @@ private:
 
 public:
   //constructor if the k is already known (k_imp = YES)
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_no_cv(STOR_OBJ&& data, GRID&& grid_func_data, double alpha, int k)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alpha(alpha), m_k(k)    {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_no_cv(STOR_OBJ&& data, double alpha, int k)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alpha(alpha), m_k(k)    {}
   
   //constructor for finding the number of PPCs (k_imp = NO)
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_no_cv(STOR_OBJ&& data, GRID&& grid_func_data, double alpha, double threshold_ppc)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alpha(alpha), m_threshold_ppc(threshold_ppc)  {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_no_cv(STOR_OBJ&& data, double alpha, double threshold_ppc)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alpha(alpha), m_threshold_ppc(threshold_ppc)  {}
   
   void call_ko() override;
 };
@@ -94,14 +87,14 @@ private:
 
 public:
   //k given
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, GRID&& grid_func_data, const std::vector<double> & alphas, int k)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alphas(alphas), m_k(k) {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, int k)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k(k) {}
   
   //k to be found
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, GRID&& grid_func_data, const std::vector<double> & alphas, double threshold_ppc)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alphas(alphas), m_threshold_ppc(threshold_ppc) {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, double threshold_ppc)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_threshold_ppc(threshold_ppc) {}
   
   void call_ko() override;
 };
@@ -118,9 +111,9 @@ private:
   double m_toll;
   
 public:
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_cv_k(STOR_OBJ&& data, GRID&& grid_func_data, double alpha, const std::vector<int> & k_s, double toll)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alpha(alpha), m_k_s(k_s), m_toll(toll) {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_cv_k(STOR_OBJ&& data, double alpha, const std::vector<int> & k_s, double toll)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alpha(alpha), m_k_s(k_s), m_toll(toll) {}
   
   void call_ko() override;
 };
@@ -137,9 +130,9 @@ private:
   double m_toll;
   
 public:
-  template<typename STOR_OBJ,typename GRID>
-  PPC_KO_wrapper_cv_alpha_k(STOR_OBJ&& data, GRID&& grid_func_data, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),std::move(grid_func_data)), m_alphas(alphas), m_k_s(k_s), m_toll(toll) {}
+  template<typename STOR_OBJ>
+  PPC_KO_wrapper_cv_alpha_k(STOR_OBJ&& data, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k_s(k_s), m_toll(toll) {}
   
   void call_ko() override;
 };

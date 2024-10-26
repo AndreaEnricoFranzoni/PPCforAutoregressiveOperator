@@ -7,10 +7,6 @@
 #include "data_reader.hpp"
 #include "Factory_ko.hpp"
 
-
-#include "mesh.hpp"
-
-
 #include "ADF_test.hpp"
 #include "ADF_policies.hpp"
 
@@ -55,23 +51,10 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   //reading data, handling NANs
   KO_Traits::StoringMatrix x = reader_data<T>(X,id_RN);
   
-  
-  
-  
-  
-  //grid of function evaluations
-  int a = 0;
-  int b = 1;
-  Geometry::Domain1D domain_func_data(a,b);
-  Geometry::Mesh1D   grid_func_data(domain_func_data,x.rows()-static_cast<int>(1));
-  
-  
-  
-  
-  
   //checking which 
   bool dom_dim = dom_dim_s==1 ? false : true;
   bool err_ret_b = err_ret==1 ? true : false;
+  
   //returning element
   Rcpp::List l;
 
@@ -85,7 +68,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       { 
         //1D domain, k imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -101,7 +84,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -115,7 +98,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       { 
         //1D domain, k not imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -131,7 +114,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -151,7 +134,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       {
         //1D domain, k imposed, not returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -167,7 +150,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -181,7 +164,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       {
         //1D domain, k not imposed, not returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -197,7 +180,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -218,7 +201,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       {
         //2D domain, k imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -234,7 +217,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -248,7 +231,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       {
         //2D domain, k not imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -264,7 +247,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -283,7 +266,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       { 
         //2D domain, k imposed, not returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -298,7 +281,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -312,7 +295,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       {
         //2D domain, k not imposed, not returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),std::move(grid_func_data),alpha,k,threshold_ppc,alphas,k_s,toll);
+        auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll);
         //solving
         ko->call_ko();
         //results
@@ -327,7 +310,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
         //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
-        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["One-step ahead prediction"]  = one_step_ahead_pred;
         l["Alpha"]                     = alpha_used;
         l["Number of PPCs retained"]   = n_PPC;
         l["Scores along PPCs"]         = scores_PPC;
@@ -355,7 +338,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
 
 //
 // [[Rcpp::export]]
-Rcpp::List KO_check_hps(Rcpp::NumericMatrix X, int lag_order)
+Rcpp::List KO_check_hps(Rcpp::NumericMatrix X)
 {
   using T = double; 
   

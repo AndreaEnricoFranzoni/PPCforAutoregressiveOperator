@@ -63,16 +63,12 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   if constexpr(k_imp == K_IMP::NO)  //if k not imposed form user: to be retrieved from phi
   {
     //PPCs retained from phi
-    std::cout << "K WITH EXPL PW"<< std::endl;
     m_k = this->PPC_retained(eigvals_phi);
   }
-  else{std::cout << "K IMP"<< std::endl;}
-  
-  
+
   //retaining only the first k components of eigenvalues and eigenvectors
   const KO_Traits::StoringVector D_hat = eigvals_phi.head(m_k);
   const KO_Traits::StoringMatrix V_hat = eigensolver_phi.eigenvectors().rowwise().reverse().leftCols(m_k);
-  
   
   //explanatory power
   double tot_exp_pow = eigvals_phi.sum();
@@ -102,11 +98,9 @@ const
 //evaluating the scores on the PPCs
 template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 std::vector<double>
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::scores(const Geometry::Mesh1D &grid_eval)
+PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::scores()
 const
 { 
-  //constexpr unsigned long int DIM_DOM=1ul;
-  //devo calcolarli su dati centrati? Al momento, sto facendo così
   std::vector<double> scores;
   scores.reserve(m_k);
   
