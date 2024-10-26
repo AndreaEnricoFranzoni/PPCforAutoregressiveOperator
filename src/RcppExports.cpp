@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PPC_KO
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, int dom_dim_s, int err_ret, Rcpp::Nullable<std::string> id_rem_nan);
-RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP dom_dim_sSEXP, SEXP err_retSEXP, SEXP id_rem_nanSEXP) {
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, Rcpp::Nullable<NumericVector> disc_ev, double left_extreme, double right_extreme, int dom_dim_s, int err_ret, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP disc_evSEXP, SEXP left_extremeSEXP, SEXP right_extremeSEXP, SEXP dom_dim_sSEXP, SEXP err_retSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,10 +25,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<NumericVector> >::type alpha_vec(alpha_vecSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<IntegerVector> >::type k_vec(k_vecSEXP);
     Rcpp::traits::input_parameter< double >::type toll(tollSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<NumericVector> >::type disc_ev(disc_evSEXP);
+    Rcpp::traits::input_parameter< double >::type left_extreme(left_extremeSEXP);
+    Rcpp::traits::input_parameter< double >::type right_extreme(right_extremeSEXP);
     Rcpp::traits::input_parameter< int >::type dom_dim_s(dom_dim_sSEXP);
     Rcpp::traits::input_parameter< int >::type err_ret(err_retSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
-    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, dom_dim_s, err_ret, id_rem_nan));
+    rcpp_result_gen = Rcpp::wrap(PPC_KO(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, disc_ev, left_extreme, right_extreme, dom_dim_s, err_ret, id_rem_nan));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -58,7 +61,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 11},
+    {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 14},
     {"_PPCKO_KO_check_hps", (DL_FUNC) &_PPCKO_KO_check_hps, 2},
     {"_PPCKO_read_data_na", (DL_FUNC) &_PPCKO_read_data_na, 2},
     {NULL, NULL, 0}
