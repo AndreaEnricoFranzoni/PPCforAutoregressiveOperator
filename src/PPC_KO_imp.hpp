@@ -74,6 +74,12 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   const KO_Traits::StoringMatrix V_hat = eigensolver_phi.eigenvectors().rowwise().reverse().leftCols(m_k);
   
   
+  //explanatory power
+  double tot_exp_pow = eigvals_phi.sum();
+  m_explanatory_power.resize(m_k);
+  std::partial_sum(D_hat.begin(),D_hat.end(),m_explanatory_power.begin());        
+  std::for_each(m_explanatory_power.begin(),m_explanatory_power.end(),[&tot_exp_pow](auto &el){el=el/tot_exp_pow;});
+  
   //Predictive factors (b_i)
   m_b = m_CovRegRoot*V_hat;
   //Predictive loadings (a_i)

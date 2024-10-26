@@ -25,27 +25,38 @@ using namespace Rcpp;
 
 //
 // [[Rcpp::export]]
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
-                  std::string id_CV = "NoCV",
-                  double alpha = 0.75,
-                  int k = 0, 
-                  double threshold_ppc = 0.95,
-                  Rcpp::Nullable<NumericVector> alpha_vec = R_NilValue,
-                  Rcpp::Nullable<IntegerVector> k_vec = R_NilValue,
-                  double toll = 1e-4,
-                  int dom_dim_s = 1,
-                  int err_ret = 0,
-                  Rcpp::Nullable<std::string> id_rem_nan = R_NilValue
+Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
+                  std::string                   id_CV         = "NoCV",
+                  double                        alpha         = 0.75,
+                  int                           k             = 0, 
+                  double                        threshold_ppc = 0.95,
+                  Rcpp::Nullable<NumericVector> alpha_vec     = R_NilValue,
+                  Rcpp::Nullable<IntegerVector> k_vec         = R_NilValue,
+                  double                        toll          = 1e-4,
+                  Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
+                  double                        left_extreme  = 0,
+                  double                        right_extreme = 1,
+                  int                           dom_dim_s     = 1,
+                  int                           err_ret       = 0,
+                  Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue
                   )
 { 
   using T = double;       //version for real-values time series
   
-  //wrapping parameters
+  //wrapping and checking parameters
+  check_threshold_ppc(threshold_ppc);
+  check_alpha(alpha);
+  check_k(k,X.nrow());
+  std::vector<double> alphas = wrap_alpha_vec(alpha_vec);
+  std::vector<int> k_s       = wrap_k_vec(k_vec,X.nrow());
   const REM_NAN id_RN = wrap_id_rem_nans(id_rem_nan);
-  
+  std::vector<double> disc_ev_points = wrap_disc_ev(disc_ev,left_extreme,right_extreme,X.nrow());
   
   //reading data, handling NANs
   KO_Traits::StoringMatrix x = reader_data<T>(X,id_RN);
+  
+  
+  
   
   
   //grid of function evaluations
@@ -55,17 +66,13 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
   Geometry::Mesh1D   grid_func_data(domain_func_data,x.rows()-static_cast<int>(1));
   
   
-  //checking parameters
-  check_threshold_ppc(threshold_ppc);
-  check_alpha(alpha);
-  check_k(k,x.rows());
-  std::vector<double> alphas = wrap_alpha_vec(alpha_vec);
-  std::vector<int> k_s       = wrap_k_vec(k_vec,x.rows());
+  
+  
   
   //checking which 
   bool dom_dim = dom_dim_s==1 ? false : true;
   bool err_ret_b = err_ret==1 ? true : false;
-  
+  //returning element
   Rcpp::List l;
 
   if(!dom_dim)                                //DOMAIN 1D
@@ -86,20 +93,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        auto valid_err            = std::get<7>(ko->results());   //valid errors
+        Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        l["Validation errors"]         = errors["Errors"];
       }
       
       else                                                                                      //K NOT IMPOSED
@@ -114,20 +123,23 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        auto valid_err            = std::get<7>(ko->results());   //valid errors
+        Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        l["Validation errors"]         = errors["Errors"];
         
-        //return l;
       }
     }
     
@@ -147,19 +159,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        //auto valid_err            = std::get<7>(ko->results());   //valid errors
+        //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        //l["Validation errors"]         = errors["Errors"];
       }
       
       else                                                                                      //K NOT IMPOSED
@@ -174,19 +189,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        //auto valid_err            = std::get<7>(ko->results());   //valid errors
+        //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        //l["Validation errors"]         = errors["Errors"];
       }        
     }
   }
@@ -208,20 +226,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        auto valid_err            = std::get<7>(ko->results());   //valid errors
+        Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        l["Validation errors"]         = errors["Errors"];
       }
       
       else                                                                                      //K NOT IMPOSED
@@ -236,20 +256,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        auto valid_err            = std::get<7>(ko->results());   //valid errors
+        Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
         //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        Rcpp::List errors = valid_err_disp(valid_err);
-        l["valid_errors"]   = errors["Errors"];
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        l["Validation errors"]         = errors["Errors"];
       }
     }
     
@@ -269,19 +291,21 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        //auto valid_err            = std::get<7>(ko->results());   //valid errors
+        //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        //l["Validation errors"]         = errors["Errors"];
       }
       
       else                                                                                      //K NOT IMPOSED
@@ -296,22 +320,33 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix X,
         double alpha_used         = std::get<1>(ko->results());   //alpha used
         int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
         auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
-        auto rho_estimate         = std::get<4>(ko->results());   //estimate of rho
-        //auto valid_err            = std::get<5>(ko->results());   //valid errors
+        auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+        auto directions           = std::get<5>(ko->results());   //directions
+        auto weights              = std::get<6>(ko->results());   //weights
+        //auto valid_err            = std::get<7>(ko->results());   //valid errors
+        //Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
         
         //saving results in a list, that will be returned
-        //Rcpp::List l;
-        l["predictions"]    = one_step_ahead_pred;
-        l["alpha"]          = alpha_used;
-        l["PPCs_retained"]  = n_PPC;
-        l["scores"]         = scores_PPC;
-        l["rho_hat"]        = rho_estimate;
-        //l["valid_errors"]   = valid_err;
-        
-        //return l;
+        l["One-step ahead predictio"]  = one_step_ahead_pred;
+        l["Alpha"]                     = alpha_used;
+        l["Number of PPCs retained"]   = n_PPC;
+        l["Scores along PPCs"]         = scores_PPC;
+        l["Explanatory power PPCs"]    = explanatory_power;
+        l["Directions of PPCs"]        = directions;
+        l["Weights of PPCs"]           = weights;
+        //l["Validation errors"]         = errors["Errors"];
       }        
     }    
   }
+  
+  
+  l["Function discrete evaluations points"] = disc_ev_points;
+  l["Left extreme domain"]                  = left_extreme; 
+  l["Right extreme domain"]                 = right_extreme;
+  l["f_n"]                                  = X(_, X.ncol() - 1);
+  l["CV"]                                   = id_CV;
+  l["Alphas"]                               = alphas;
+  l["K_s"]                                  = k_s;
   
   return l;
 }

@@ -8,8 +8,7 @@
 #include <string>
 #include <stdexcept>
 
-
-//#include "removing_nan.hpp"
+#include "mesh.hpp"
 
 
 //utilities to wrap the input parameters of the R function
@@ -83,15 +82,15 @@ wrap_alpha_vec(Rcpp::Nullable<Rcpp::NumericVector> alpha_vec)
   
   std::vector<double> alphas = Rcpp::as<std::vector<double>>(alpha_vec);
   
-  //all the alphas have to be positive numbers
-  if(*(std::min_element(alphas.cbegin(),alphas.cend())) <= 0)
+  //sorting into ascending order the alphas to be coherent during the algorithm
+  std::sort(alphas.begin(), alphas.end());
+  
+  if(alphas[0] <= 0)
   {
     std::string error_message = "Every alpha has to be a positive real number";
     throw std::invalid_argument(error_message);
   }
   
-  //sorting into ascending order the alphas to be coherent during the algorithm
-  std::sort(alphas.begin(), alphas.end());
   return alphas;
 }
 
@@ -116,22 +115,55 @@ wrap_k_vec(Rcpp::Nullable<Rcpp::IntegerVector> k_vec, int k_max)
     
     std::vector<int> k_s = Rcpp::as<std::vector<int>>(k_vec);
     
-    //all the k_s has to be in the range [1,k_max]
-    if(*(std::min_element(k_s.cbegin(),k_s.cend())) < 1)
+    //sorting into ascending order the alphas to be coherent during the algorithm
+    std::sort(k_s.begin(), k_s.end());
+    
+    //checking
+    if(k_s[0] < 1)
     {
       std::string error_message1 = "k has to be at least 1";
       throw std::invalid_argument(error_message1);
     }
-    
-    if(*(std::max_element(k_s.cbegin(),k_s.cend())) > k_max)
+    if(k_s.back() > k_max)
     {
       std::string error_message2 = "k cannot be greater than the number of discrete evaluation of the functional object in the domain (" + std::to_string(k_max) + ")";
       throw std::invalid_argument(error_message2);
     }
     
-    //sorting into ascending order the alphas to be coherent during the algorithm
-    std::sort(k_s.begin(), k_s.end());
     return k_s;
+}
+
+
+
+//to wrap the points in which the domain has been discretized
+inline
+std::vector<double>
+wrap_disc_ev(Rcpp::Nullable<Rcpp::NumericVector> disc_ev, double a, double b, int dim)    //dim: row of x
+{
+  if(disc_ev.isNull())
+  {
+    Geometry::Domain1D domain_func_data(a,b);
+    Geometry::Mesh1D   grid_func_data(domain_func_data,dim-static_cast<int>(1));
+    
+    return grid_func_data.nodes();
+  }
+  
+  std::vector<double> disc_ev_points = Rcpp::as<std::vector<double>>(disc_ev);
+  std::sort(disc_ev_points.begin(),disc_ev_points.end());
+  
+  if(disc_ev_points[0] < a || disc_ev_points.back() > b)
+  {
+    std::string error_message = "The points in which there are the discrete evaluations of the functiona data have to in the domain (" + std::to_string(a) + "," + std::to_string(b) + ")";
+    throw std::invalid_argument(error_message);
+  }
+  
+  if(disc_ev_points.size()!=dim)
+  {
+    std::string error_message2 = "In the grid are needed " + std::to_string(dim) + " points";
+    throw std::invalid_argument(error_message2);
+  }
+  
+  return disc_ev_points;
 }
 
 

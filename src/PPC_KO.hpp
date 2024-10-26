@@ -41,6 +41,7 @@ private:
   KO_Traits::StoringMatrix m_a;               //matrix containing predictive loadings (each col)  (m x k)
   KO_Traits::StoringMatrix m_b;               //matrix containing predictive factors (each col)   (m x k)        
   KO_Traits::StoringMatrix m_rho;             //matrix containing the estimate of the operator for doing 1-step ahead prediction (m x m)
+  std::vector<double> m_explanatory_power;    //vector containing the cumulative explanatory power (will have size k)
   double m_alpha;                             //regularization parameter
   int m_k;                                    //number of PPCs retained
   double m_threshold_ppc;                       //threshold according to how much predictive power has to be retained by the PPCs
@@ -126,6 +127,21 @@ public:
   inline KO_Traits::StoringMatrix rho() const {return m_rho;};
   
   /*!
+   * Getter for m_a
+   */
+  inline KO_Traits::StoringMatrix a() const {return m_a;};
+  
+  /*!
+   * Getter for m_b
+   */
+  inline KO_Traits::StoringMatrix b() const {return m_b;};
+  
+  /*!
+   * Getter for m_explanatory_power
+   */
+  inline std::vector<double> explanatory_power() const {return m_explanatory_power;};
+  
+  /*!
    * Getter for m_alpha
    */
   inline double alpha() const {return m_alpha;};
@@ -155,14 +171,13 @@ public:
    */
   inline double & threshold_ppc() {return m_threshold_ppc;};
   
-  
   /*!
    * Getter for m_valid_err
    */
   inline valid_err_variant ValidErr() const {return m_valid_err;};
   
   /*!
-   * Setter for m_CovReg (needed for CV)
+   * Setter for m_valid_err
    */
   inline valid_err_variant & ValidErr() {return m_valid_err;};
   

@@ -71,8 +71,8 @@ public:
     if constexpr (valid_err_ret == VALID_ERR_RET::YES_err)
     {
       valid_err_cv_1_t m;
-      m.reserve(m_k_s.size());
-      for (size_t i = 0; i < m_k_s.size(); ++i)  { m.emplace_back(cv.valid_errors()[i]);}
+      m.reserve(cv.valid_errors().size());
+      for (size_t i = 0; i < cv.valid_errors().size(); ++i)  { m.emplace_back(cv.valid_errors()[i]);}
       this->ValidErr() = m;
       m.clear();
     }

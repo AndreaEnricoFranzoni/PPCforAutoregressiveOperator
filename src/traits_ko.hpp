@@ -73,10 +73,23 @@ using valid_err_cv_1_t = std::vector<double>;
 using valid_err_cv_2_t = std::vector<std::vector<double>>;
 using valid_err_variant = std::variant<valid_err_cv_1_t,valid_err_cv_2_t>;
 
-// if errors are saved or not
-using results_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, KO_Traits::StoringMatrix, valid_err_variant>; 
-using results_no_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, KO_Traits::StoringMatrix>; 
+//results from the algo
+//        EigenVector with one-step ahead prediction:   Y
+//        regularization parameter used                 Y
+//        number of PPCs                                Y
+//        scores along the PPCs                         Y
+//        explanatory power of the PPCs                 Y
+//        a_i (directions)                              Y
+//        b_i (weights)                                 Y
+//        id_CV (which type of algorithm has been used)
+//        left extreme of the domain
+//        right extreme of the domain
+//        grid for the discrete evaluations
+//        errors (eventually)                           Y
+using results_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix, valid_err_variant>; 
+using results_no_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix>; 
 
+// if errors are saved or not
 template <VALID_ERR_RET valid_err_ret>
 using results_t = std::conditional<valid_err_ret,results_err_t,results_no_err_t>::type;
 
