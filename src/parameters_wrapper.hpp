@@ -139,7 +139,13 @@ wrap_k_vec(Rcpp::Nullable<Rcpp::IntegerVector> k_vec, int k_max)
 inline
 std::vector<double>
 wrap_disc_ev(Rcpp::Nullable<Rcpp::NumericVector> disc_ev, double a, double b, int dim)    //dim: row of x
-{
+{ 
+  if(a>=b)
+  {
+    std::string error_message1 = "Left extreme of the domain has to be smaller than the right one";
+    throw std::invalid_argument(error_message1);
+  }
+  
   if(disc_ev.isNull())
   {
     Geometry::Domain1D domain_func_data(a,b);
@@ -153,14 +159,14 @@ wrap_disc_ev(Rcpp::Nullable<Rcpp::NumericVector> disc_ev, double a, double b, in
   
   if(disc_ev_points[0] < a || disc_ev_points.back() > b)
   {
-    std::string error_message = "The points in which there are the discrete evaluations of the functiona data have to in the domain (" + std::to_string(a) + "," + std::to_string(b) + ")";
-    throw std::invalid_argument(error_message);
+    std::string error_message2 = "The points in which there are the discrete evaluations of the functiona data have to in the domain (" + std::to_string(a) + "," + std::to_string(b) + ")";
+    throw std::invalid_argument(error_message2);
   }
   
   if(disc_ev_points.size()!=dim)
   {
-    std::string error_message2 = "In the grid are needed " + std::to_string(dim) + " points";
-    throw std::invalid_argument(error_message2);
+    std::string error_message3 = "In the grid are needed " + std::to_string(dim) + " points";
+    throw std::invalid_argument(error_message3);
   }
   
   return disc_ev_points;
@@ -170,9 +176,10 @@ wrap_disc_ev(Rcpp::Nullable<Rcpp::NumericVector> disc_ev, double a, double b, in
 
 //removing NaNs
 enum REM_NAN
-{
-  MR  = 0,      //replacing nans with mean (easily changes the mean of the distribution)
-  ZR  = 1,      //replacing nans with 0s (easily changes the sd of the distribution)
+{ 
+  NR = 0,      //not replacing NaN
+  MR = 1,      //replacing nans with mean (easily changes the mean of the distribution)
+  ZR = 2,      //replacing nans with 0s (easily changes the sd of the distribution)
 };
 
 
@@ -184,6 +191,10 @@ wrap_id_rem_nans(Rcpp::Nullable<std::string> id_rem_nan)
   if(id_rem_nan.isNull())
   { 
     return REM_NAN::MR;
+  }
+  if(Rcpp::as< std::string >(id_rem_nan) == "NO")
+  {
+    return REM_NAN::NR;
   }
   if(Rcpp::as< std::string >(id_rem_nan) == "MR")
   {

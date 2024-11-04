@@ -1,38 +1,52 @@
 #include "removing_nan.hpp"
+#include <RcppEigen.h>
 
-template<typename T,REM_NAN MA_t>
-KO_Traits::StoringMatrix
-removing_nan<T,MA_t>::final_clean()
-const
-{ 
-  std::vector<int> temp;
-  temp.resize(m_m);
-  std::iota(temp.begin(),temp.end(),static_cast<int>(1));     
-  
-  //all the rows
-  std::set<int> all_row(temp.begin(),temp.end());
-  temp.clear();
-  
-  //how many rows have to be removed
-  auto n_row_rem = m_row_to_be_removed.size();
-  
-  //if there are only NaNs: error
-  if(n_row_rem==m_m)
+//remove rows of nan
+
+// Funzione che verifica se una riga è interamente NaN
+inline
+bool 
+is_row_all_nan(const Rcpp::NumericMatrix::ConstRow& row, int tot_cols) 
+{
+  return std::count_if(row.cbegin(),row.cend(),[](auto el){return isnan(el);}) == tot_cols  ?  true  :  false;
+}
+
+
+//function to identify rows of only NaNs
+//
+//  [[Rcpp::depends(RcppEigen)]]
+std::set<int>
+rows_entire_NaNs(const Rcpp::NumericMatrix &x)
+{
+  if (x.nrow() == 0 || x.ncol() == 0) 
   {
-    std::string error_message = "Input data are all NaNs";
-    throw std::invalid_argument(error_message);  
+    std::string error_message1 = "Empty data matrix";
+    throw std::invalid_argument(error_message1);
   }
+    
+  int tot_cols = x.ncol();
+  std::set<int> rows_to_be_kept;
+  for (int i = 0; i < x.nrow(); ++i) { if (!is_row_all_nan(x.row(i),tot_cols)) {  rows_to_be_kept.insert(i);}}
+    
+  if (rows_to_be_kept.empty())
+  {
+    std::string error_message2 = "Only-NaNs data matrix";
+    throw std::invalid_argument(error_message2);
+  }
+    
+  return rows_to_be_kept;
+}
 
-  //rows retained: only the ones that are not removed
-  std::set<int> row_ret;
-  std::set_difference(all_row.begin(),all_row.end(),
-                      m_row_to_be_removed.begin(),m_row_to_be_removed.end(),
-                      std::inserter(row_ret,row_ret.begin()));
+
+// function to remove the all-NaNs rows
+//
+//  [[Rcpp::depends(RcppEigen)]]
+Rcpp::NumericMatrix 
+removing_NaNS_entire_rows(const Rcpp::NumericMatrix &x,const std::set<int> &rows_to_be_kept)
+{
+  Rcpp::NumericMatrix x_clean(rows_to_be_kept.size(),x.ncol());
+  int counter_row_clean = 0;
+  std::for_each(rows_to_be_kept.cbegin(),rows_to_be_kept.cend(),[&x,&x_clean,&counter_row_clean](auto el){x_clean.row(counter_row_clean)=x.row(el); counter_row_clean++;});
   
-  //remove the rows of all NaNs
-  KO_Traits::StoringMatrix data_cleaned(m_m - n_row_rem, m_n);
-  int counter_row_ret = 0;
-  std::for_each(row_ret.begin(),row_ret.end(),[this,&data_cleaned,&counter_row_ret](int el){data_cleaned.row(counter_row_ret)=this->m_data.row(el-1); counter_row_ret++;});
-
-  return data_cleaned;
+  return x_clean;
 }

@@ -5,4 +5,7 @@ importFrom("graphics", "axis", "boxplot", "legend", "lines", "matplot","par", "t
 import(ggplot2)
 import(grid)
 import(gridExtra)
+import(viridis)
+import(latex2exp)
+import(patchwork)
 exportPattern("^[[:alpha:]]+")
