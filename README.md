@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series. Assumption on data: Functional AutoRegressive of order 1 process.
+R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series of functional data. Assumption on data: Functional AutoRegressive of order 1 process.
 
 
 
