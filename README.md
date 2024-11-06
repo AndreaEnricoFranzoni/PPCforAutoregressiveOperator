@@ -167,7 +167,7 @@ PPCKO::PPC_KO_2d(Rcpp::NumericMatrix           X,
                  int                           err_ret          = 0,
                  Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue)
 ~~~
-Inputs have the sane meaning of the unidimensional domain case: here are explained only the ones that differ.
+Inputs have the same meaning of the unidimensional domain case: here are explained only the ones that differ.
 
 -**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (m is the total number of evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain. Below, some functions are used to map the data (to understand in which format data can be stored).
 
@@ -270,6 +270,8 @@ KO_show_results( results_ko,
 PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 ~~~
 -**`Xt`**: list in which each element is a matrix containing the evaluation of the functional data. Each matrix is a time instants (temporally equispaced). Put NaNs in each matrix for the points that actually do not belong the data domain (to represent more complex domains).
+
+**RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
 
 
 
