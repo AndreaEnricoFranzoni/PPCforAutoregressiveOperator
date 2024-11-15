@@ -33,8 +33,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
                   Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
                   double                        left_extreme  = 0,
                   double                        right_extreme = 1,
-                  int                           min_size_ts   = R_NilValue,
-                  int                           max_size_ts   = R_NilValue,
+                  Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
+                  Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                   int                           err_ret       = 0,
                   Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue
                   )
@@ -259,8 +259,8 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
                      double                        right_extreme_x1 = 1,
                      double                        left_extreme_x2  = 0,
                      double                        right_extreme_x2 = 1,
-                     int                           min_size_ts      = R_NilValue,
-                     int                           max_size_ts      = R_NilValue,
+                     Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
+                     Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                      int                           err_ret          = 0,
                      Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue
 )
