@@ -178,15 +178,12 @@ inline
 std::pair<int,int>
 wrap_sizes_set_CV(Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, int number_time_instants)    //dim: row of x
 { 
-  int min_dim_ts;
-  int max_dim_ts;
-
-  min_dim_ts = min_size_ts.isNull() ? static_cast<int>(std::ceil(static_cast<double>(number_time_instants)/static_cast<double>(2)))  : Rcpp::as<int>(min_size_ts);
-  max_dim_ts = max_size_ts.isNull() ? number_time_instants  : Rcpp::as<int>(max_size_ts); 
+  int min_dim_ts = min_size_ts.isNull() ? static_cast<int>(std::ceil(static_cast<double>(number_time_instants)/static_cast<double>(2)))  : Rcpp::as<int>(min_size_ts);
+  int max_dim_ts = max_size_ts.isNull() ? number_time_instants  : Rcpp::as<int>(max_size_ts); 
   
-  if(min_size_ts >= max_size_ts)
+  if(min_dim_ts >= max_dim_ts)
   {
-    std::string error_message = "Min size of train set (" + std::to_string(min_size_ts) + " has to be less than the max one ("  + std::to_string(max_size_ts) + ")";
+    std::string error_message = "Min size of train set (" + std::to_string(min_dim_ts) + " has to be less than the max one ("  + std::to_string(max_dim_ts) + ")";
     throw std::invalid_argument(error_message);
   }
 
