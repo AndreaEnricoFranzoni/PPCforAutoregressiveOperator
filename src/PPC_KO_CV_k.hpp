@@ -60,9 +60,9 @@ public:
     //lambda wrapper for the correct overload
     auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k);};
     
-    
+    double toll_param = m_toll*this->trace_cov();
     //CV_PPC::CV_KO_PPC_k_CRTP<cv_strat,cv_err_eval,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,m_toll,this->alpha(),PPC::ko_single_cv_CRTP<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval>);
-    CV_k<cv_strat,cv_err_eval,K_IMP::YES,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,m_toll,this->alpha(),predictor);
+    CV_k<cv_strat,cv_err_eval,K_IMP::YES,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,toll_param,this->alpha(),predictor);
     
     cv.best_param_search();
     this->k() = cv.param_best();
