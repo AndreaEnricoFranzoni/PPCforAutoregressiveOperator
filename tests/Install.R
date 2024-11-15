@@ -1,8 +1,8 @@
 #to uploda the packages
 #change here the directory
-#setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/pacs-project/PPCforAutoregressiveOperator")
+setwd("/Users/andreafranzoni/Documents/Politecnico/Magistrale/PACS/pacs-project/PPCforAutoregressiveOperator")
 #then 
-#Rcpp::compileAttributes(".") 
+Rcpp::compileAttributes(".") 
 # and then push the changes to modify the exports
 
 library(devtools)
