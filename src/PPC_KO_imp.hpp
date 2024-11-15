@@ -18,31 +18,31 @@ const
 
 
 //doing the inverse square root of a spd matrix
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
-KO_Traits::StoringMatrix
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat)
-const
-{   
+//template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+//KO_Traits::StoringMatrix
+//PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat)
+//const
+//{   
   //covariance matrix: is symmetric. Since only real values: self-adjoint
   //expoliting Eigen library to do spectral decomposition efficiently
-  Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver(mat);
+//  Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver(mat);
   
-  if (eigensolver.info() != Eigen::Success) abort();  //TODO: THROW EXCEPTION
+  //if (eigensolver.info() != Eigen::Success) abort();  //TODO: THROW EXCEPTION
   
   //eigenvalues (descending order)
-  KO_Traits::StoringVector eigvals = eigensolver.eigenvalues().reverse();
+ // KO_Traits::StoringVector eigvals = eigensolver.eigenvalues().reverse();
   
   //eigenvectors (ordererd wrt descending order of their eigenvalues)
-  KO_Traits::StoringMatrix eigvcts = eigensolver.eigenvectors().rowwise().reverse();
+  //KO_Traits::StoringMatrix eigvcts = eigensolver.eigenvectors().rowwise().reverse();
   
   //spectral theorem
-  std::transform(eigvals.begin(),eigvals.end(),
-                 eigvals.begin(),
-                 [](double s){return static_cast<double>(1)/std::sqrt(s);});
+  //std::transform(eigvals.begin(),eigvals.end(),
+    //             eigvals.begin(),
+      //           [](double s){return static_cast<double>(1)/std::sqrt(s);});
   
   //spectral theorem for inverse square root    
-  return eigvcts*(eigvals.asDiagonal())*(eigvcts.transpose());
-}
+  //return eigvcts*(eigvals.asDiagonal())*(eigvcts.transpose());
+//}
 
 
 //KO algorithm (all parameters been set)
@@ -51,7 +51,11 @@ void
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
 { 
   //Square root inverse of reg covariance
-  m_CovRegRoot = this->matrix_inverse_square_root(m_CovReg);
+  //m_CovRegRoot = this->matrix_inverse_square_root(m_CovReg);
+  Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
+  KO_Traits::StoringMatrix m_CovRegRoot = eigensolver_cov_reg.operatorInverseSqrt();
+  
+  
   
   //Phi hat
   KO_Traits::StoringMatrix phi_hat = m_CovRegRoot*m_GammaSquared*m_CovRegRoot.transpose();
