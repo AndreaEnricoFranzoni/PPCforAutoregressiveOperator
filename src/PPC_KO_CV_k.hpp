@@ -13,16 +13,20 @@ private:
   std::vector<int> m_k_s;
   KO_Traits::StoringMatrix m_X_non_cent; 
   double m_toll;
+  int min_size_ts;
+  int max_size_ts;
   
 public:
   
   template<typename STOR_OBJ>
-  PPC_KO_CV_k(STOR_OBJ&& X, std::vector<int> &k_s, double alpha, double toll) 
+  PPC_KO_CV_k(STOR_OBJ&& X, std::vector<int> &k_s, double alpha, double toll, int min_size_ts, int max_size_ts) 
     : 
     PPC_KO_base<PPC_KO_CV_k,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
     m_k_s(k_s),
     m_X_non_cent(this->m(),this->n()),
-    m_toll(toll)
+    m_toll(toll),
+    m_min_size_ts(min_size_ts),
+    m_max_size_ts(max_size_ts)
     {
       this->alpha() = alpha;
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
@@ -55,11 +59,12 @@ public:
   {
   
     //scrivere una l'oggetto CV strategy
-    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
+    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(m_min_size_ts,m_max_size_ts);
+
     for (size_t i = 0; i < (*strategy_cv).strategy().size(); ++i)
     {
-      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front();
-      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front();
+      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front() << std::endl;
+      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front() << std::endl;
     }
     
     

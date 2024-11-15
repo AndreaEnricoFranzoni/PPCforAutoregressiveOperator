@@ -11,17 +11,21 @@ class PPC_KO_CV_alpha : public PPC_KO_base<PPC_KO_CV_alpha<dom_dim,k_imp,valid_e
 {
 private:
   std::vector<double> m_alphas;
-  KO_Traits::StoringMatrix m_X_non_cent; 
+  KO_Traits::StoringMatrix m_X_non_cent;
+  int m_min_size_ts;
+  int m_max_size_ts;  
   
   
 public:
   //k already known
   template<typename STOR_OBJ>
-  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, int k) 
+  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, int k, int min_size_ts, int max_size_ts) 
     : 
     PPC_KO_base<PPC_KO_CV_alpha,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
     m_alphas(alphas),
-    m_X_non_cent(this->m(),this->n())
+    m_X_non_cent(this->m(),this->n()),
+    m_min_size_ts(min_size_ts),
+    m_max_size_ts(max_size_ts)
     {
       this->k() = k; 
       
@@ -53,11 +57,13 @@ public:
   
   //k to be found
   template<typename STOR_OBJ>
-  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, double threshold_ppc) 
+  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, double threshold_ppc, int min_size_ts, int max_size_ts) 
     : 
     PPC_KO_base<PPC_KO_CV_alpha,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
     m_alphas(alphas),
-    m_X_non_cent(this->m(),this->n())
+    m_X_non_cent(this->m(),this->n()),
+    m_min_size_ts(min_size_ts),
+    m_max_size_ts(max_size_ts)
     {
       this->threshold_ppc() = threshold_ppc; 
       
@@ -90,7 +96,13 @@ public:
   solving()
   {
     //factory to create the cv strategy
-    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
+    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(m_min_size_ts,m_max_size_ts);
+
+    for (size_t i = 0; i < (*strategy_cv).strategy().size(); ++i)
+    {
+      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front() << std::endl;
+      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front() << std::endl;
+    }
     
     if constexpr(k_imp == K_IMP::YES)
     {

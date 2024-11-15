@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <numeric>
 #include <iostream>
+#include <utility>
 #include <string>
 #include <stdexcept>
 
@@ -170,6 +171,31 @@ wrap_disc_ev(Rcpp::Nullable<Rcpp::NumericVector> disc_ev, double a, double b, in
   }
   
   return disc_ev_points;
+}
+
+//to wrap the min a max dimension of ts
+inline
+std::pair<int,int>
+wrap_sizes_set_CV(Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, int number_time_instants)    //dim: row of x
+{ 
+  int min_dim_ts;
+  int max_dim_ts;
+
+  if(min_size_ts.isNull()){
+    min_dim_ts = static_cast<int>(std::ceil(static_cast<double>(number_time_instants)/static_cast<double>(2)));
+  }
+
+  if(max_size_ts.isNull()){
+    max_size_ts = number_time_instants;
+  }
+
+  if(min_size_ts >= max_size_ts)
+  {
+    std::string error_message = "Min size of train set (" + std::to_string(min_size_ts) + " has to be less than the max one ("  + std::to_string(max_size_ts) + ")";
+    throw std::invalid_argument(error_message);
+  }
+
+  return std::make_pair(min_size_ts,max_size_ts);
 }
 
 

@@ -91,7 +91,7 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
       */
      
     
-    PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k);
+    PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k,m_min_size_ts,m_max_size_ts);
     
     KO.solve();
     auto scores = KO.scores();
@@ -118,7 +118,7 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
       */
      
     
-    PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_threshold_ppc);
+    PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_threshold_ppc,m_min_size_ts,m_max_size_ts);
     
     KO.solve();
     auto scores = KO.scores();
@@ -151,7 +151,7 @@ PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko()
   
   
   
-  PPC_KO_CV_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_k_s,m_alpha,m_toll);
+  PPC_KO_CV_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_k_s,m_alpha,m_toll,m_min_size_ts,m_max_size_ts);
   
   KO.solve();
   auto scores = KO.scores();
@@ -182,7 +182,7 @@ PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::cal
     */
    
   
-  PPC_KO_CV_alpha_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k_s,m_toll);
+  PPC_KO_CV_alpha_k<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,m_k_s,m_toll,m_min_size_ts,m_max_size_ts);
   
   KO.solve();
   auto scores = KO.scores();

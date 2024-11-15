@@ -25,7 +25,9 @@ public:
               double threshold_ppc,
               const std::vector<double>& alphas,
               const std::vector<int>& k_s,
-              double toll)
+              double toll,
+              int min_size_ts,
+              int max_size_ts)
     {
       
       if (id == "NoCV")
@@ -36,18 +38,18 @@ public:
       
       if (id == "CV_alpha")
       {
-        if(k==0){return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc);}
-        else    {return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k);}
+        if(k==0){return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts);}
+        else    {return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts);}
       }
       
       if (id == "CV_k")
       {
-        return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll);
+        return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts);
       }
       
       if (id == "CV")
       {
-        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll);
+        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts);
       }
       
       else

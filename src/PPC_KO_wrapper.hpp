@@ -84,17 +84,19 @@ private:
   std::vector<double> m_alphas;         //CV on alpha
   int m_k;
   double m_threshold_ppc;
+  int m_min_size_ts; 
+  int m_max_size_ts;
 
 public:
   //k given
   template<typename STOR_OBJ>
-  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, int k)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k(k) {}
+  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, int k, int min_size_ts, int max_size_ts)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k(k), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   //k to be found
   template<typename STOR_OBJ>
-  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, double threshold_ppc)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_threshold_ppc(threshold_ppc) {}
+  PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, double threshold_ppc, int min_size_ts, int max_size_ts)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_threshold_ppc(threshold_ppc), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };
@@ -109,11 +111,13 @@ private:
   double m_alpha;
   std::vector<int> m_k_s;
   double m_toll;
+  int m_min_size_ts; 
+  int m_max_size_ts;
   
 public:
   template<typename STOR_OBJ>
-  PPC_KO_wrapper_cv_k(STOR_OBJ&& data, double alpha, const std::vector<int> & k_s, double toll)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alpha(alpha), m_k_s(k_s), m_toll(toll) {}
+  PPC_KO_wrapper_cv_k(STOR_OBJ&& data, double alpha, const std::vector<int> & k_s, double toll, int min_size_ts, int max_size_ts)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alpha(alpha), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };
@@ -128,11 +132,13 @@ private:
   std::vector<double> m_alphas;
   std::vector<int> m_k_s;
   double m_toll;
+  int m_min_size_ts; 
+  int m_max_size_ts;
   
 public:
   template<typename STOR_OBJ>
-  PPC_KO_wrapper_cv_alpha_k(STOR_OBJ&& data, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k_s(k_s), m_toll(toll) {}
+  PPC_KO_wrapper_cv_alpha_k(STOR_OBJ&& data, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll, int min_size_ts, int max_size_ts)
+    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data)), m_alphas(alphas), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };

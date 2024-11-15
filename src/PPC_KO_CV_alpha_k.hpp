@@ -14,17 +14,21 @@ private:
   std::vector<int> m_k_s;
   KO_Traits::StoringMatrix m_X_non_cent; 
   double m_toll;
+  int min_size_ts;
+  int max_size_ts;
   
 public:
   
   template<typename STOR_OBJ>
-  PPC_KO_CV_alpha_k(STOR_OBJ&& X, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll) 
+  PPC_KO_CV_alpha_k(STOR_OBJ&& X, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll, int min_size_ts, int max_size_ts) 
     : 
     PPC_KO_base<PPC_KO_CV_alpha_k,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
     m_alphas(alphas),
     m_k_s(k_s),
     m_X_non_cent(this->m(),this->n()),
-    m_toll(toll)
+    m_toll(toll),
+    m_min_size_ts(min_size_ts),
+    m_max_size_ts(max_size_ts),
     {
       for (size_t i = 0; i < this->n(); ++i)
       {
@@ -58,8 +62,14 @@ public:
 
     //scrivere una l'oggetto CV strategy
     //passarlo
-    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
+    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(m_min_size_ts,m_max_size_ts);
   
+    for (size_t i = 0; i < (*strategy_cv).strategy().size(); ++i)
+    {
+      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front() << std::endl;
+      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front() << std::endl;
+    }
+
     //lambda wrapper for the correct overload
     auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k);};
 
