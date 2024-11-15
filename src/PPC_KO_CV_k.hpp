@@ -56,10 +56,10 @@ public:
   
     //scrivere una l'oggetto CV strategy
     auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
-    for (size_t i = 0; i < strategy_cv.strategy().size(); ++i)
+    for (size_t i = 0; i < (*strategy_cv).strategy().size(); ++i)
     {
-      std::cout << "Train: " << strategy_cv.strategy()[i].first.front();
-      std::cout << "Valid: " << strategy_cv.strategy()[i].second.front();
+      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front();
+      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front();
     }
     
     
