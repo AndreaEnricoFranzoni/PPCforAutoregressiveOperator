@@ -179,7 +179,19 @@ std::pair<int,int>
 wrap_sizes_set_CV(Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, int number_time_instants)    //dim: row of x
 { 
   int min_dim_ts = min_size_ts.isNull() ? static_cast<int>(std::ceil(static_cast<double>(number_time_instants)/static_cast<double>(2)))  : Rcpp::as<int>(min_size_ts);
-  int max_dim_ts = max_size_ts.isNull() ? number_time_instants  : Rcpp::as<int>(max_size_ts); 
+  int max_dim_ts = max_size_ts.isNull() ? number_time_instants  : (Rcpp::as<int>(max_size_ts)+1); 
+  
+  if !(min_dim_ts>1)
+  {
+    std::string error_message1 = "Min size of train set (" + std::to_string(min_dim_ts) + " has to be at least 2";
+    throw std::invalid_argument(error_message1);
+  }
+
+  if !(max_dim_ts<=number_time_instants)
+  {
+    std::string error_message2 = "Max size of train set (" + std::to_string(max_dim_ts) + " has to be at most the total number of time instants ("  + std::to_string(number_time_instants) + ") minus 1 (to leave room for the validation set)";
+    throw std::invalid_argument(error_message2);
+  }
   
   if(min_dim_ts >= max_dim_ts)
   {
