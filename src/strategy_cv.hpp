@@ -52,7 +52,7 @@ public:
   inline cv_strategy_t strategy() const {return m_strategy;}
   
   ////creating the strategy: method that is called in the constructor: tag dispatching to how to do it
-  void train_validation_set_strategy(int n) { return train_validation_set_strategy(n, CV_STRAT_T<cv_strat>{});};
+  void train_validation_set_strategy(int min_dim_ts, int max_dim_ts) { return train_validation_set_strategy(min_dim_ts, max_dim_ts, CV_STRAT_T<cv_strat>{});};
   //for a specific pair of train and validation sets, returns them
   train_valid_set_t train_validation_set(const KO_Traits::StoringMatrix &data, const iter_cv_t &strat) const { return train_validation_set(data, strat, CV_STRAT_T<cv_strat>{});};
   
