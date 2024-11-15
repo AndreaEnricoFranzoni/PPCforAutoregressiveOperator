@@ -56,6 +56,12 @@ public:
   
     //scrivere una l'oggetto CV strategy
     auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
+    for (size_t i = 0; i < strategy_cv.strategy().size(); ++i)
+    {
+      std::cout << "Train: " << strategy_cv.strategy()[i].first.front();
+      std::cout << "Valid: " << strategy_cv.strategy()[i].second.front();
+    }
+    
     
     //lambda wrapper for the correct overload
     auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k);};
