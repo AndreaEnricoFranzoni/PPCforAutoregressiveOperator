@@ -14,8 +14,8 @@ private:
   std::vector<int> m_k_s;
   KO_Traits::StoringMatrix m_X_non_cent; 
   double m_toll;
-  int min_size_ts;
-  int max_size_ts;
+  int m_min_size_ts;
+  int m_max_size_ts;
   
 public:
   
@@ -28,7 +28,7 @@ public:
     m_X_non_cent(this->m(),this->n()),
     m_toll(toll),
     m_min_size_ts(min_size_ts),
-    m_max_size_ts(max_size_ts),
+    m_max_size_ts(max_size_ts)
     {
       for (size_t i = 0; i < this->n(); ++i)
       {
