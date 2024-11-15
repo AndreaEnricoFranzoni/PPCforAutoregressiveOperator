@@ -9,6 +9,7 @@
 #include <vector>
 #include <functional>
 #include <utility>
+#include <tuple>
 
 #include "traits_ko.hpp"
 
@@ -183,8 +184,9 @@ public:
   
 
   //methods common to all child classes
-  //number of PPCs retained
-  int PPC_retained(const KO_Traits::StoringArray & eigvals) const;
+  //number of PPCs retained, eigvalues and eigvcts di phi
+  std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained(const KO_Traits::StoringMatrix & phi, double tot_exp_pow) const;
+
   
   //Inverse square for regularized covariance (k is chosen in this function)
   //KO_Traits::StoringMatrix matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat) const;
