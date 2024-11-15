@@ -187,7 +187,7 @@ public:
   int PPC_retained(const KO_Traits::StoringArray & eigvals) const;
   
   //Inverse square for regularized covariance (k is chosen in this function)
-  KO_Traits::StoringMatrix matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat) const;
+  //KO_Traits::StoringMatrix matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat) const;
   
   //KO algorithm, once parameters have been set
   void KO_algo();
