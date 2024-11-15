@@ -38,7 +38,7 @@ class cv_strategy
 {
 private:
   //creating the strategy: method that is called in the constructor
-  void train_validation_set_strategy(int n, CV_STRAT_T<CV_STRAT::AUGMENTING_WINDOW>);
+  void train_validation_set_strategy(int min_dim_ts, int max_dim_ts, CV_STRAT_T<CV_STRAT::AUGMENTING_WINDOW>);
   //for each element: the elements of the first identify the training set, the second's ones the validation set
   cv_strategy_t m_strategy;
   //for a specific pair of train and validation sets, returns them
@@ -46,7 +46,7 @@ private:
   
 public:
   //constructor
-  cv_strategy(int n) { this->train_validation_set_strategy(n);}
+  cv_strategy(int min_dim_ts, int max_dim_ts) { this->train_validation_set_strategy(min_dim_ts,max_dim_ts);}
   
   //getter for the strategy
   inline cv_strategy_t strategy() const {return m_strategy;}

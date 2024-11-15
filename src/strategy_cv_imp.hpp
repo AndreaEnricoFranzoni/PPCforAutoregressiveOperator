@@ -4,19 +4,22 @@
 //Augmenting window strategy division in train and validation
 template<CV_STRAT cv_strat>
 void
-cv_strategy<cv_strat>::train_validation_set_strategy(int n,CV_STRAT_T<CV_STRAT::AUGMENTING_WINDOW>)
+cv_strategy<cv_strat>::train_validation_set_strategy(int min_dim_ts, int max_dim_ts, CV_STRAT_T<CV_STRAT::AUGMENTING_WINDOW>)
 {
   
   //defining the augmenting moving window for the train and validation sets 
   //how many, from the start, contiguos time instants: taking the ceil of half of the time instants as the smallest one
-  int min_dim_ts = static_cast<int>(std::ceil(static_cast<double>(n)/static_cast<double>(2)));
+  //int min_dim_ts = static_cast<int>(std::ceil(static_cast<double>(n)/static_cast<double>(2)));
   //the biggest is all the time instants but one
-  int max_dim_ts = n;
+  //int max_dim_ts = n;
+
+  std::size_t min_size_ts = static_cast<std::size_t>(min_dim_ts);
+  std::size_t max_size_ts = static_cast<std::size_t>(max_dim_ts);
   
   //train set is: from the beginning up to a time instant
   //validation set is: the next time instant
-  m_strategy.reserve(max_dim_ts - min_dim_ts);
-  for(std::size_t i = static_cast<std::size_t>(min_dim_ts); i < static_cast<std::size_t>(max_dim_ts); ++i)
+  m_strategy.reserve(max_size_ts - min_size_ts);
+  for(std::size_t i = min_size_ts; i < max_size_ts; ++i)
   { 
     //train set: i: Eigen takes the first p left cols starting from 1
     std::vector<int> train_set;

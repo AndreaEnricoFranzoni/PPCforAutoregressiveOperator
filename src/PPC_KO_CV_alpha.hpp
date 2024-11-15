@@ -90,7 +90,7 @@ public:
   solving()
   {
     //factory to create the cv strategy
-    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(this->n());
+    auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(2,this->n());
     
     if constexpr(k_imp == K_IMP::YES)
     {
