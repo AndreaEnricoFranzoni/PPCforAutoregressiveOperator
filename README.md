@@ -1,18 +1,18 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series of functional data. Assumptions: data come from a stationary Functional AutoRegressive of order 1 (FAR(1)) process. 
+R package for estimating an autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), to compute one-step ahead prediction of functional time series. The domain of the functional element can be unidimensional (time serie of functions) or bidimensional (time serie of surfaces).
+
+Assumptions: data a stationary Functional AutoRegressive of order 1 (*FAR(1)*) process. 
 
 The point predictor assumes the form of:
 
 $\hat{f}_{n+1} = \sum _{i=1}^{k} \langle f_n, b_i \rangle  a_i$
 
 where: 
-- k is the number of PPCs retained;
+- k is the number of PPCs;
 - $f_n$ is the last instant functional element;
 - $a_i$ are the directions along which the prediction is approximated (directions that have the most predictive power) (predictive loadings);
 - $b_i$ weights the prediction along the $i$-th PPC: $\langle f_n, b_i \rangle$ is the projection along it (predictive factors).
-
-The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 
 
@@ -35,6 +35,7 @@ library(latex2exp)
 ~~~
 
 
+
 # Installation
 
 To install the package:
@@ -43,12 +44,21 @@ devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", fo
 ~~~
 
 
+
 # Test
 
 To automatically test the package:
 ~~~
 devtools::test()
 ~~~
+
+The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
+
+
+
+# Documentation
+
+TODO
 
 
 
@@ -71,29 +81,29 @@ PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
                int                           err_ret       = 0,
                Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue)
 ~~~
--**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs.
+-**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs.
 
 -**`id_CV`**: string: indicates which version of KO algorithm is used:
-- `NoCV (default)`: algorithm is performed with input parameters; 
+- `NoCV (default)`: algorithm is performed with fixed input parameters; 
 - `CV_alpha`: CV is performed to select the best value of `alpha`;
 - `CV_k`: CV is performed to select the best `k`;
 - `CV`: CV is performed to select the best pair {`alpha`-`k`}.
   
-CV is performed as follows: the first train set will comprehend data from the beginning of the data set to a specific time instant, while validation set will be the next time instant. Then, for every CV iteration, the window is augmented: another time instant will be added to the previous train set, and validation set will be the next one, up until a specific time instant. For each validation set, the validation error is evaluated taking the squared mean error between the discrete evaluation of prediction and actual value. The average of these losses will be the validation error for a specific parameter/pair of parameteers
+CV is performed as follows: the first train set will comprehend data from the beginning of the dataset to a specific time instant, while the respective validation set will be the next time instant. Then, for every CV iteration, the window is augmented: another time instant will be added to the previous train set, and validation set will be the next one, up until another specific time instant. For each validation set, the validation error is evaluated taking the squared mean error of the difference between the discrete evaluation of prediction and actual value, to estimate the $L^2$ norm of the loss. The average of these losses will be the validation error for a specific parameter/pair of parameters.
 
 -**`alpha`**: double, $\in (0,+\infty)$: regularization parameter.
 
 -**`k`**: integer, $\in$ { $0, \dots, m$ }: number of PPCs retained: if `0`, it will be the smallest number that satisfies `threshold_k` explanatory power retained; otherwise, `k` PPCs are retained. 
 
--**`threshold_k`**: double in $(0,1)$: how much explanatory power the PPCs retain: ignored if `k` is passed or select through CV.
+-**`threshold_k`**: double in $(0,1)$: how much explanatory power the PPCs retain: ignored if `k` is passed or selected through CV.
 
 -**`alpha_vec`**: vector of values of `alpha` tried in the CV. Default value: looking for its magnitude from $10^{-10}$ to $10^{11}$.
 
 -**`k_vec`**: vector of values of `k` tried in the CV. Default value: { $\{1, \dots, m\}$ }.
 
--**`toll`**: if CV for `k`: how much difference in the validation error to stop adding another PPC.
+-**`toll`**: if CV for `k`: adding another PPC increases the predictive power. But after having reached a good amount of explanatory predictive power, adding others PPCs could be meaningless: if the absolute difference of two consecutive validation errors is smaller than `trace(cov)`*`toll`: stop adding others PPCs. Default is $10^{-4}$.
 
--**`disc_ev`**: discrete points of the domain for which the evaluations are available. Default value: equispaced grid between left and right extreme, of length m.
+-**`disc_ev`**: discrete points of the domain for which the evaluations are available. Default value: equispaced grid between left and right extreme, of length *m*.
 
 -**`left_extreme`**: left extreme of the domain of the data.
 
@@ -113,7 +123,7 @@ CV is performed as follows: the first train set will comprehend data from the be
 
 -**`One-step ahead prediction`**: vector containing the one step ahead prediction (for each available point of the domain).
 
--**`Alpha`**: values of the regularization parameter `alpha` used.
+-**`Alpha`**: value of the regularization parameter `alpha` used.
 
 -**`Number of PPCs retained`**: number of PPCs retained (value of `k`).
 
@@ -121,17 +131,17 @@ CV is performed as follows: the first train set will comprehend data from the be
 
 -**`Explanatory power PPCs`**: vector containing the cumulative explanatory power up to PPC $i$.
 
--**`Directions of PPCs`**: matrix in which each column is the direction (discrete evaluated function) along PPC $i$.
+-**`Directions of PPCs`**: matrix in which each column is the direction $a_i$ (discrete evaluated function) along PPC $i$-th.
 
--**`Weights of PPCs`**: matrix in which each column is the weight (discrete evaluated function) along PPC $i$.
+-**`Weights of PPCs`**: matrix in which each column is the weight $b_i$ (discrete evaluated function) for PPC $i$-th.
 
 -**`Validation errors`**: if `err_ret==1`: if `id_CV==NoCV`: empty vector; if `id_CV==CV_alpha`: vector containing the validation errors for each tried value of `alpha`; if `id_CV==CV_k`: vector containing the validation errors for each value of `k` actually tried; if `id_CV==CV`: matrix containing the validation errors for the pairs `alpha`-`k` (only `k` actually tried, if not put the validation error for the greatest `k` actually tried given that `alpha`). If `err_ret==0`: element not returned.
 
--**`Function discrete evaluations points`**: discretization of the domain of the functional data for which evaluations are available.
+-**`Function discrete evaluations points`**: points of the domain for which evaluations are available.
 
--**`Left extreme domain`**: left extreme of the domain of the data.
+-**`Left extreme domain`**: left extreme of the domain.
 
--**`Right extreme domain`**: right extreme of the domain of the data.
+-**`Right extreme domain`**: right extreme of the domain.
 
 -**`f_n`**: evaluation of the functional data in last time instant available.
 
@@ -147,7 +157,7 @@ CV is performed as follows: the first train set will comprehend data from the be
 ~~~
 PPCKO::KO_check_hps(Rcpp::NumericMatrix X)
 ~~~
--**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs.
+-**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs.
 
 **RETURN**: list containing:
 
@@ -317,3 +327,8 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 -**`Xt`**: list in which each element is a matrix containing the evaluation of the functional data. Each matrix is a time instants (temporally equispaced). Put NaNs in each matrix for the points that actually do not belong the data domain (to represent more complex domains).
 
 **RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
+
+
+
+# Bibliography 
+TODO
