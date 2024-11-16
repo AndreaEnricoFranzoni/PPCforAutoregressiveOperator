@@ -1,19 +1,52 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series of functional data. Assumption on data: Functional AutoRegressive of order 1 process.
+R package for estimating autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), in order to compute one step ahead prediction for time series of functional data. Assumptions: data come from a Functional AutoRegressive(1), stationary process. The point predictor assumes the form of:
 
+$\hat{f}_{n+1} = \sum _{i=1}^{k} \langle f_n, b_i \rangle  a_i$
+
+where: 
+- k is the number of PPCs retained;
+- $f_n$ is the last instant functional element;
+- $a_i$ are the directions along which the prediction is approximated (directions that have the most predictive power) (predictive loadings);
+- $b_i$ weights the prediction along the $i$-th PPC: $\langle f_n, b_i \rangle$ is the projection along it (predictive factors).
+
+The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
+
+
+
+# Prerequisites
+~~~
+library(Rcpp)
+library(RcppEigen)
+library(devtools)
+~~~
+If MacOS is used, having Fortran installed is mandatory. In case of error during the installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+
+If others errors occur, could be that the other needed dependencies have not been actually imported: can be done manually from Rstudio. If already installed:
+~~~
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(patchwork)
+library(latex2exp)
+~~~
 
 
 # Installation
 
 To install the package:
 ~~~
-library(Rcpp)
-library(RcppEigen)
-library(devtools)
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 ~~~
-If MacOS is used, having Fortran installed is mandatory. In case of error during the installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+
+
+# Test
+
+To automatically tests the package
+~~~
+devtools::test()
+~~~
 
 
 
@@ -31,6 +64,8 @@ PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
                Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
                double                        left_extreme  = 0,
                double                        right_extreme = 1,
+               Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
+               Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                int                           err_ret       = 0,
                Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue)
 ~~~
@@ -40,17 +75,19 @@ PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
 - `NoCV (default)`: algorithm is performed with input parameters; 
 - `CV_alpha`: CV is performed to select the best value of `alpha`;
 - `CV_k`: CV is performed to select the best `k`;
-- `CV`: CV is performed to select the best pair `alpha`-`k`.
+- `CV`: CV is performed to select the best pair {`alpha`-`k`}.
+  
+CV is performed as follows: the first train set will comprehend data from the beginning of the data set to a specific time instant, while validation set will be the next time instant. Then, for every CV iteration, the window is augmented: another time instant will be added to the previous train set, and validation set will be the next one, up until a specific time instant. For each validation set, the validation error is evaluated taking the squared mean error between the discrete evaluation of prediction and actual value. The average of these losses will be the validation error for a specific parameter/pair of parameteers
 
--**`alpha`**: double in $(0,+\infty)$: regularization parameter.
+-**`alpha`**: double, $\in (0,+\infty)$: regularization parameter.
 
--**`k`**: integer in $\{1, \dots, m\}$: number of PPCs retained: if `0`, it will be the smallest number that satisfies `threshold_k` explanatory power retained; otherwise, `k` PPCs are retained. 
+-**`k`**: integer, $\in$ { $0, \dots, m$ }: number of PPCs retained: if `0`, it will be the smallest number that satisfies `threshold_k` explanatory power retained; otherwise, `k` PPCs are retained. 
 
 -**`threshold_k`**: double in $(0,1)$: how much explanatory power the PPCs retain: ignored if `k` is passed or select through CV.
 
 -**`alpha_vec`**: vector of values of `alpha` tried in the CV. Default value: looking for its magnitude from $10^{-10}$ to $10^{11}$.
 
--**`k_vec`**: vector of values of `k` tried in the CV. Default value: $\{1, \dots, m\}$.
+-**`k_vec`**: vector of values of `k` tried in the CV. Default value: { $\{1, \dots, m\}$ }.
 
 -**`toll`**: if CV for `k`: how much difference in the validation error to stop adding another PPC.
 
@@ -59,6 +96,10 @@ PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
 -**`left_extreme`**: left extreme of the domain of the data.
 
 -**`right_extreme`**: right extreme of the domain of the data.
+
+-**`min_size_ts`**: the dimension of the first train set, $\in$ { $2, \dots,$ `max_size_ts`}. If not passed: default value is $\lceil (n/2) \rceil$.
+
+-**`max_size_ts`**: the dimension of the last train set, $\in$ {`min_size_ts` $, \dots,n-1$}. If not passed: default value is $n-1$.
 
 -**`err_ret`**: `1`: validation errors stored and returned. `0`: validation errors not stored and not returned.
 
@@ -164,12 +205,14 @@ PPCKO::PPC_KO_2d(Rcpp::NumericMatrix           X,
                  double                        right_extreme_x1 = 1,
                  double                        left_extreme_x2  = 0,
                  double                        right_extreme_x2 = 1,
+                 Rcpp::Nullable<int>           min_size_ts      = R_NilValue,
+                 Rcpp::Nullable<int>           max_size_ts      = R_NilValue,
                  int                           err_ret          = 0,
                  Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue)
 ~~~
 Inputs have the same meaning of the unidimensional domain case: here are explained only the ones that differ.
 
--**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (m is the total number of evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain. Below, some functions are used to map the data (to understand in which format data can be stored).
+-**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (m is the total number of evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain. [Below](#usage-utilities-to-map-bidimensional-domain-data), some functions are used to map the data (to understand in which format data can be stored). 
 
 -**`disc_ev_xi`**: discrete points of the domain for which the evaluations are available along dimension $i$. Default value: equispaced grid between left and right extreme of dimension $i$. 
 
@@ -264,7 +307,7 @@ KO_show_results( results_ko,
 
 
 
-# Usage: utilities to map bidimensional domain data
+## Usage: utilities to map bidimensional domain data
 
 ~~~
 PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
@@ -272,9 +315,3 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 -**`Xt`**: list in which each element is a matrix containing the evaluation of the functional data. Each matrix is a time instants (temporally equispaced). Put NaNs in each matrix for the points that actually do not belong the data domain (to represent more complex domains).
 
 **RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
-
-
-
-
-# Testing
-In the folder `tests`, the implementation of KO is used to try to reconstruct the result obtained by [Didericksen, Kokoszka & Zhang](https://www.semanticscholar.org/paper/Empirical-properties-of-forecasts-with-the-model-Didericksen-Kokoszka/c1fae9f292c2b42beffe4e4146a2bf9ca005f060), trying to demonstrate the goodness of KO.
