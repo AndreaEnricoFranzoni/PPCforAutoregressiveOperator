@@ -45,7 +45,7 @@ devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", fo
 
 # Test
 
-To automatically tests the package
+To automatically test the package:
 ~~~
 devtools::test()
 ~~~
@@ -310,7 +310,7 @@ KO_show_results( results_ko,
 
 
 ## Usage: utilities to map bidimensional domain data
-
+# From list of matrices
 ~~~
 PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 ~~~
