@@ -11,3 +11,4 @@ Imports: Rcpp (>= 1.0.12), ggplot2, grid, gridExtra, viridis, patchwork, latex2e
 LinkingTo: Rcpp, RcppEigen
 Depends: R (>= 4.0)
 SystemRequirements: C++20, BLAS, LAPACK
+Suggests: testthat (>= 3.0.0)
