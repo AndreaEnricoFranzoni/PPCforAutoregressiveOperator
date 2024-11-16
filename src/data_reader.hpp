@@ -15,6 +15,10 @@
 #include "removing_nan.hpp"
 #include "parameters_wrapper.hpp"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 
 //
 // [[Rcpp::depends(RcppEigen)]]
@@ -23,7 +27,11 @@ std::pair<KO_Traits::StoringMatrix,std::vector<int>>
 reader_data(Rcpp::NumericMatrix X,
             REM_NAN MA_t)
 {
-  std::cout << "Remote version 2" << std::endl;
+  std::cout << "Remote version 2.1" << std::endl;
+
+#ifdef _OPENMP
+  std::cout << "Remote par version 2.1.9" << std::endl;
+#endif
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();

@@ -1,4 +1,20 @@
-PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
+###############
+## NO OPENMP ##
+###############
+#PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
+#PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
+
+#CXX_STD = CXX20
+
+
+
+
+###############
+## OPENMP    ##
+###############
+PKG_CXXFLAGS = -fopenmp
+PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include 
 PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
+PKG_LIBS += -fopenmp
 
 CXX_STD = CXX20
