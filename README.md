@@ -79,6 +79,7 @@ PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
                Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
                Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                int                           err_ret       = 0,
+               Rcpp::Nullable<int>           num_threads   = R_NilValue,
                Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue)
 ~~~
 -**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs.
@@ -114,6 +115,8 @@ CV is performed as follows: the first train set will comprehend data from the be
 -**`max_size_ts`**: the dimension of the last train set, $\in$ {`min_size_ts` $, \dots,n-1$}. If not passed: default value is $n-1$.
 
 -**`err_ret`**: `1`: validation errors stored and returned. `0`: validation errors not stored and not returned.
+
+-**`num_threads`**: number of threads for parallelization through OMP. Default: the max number of available threads in the machine. If used the serialized version, will be automatically put equal to $1$.
 
 -**`id_rem_nan`**: string that indicates which strategy to remove eventual NaNs is used:
 - `MR` (default): NaNs are substituted by the mean of the temporal serie in that point of the domain;
