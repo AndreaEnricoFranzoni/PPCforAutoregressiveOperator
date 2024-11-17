@@ -240,7 +240,7 @@ wrap_num_thread(Rcpp::Nullable<int> num_threads)
 {
 #ifndef _OPENMP
   return 1;
-#endif
+#else
   
   int max_n_t = omp_get_num_procs();
   
@@ -255,6 +255,7 @@ wrap_num_thread(Rcpp::Nullable<int> num_threads)
     
     return n_t;
   }
+#endif
 }
 
 
