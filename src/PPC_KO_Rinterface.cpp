@@ -519,7 +519,7 @@ Rcpp::List KO_check_hps(Rcpp::NumericMatrix X)
   auto pv_final = add_nans_vec(Eigen::Map<const KO_Traits::StoringVector>(pv.data(),pv.size()),data_read.second,X.nrow());
   
   
-  l["Pvalues ADF"] = pv_final;
+  l["P-values ADF"] = pv_final;
   return l;
 }
 
@@ -552,7 +552,7 @@ Rcpp::List KO_check_hps_2d(Rcpp::NumericMatrix X, int dim_x1, int dim_x2)
     auto pv = adf_t.p_values();
     auto pv_final = from_col_to_matrix(add_nans_vec(Eigen::Map<const KO_Traits::StoringVector>(pv.data(),pv.size()),data_read.second,X.nrow()),dim_x1,dim_x2);
     
-    l["Pvalues ADF"] = pv_final;
+    l["P-values ADF"] = pv_final;
     return l;
   }
   
@@ -562,7 +562,7 @@ Rcpp::List KO_check_hps_2d(Rcpp::NumericMatrix X, int dim_x1, int dim_x2)
   auto pv = adf_t.p_values();
   auto pv_final = from_col_to_matrix(add_nans_vec(Eigen::Map<const KO_Traits::StoringVector>(pv.data(),pv.size()),data_read.second,X.nrow()),dim_x1,dim_x2);
   
-  l["Pvalues ADF"] = pv_final;
+  l["P-values ADF"] = pv_final;
   return l;
 }
 
