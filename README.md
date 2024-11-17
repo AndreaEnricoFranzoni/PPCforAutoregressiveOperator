@@ -23,7 +23,9 @@ library(RcppEigen)
 library(devtools)
 ~~~
 
-If macOS is used, having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the package installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+- macOS: having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the package installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+
+- Windows: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
 
 The parallel version exploits *OpenMP* to speed up the computation doing CV, and it is highly recommended. How to set up *OpenMP* can be found [here](#prerequisites-appendix).
 
