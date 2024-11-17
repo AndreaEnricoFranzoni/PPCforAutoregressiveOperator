@@ -113,7 +113,7 @@ public:
     for(const auto & alpha : m_alphas)
     {
       //alpha fixed: doing CV on k
-      CV_k<cv_strat,err_eval,k_imp,valid_err_ret> cv(std::move(this->Data()),std::move(this->strategy()),m_k_s,m_toll,alpha,m_pred_f);
+      CV_k<cv_strat,err_eval,k_imp,valid_err_ret> cv(std::move(this->Data()),std::move(this->strategy()),m_k_s,m_toll,alpha,m_pred_f,this->number_threads());
       cv.best_param_search();
       
       //best k given the alpha
