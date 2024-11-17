@@ -381,7 +381,7 @@ llvm-config --version
 brew install llvm
 ~~~
 
-4. OMP is now set and the parallel version of the package can be used.
+4. OMP is now set to work on macOS and the parallel version of the package can be used.
   
 
 ## Other R dependencies
