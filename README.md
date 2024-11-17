@@ -52,16 +52,18 @@ devtools::test()
 
 The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
+
+
 ## Data
 
 A time series of functions (synthetic data) can be loaded on the global environment using
 ~~~
-PPCKO::data(data_1d)
+data(data_1d)
 ~~~
 
 A time series of surfaces (synthetic data) can be loaded on the global environment using
 ~~~
-PPCKO::data(data_2d)
+data(data_2d)
 ~~~
 
 
@@ -75,22 +77,22 @@ TODO
 # Usage: unidimensional domain
 ## KO algorithm
 ~~~
-PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
-               std::string                   id_CV         = "NoCV",
-               double                        alpha         = 0.75,
-               int                           k             = 0, 
-               double                        threshold_ppc = 0.95,
-               Rcpp::Nullable<NumericVector> alpha_vec     = R_NilValue,
-               Rcpp::Nullable<IntegerVector> k_vec         = R_NilValue,
-               double                        toll          = 1e-4,
-               Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
-               double                        left_extreme  = 0,
-               double                        right_extreme = 1,
-               Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
-               Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
-               int                           err_ret       = 0,
-               Rcpp::Nullable<int>           num_threads   = R_NilValue,
-               Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue)
+PPC_KO( Rcpp::NumericMatrix           X,
+        std::string                   id_CV         = "NoCV",
+        double                        alpha         = 0.75,
+        int                           k             = 0,
+        double                        threshold_ppc = 0.95,
+        Rcpp::Nullable<NumericVector> alpha_vec     = R_NilValue,
+        Rcpp::Nullable<IntegerVector> k_vec         = R_NilValue,
+        double                        toll          = 1e-4,
+        Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
+        double                        left_extreme  = 0,
+        double                        right_extreme = 1,
+        Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
+        Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
+        int                           err_ret       = 0,
+        Rcpp::Nullable<int>           num_threads   = R_NilValue,
+        Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue)
 ~~~
 -**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs.
 
@@ -168,7 +170,7 @@ CV is performed as follows: the first train set will comprehend data from the be
   
 ## KO algorithm hypothesiss check
 ~~~
-PPCKO::KO_check_hps(Rcpp::NumericMatrix X)
+KO_check_hps(Rcpp::NumericMatrix X)
 ~~~
 -**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs.
 
@@ -214,27 +216,27 @@ KO_show_results( results_ko,
 # Usage: bidimensional domain
 ## KO algorithm
 ~~~
-PPCKO::PPC_KO_2d(Rcpp::NumericMatrix           X,
-                 std::string                   id_CV            = "NoCV",
-                 double                        alpha            = 0.75,
-                 int                           k                = 0, 
-                 double                        threshold_ppc    = 0.95,
-                 Rcpp::Nullable<NumericVector> alpha_vec        = R_NilValue,
-                 Rcpp::Nullable<IntegerVector> k_vec            = R_NilValue,
-                 double                        toll             = 1e-4,
-                 Rcpp::Nullable<NumericVector> disc_ev_x1       = R_NilValue,
-                 int                           num_disc_ev_x1   = 10,
-                 Rcpp::Nullable<NumericVector> disc_ev_x2       = R_NilValue,
-                 int                           num_disc_ev_x2   = 10,
-                 double                        left_extreme_x1  = 0,
-                 double                        right_extreme_x1 = 1,
-                 double                        left_extreme_x2  = 0,
-                 double                        right_extreme_x2 = 1,
-                 Rcpp::Nullable<int>           min_size_ts      = R_NilValue,
-                 Rcpp::Nullable<int>           max_size_ts      = R_NilValue,
-                 int                           err_ret          = 0,
-                 Rcpp::Nullable<int>           num_threads      = R_NilValue,
-                 Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue)
+PPC_KO_2d(Rcpp::NumericMatrix           X,
+          std::string                   id_CV            = "NoCV",
+          double                        alpha            = 0.75,
+          int                           k                = 0, 
+          double                        threshold_ppc    = 0.95,
+          Rcpp::Nullable<NumericVector> alpha_vec        = R_NilValue,
+          Rcpp::Nullable<IntegerVector> k_vec            = R_NilValue,
+          double                        toll             = 1e-4,
+          Rcpp::Nullable<NumericVector> disc_ev_x1       = R_NilValue,
+          int                           num_disc_ev_x1   = 10,
+          Rcpp::Nullable<NumericVector> disc_ev_x2       = R_NilValue,
+          int                           num_disc_ev_x2   = 10,
+          double                        left_extreme_x1  = 0,
+          double                        right_extreme_x1 = 1,
+          double                        left_extreme_x2  = 0,
+          double                        right_extreme_x2 = 1,
+          Rcpp::Nullable<int>           min_size_ts      = R_NilValue,
+          Rcpp::Nullable<int>           max_size_ts      = R_NilValue,
+          int                           err_ret          = 0,
+          Rcpp::Nullable<int>           num_threads      = R_NilValue,
+          Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue)
 ~~~
 Inputs have the same meaning of the unidimensional domain case: here are explained only the ones that differ.
 
@@ -284,9 +286,9 @@ Inputs have the same meaning of the unidimensional domain case: here are explain
 
 ## KO algorithm hypothesis check
 ~~~
-PPCKO::KO_check_hps_2d( Rcpp::NumericMatrix X,
-                        int dim_x1,
-                        int dim_x2 )
+KO_check_hps_2d( Rcpp::NumericMatrix X,
+                 int                 dim_x1,
+                 int                 dim_x2 )
 ~~~
 -**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (*m* is the total number of actual evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain, in EACH ONE of the time instants, and they concurr in the count of *m*. In this way, the data reader understands that these points do not belong to the domain. [Below](#usage-utilities-to-map-bidimensional-domain-data), some functions are used to map the data from different storaging strategies to the ones needed from the package main function (to understand in which format data can be stored). 
 
@@ -300,12 +302,12 @@ PPCKO::KO_check_hps_2d( Rcpp::NumericMatrix X,
 
 ## KO algorithm results visualization
 ~~~
-KO_show_results( results_ko,
-                 hp_ko       = NULL,
-                 x1_lab      = "x1",
-                 x2_lab      = "x2",
-                 z_lab       = "value",
-                 true_alphas = FALSE)
+KO_show_results_2d( results_ko,
+                    hp_ko       = NULL,
+                    x1_lab      = "x1",
+                    x2_lab      = "x2",
+                    z_lab       = "value",
+                    true_alphas = FALSE)
 ~~~
 -**`results_ko`**: the output of `PPCKO::PPC_KO_2d`.
 
@@ -336,7 +338,7 @@ KO_show_results( results_ko,
 # Usage: utilities to map bidimensional domain data
 ## From list of matrices
 ~~~
-PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
+data_2d_wrapper_from_list(Rcpp::List Xt)
 ~~~
 -**`Xt`**: list in which each element is a matrix containing the evaluation of the functional data. Each matrix is a time instants (temporally equispaced). Put NaNs in each matrix for the points that actually do not belong the data domain (to represent more complex domains).
 
