@@ -23,9 +23,9 @@ library(RcppEigen)
 library(devtools)
 ~~~
 
-If MacOS is used, having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+If MacOS is used, having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the package installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
 
-The parallel version exploits *OpenMP* to speed up the computation doing CV, and it is highly recommended. How to set up *OpenMP* can be found [Here](#prerequisites-appendix).
+The parallel version exploits *OpenMP* to speed up the computation doing CV, and it is highly recommended. How to set up *OpenMP* can be found [here](#prerequisites-appendix).
 
 
 # Installation
@@ -62,7 +62,7 @@ TODO
 
 
 # Usage: unidimensional domain
-
+## KO algorithm
 ~~~
 PPCKO::PPC_KO( Rcpp::NumericMatrix           X,
                std::string                   id_CV         = "NoCV",
@@ -115,7 +115,7 @@ CV is performed as follows: the first train set will comprehend data from the be
 
 -**`err_ret`**: `1`: validation errors stored and returned. `0`: validation errors not stored and not returned.
 
--**`num_threads`**: number of threads for parallelization through OMP. Default: the max number of available threads in the machine. If used the serialized version, will be automatically put equal to $1$.
+-**`num_threads`**: number of threads for parallelization through OMP. Default: the max number of available threads in the machine. If the serialized version is used, will be automatically put equal to $1$.
 
 -**`id_rem_nan`**: string that indicates which strategy to remove eventual NaNs is used:
 - `MR` (default): NaNs are substituted by the mean of the temporal serie in that point of the domain;
@@ -131,7 +131,7 @@ CV is performed as follows: the first train set will comprehend data from the be
 
 -**`Scores along PPCs`**: vector containing the scores along the PPCs.
 
--**`Explanatory power PPCs`**: vector containing the cumulative explanatory power up to PPC $i$.
+-**`Explanatory power PPCs`**: vector containing the cumulative explanatory power up to PPC $i$-th.
 
 -**`Directions of PPCs`**: matrix in which each column is the direction $a_i$ (discrete evaluated function) along PPC $i$-th.
 
@@ -155,7 +155,7 @@ CV is performed as follows: the first train set will comprehend data from the be
 
 
   
----
+## KO algorithm hypothesiss check
 ~~~
 PPCKO::KO_check_hps(Rcpp::NumericMatrix X)
 ~~~
@@ -167,7 +167,7 @@ PPCKO::KO_check_hps(Rcpp::NumericMatrix X)
 
 
 
----
+## KO algorithm results visualization
 ~~~
 KO_show_results( results_ko,
                  hp_ko       = NULL,
@@ -201,7 +201,7 @@ KO_show_results( results_ko,
 
 
 # Usage: bidimensional domain
-
+## KO algorithm
 ~~~
 PPCKO::PPC_KO_2d(Rcpp::NumericMatrix           X,
                  std::string                   id_CV            = "NoCV",
@@ -222,23 +222,24 @@ PPCKO::PPC_KO_2d(Rcpp::NumericMatrix           X,
                  Rcpp::Nullable<int>           min_size_ts      = R_NilValue,
                  Rcpp::Nullable<int>           max_size_ts      = R_NilValue,
                  int                           err_ret          = 0,
+                 Rcpp::Nullable<int>           num_threads      = R_NilValue,
                  Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue)
 ~~~
 Inputs have the same meaning of the unidimensional domain case: here are explained only the ones that differ.
 
--**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (m is the total number of evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain. [Below](#usage-utilities-to-map-bidimensional-domain-data), some functions are used to map the data (to understand in which format data can be stored). 
+-**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (*m* is the total number of actual evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain, in EACH ONE of the time instants, and they concurr in the count of *m*. In this way, the data reader understands that these points do not belong to the domain. [Below](#usage-utilities-to-map-bidimensional-domain-data), some functions are used to map the data from different storaging strategies to the ones needed from the package main function (to understand in which format data can be stored). 
 
--**`disc_ev_xi`**: discrete points of the domain for which the evaluations are available along dimension $i$. Default value: equispaced grid between left and right extreme of dimension $i$. 
+-**`disc_ev_xi`**: discrete points of the domain for which the evaluations are available along dimension $i$. Default value: equispaced grid between left and right extreme of domain $i$-th. 
 
--**`num_disc_ev_xi`**: number of discrete evaluations available for dimension $i$. Their product is equal to m.
+-**`num_disc_ev_xi`**: number of discrete evaluations (actual AND NaNs) available for dimension $i$.
 
--**`left_extreme_xi`**: left extreme of the domain of the data for dimension $i$.
+-**`left_extreme_xi`**: left extreme of the domain of the data for dimension $i$. 
 
 -**`right_extreme_xi`**: right extreme of the domain of the data for dimension $i$.
 
 **RETURN**: list containing:
 
--**`One-step ahead prediction`**: matrix containing the one step ahead prediction (for each available point of the domain).
+-**`One-step ahead prediction`**: matrix containing the one step ahead prediction (for each available point of the domain). NaNs are put in the points of the rectangle that do not belong to the domain.
 
 -**`Alpha`**: values of the regularization parameter `alpha` used.
 
@@ -246,11 +247,11 @@ Inputs have the same meaning of the unidimensional domain case: here are explain
 
 -**`Scores along PPCs`**: vector containing the scores along the PPCs.
 
--**`Explanatory power PPCs`**: vector containing the cumulative explanatory power up to PPC $i$.
+-**`Explanatory power PPCs`**: vector containing the cumulative explanatory power up to PPC $i$-th.
 
--**`Directions of PPCs`**: list in which each element is the direction (discrete evaluated function) along PPC $i$.
+-**`Directions of PPCs`**: list in which each element is the direction (discrete evaluated function) along PPC $i$-th.
 
--**`Weights of PPCs`**: list in which each element is the weight (discrete evaluated function) along PPC $i$.
+-**`Weights of PPCs`**: list in which each element is the weight (discrete evaluated function) along PPC $i$-th.
 
 -**`Validation errors`**: if `err_ret==1`: if `id_CV==NoCV`: empty vector; if `id_CV==CV_alpha`: vector containing the validation errors for each tried value of `alpha`; if `id_CV==CV_k`: vector containing the validation errors for each value of `k` actually tried; if `id_CV==CV`: matrix containing the validation errors for the pairs `alpha`-`k` (only `k` actually tried, if not put the validation error for the greatest `k` actually tried given that `alpha`). If `err_ret==0`: element not returned.
 
@@ -270,13 +271,13 @@ Inputs have the same meaning of the unidimensional domain case: here are explain
 
 
 
----
+## KO algorithm hypothesis check
 ~~~
 PPCKO::KO_check_hps_2d( Rcpp::NumericMatrix X,
                         int dim_x1,
                         int dim_x2 )
 ~~~
--**`X`**: matrix of numeric (real) values: each row (m) is the evaluation of the functional element in a point of its domain, each column (n) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (m is the total number of evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain. Below, some functions are used to map the data (to understand in which format data can be stored).
+-**`X`**: matrix of numeric (real) values: each row (*m*) is the evaluation of the functional element in a point of its domain, each column (*n*) is a specific time instant (equispaced) at which the evaluation occurs. In this case, originally, each time instants is a matrix, in which each entries contains the evaluation of the functional data in that specific point. Data have to be mapped to obtain an input equal to the unidimensional domain case: a vector in which all the columns are lined up represents a single time instant (*m* is the total number of actual evaluations in the grid): are then put next to each other sequentially. To represent more complex domains: NaNs are put in all the points of the grid that do not belong to the domain, in EACH ONE of the time instants, and they concurr in the count of *m*. In this way, the data reader understands that these points do not belong to the domain. [Below](#usage-utilities-to-map-bidimensional-domain-data), some functions are used to map the data from different storaging strategies to the ones needed from the package main function (to understand in which format data can be stored). 
 
 -**`dim_xi`**: number of discrete evaluations (actual evaluations AND NaNs) along dimension $i$.
 
@@ -286,7 +287,7 @@ PPCKO::KO_check_hps_2d( Rcpp::NumericMatrix X,
 
 
 
----
+## KO algorithm result visualization
 ~~~
 KO_show_results( results_ko,
                  hp_ko       = NULL,
@@ -301,7 +302,7 @@ KO_show_results( results_ko,
 
 -**`x1_lab`**: name of the $x1$-axis.
 
--**`x2_lab`**: name of the $x1$-axis.
+-**`x2_lab`**: name of the $x2$-axis.
 
 -**`z_lab`**: name of the $z$-axis.
 
