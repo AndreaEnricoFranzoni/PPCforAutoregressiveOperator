@@ -23,18 +23,15 @@ library(RcppEigen)
 library(devtools)
 ~~~
 
-- macOS: having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the package installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+Depending on the operative system, the instructions to totally set up the environment can be found [here](#prerequisites-appendix).
 
-- Windows: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
-
-The parallel version exploits *OpenMP* to speed up the computation doing CV, and it is highly recommended. How to set up *OpenMP* can be found [here](#prerequisites-appendix).
 
 
 # Installation
 
 To install the package:
 
-- Parallel version
+- Parallel version (highly recommended)
 ~~~
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 ~~~
@@ -348,67 +345,68 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 
 
 # Prerequisites: appendix
-## OpenMP setting
-Linux and Windows have already OpenMP installed by default. The problem arises using macOS, where OMP is not installed by default. OMP is mandatory to use the main version of the package (but it can be used without in its serial version). 
+## macOS
 
-Open the terminal and digit the following commands
+1. **Fortran**:  unlike Linux and Windows, Fortran has to be installed on macOS: instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
 
-1. **Homebrew**
-- Check the presence of Homebrew
-~~~
-brew --version
-~~~
-- If this command does not give back the version of Homebrew, install it according to the macOS version
-~~~
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-~~~
-  1. macOS *M1* or *M2*
-~~~
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/opt/homebrew/bin/brew shellenv)"
-~~~
-  2. macOS *Intel*
-~~~
-echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
-eval "$(/usr/local/bin/brew shellenv)"
-~~~
+2. **OpenMP**: unlike Linux and Windows, OMP is not installed by default on macOS. Open the terminal and digit the following commands.
 
-2. **OMP**
-- Once Homebrew is set, check the presence of OMP
-~~~
-brew list libomp
-~~~
-- Install it in case of negative output
-~~~
-brew install libomp
-~~~
+- **Homebrew**
+  - Check the presence of Homebrew
+    ~~~
+    brew --version
+    ~~~
+    - If this command does not give back the version of Homebrew, install it according to the macOS version
+    ~~~
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    ~~~
+      1. macOS *M1* or *M2*
+      ~~~
+      echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+      ~~~
+      2. macOS *Intel*
+      ~~~
+      echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+      eval "$(/usr/local/bin/brew shellenv)"
+      ~~~
 
-3. **LLVM**
+- **OMP**
+  - Once Homebrew is set, check the presence of OMP
+    ~~~
+    brew list libomp
+    ~~~
+  - Install it in case of negative output
+    ~~~
+    brew install libomp
+    ~~~
+
+- **LLVM**
    
-[LLVM](https://llvm.org) is needed to configure clang on macOS in order to use an external OMP version
-- Check its presence
-~~~
-llvm-config --version
-~~~
-- Eventually, download it
-~~~
-brew install llvm
-~~~
+  [LLVM](https://llvm.org) is needed to configure clang on macOS in order to use an external OMP version
+  - Check its presence
+  ~~~
+  llvm-config --version
+  ~~~
+  - Eventually, download it
+  ~~~
+  brew install llvm
+  ~~~
 
-4. OMP is now set to work on macOS and the parallel version of the package can be used.
-  
+## Windows
 
-## Other R dependencies
-If others errors occur, checking that other needed dependencies have been actually imported could be useful.
-~~~
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(viridis)
-library(patchwork)
-library(latex2exp)
-~~~
+1. **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). It will take for Fortran and OMP; select the most recent version. After, all the default options have to be selected to add it to the *PATH* variable. If successfull, the following commands on the R console result in a positive output
+   ~~~
+   Sys.which("gcc")
+   Sys.which("g++")
+   Sys.which("make")
+   ~~~
 
+## Linux
+
+No other prerequisites.
+
+                
 
 
 # Bibliography 
