@@ -23,7 +23,7 @@ library(RcppEigen)
 library(devtools)
 ~~~
 
-Depending on the operative system, the instructions to totally set up the environment can be found [here](#prerequisites-appendix).
+Depending on the operative system, the instructions to totally set up the environment can be found [here](#prerequisites-depending-on-operative-system).
 
 
 
@@ -344,7 +344,7 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 
 
 
-# Prerequisites: appendix
+# Prerequisites: depending on operative system
 ## macOS
 
 1. **Fortran**:  unlike Linux and Windows, Fortran has to be installed on macOS: instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
