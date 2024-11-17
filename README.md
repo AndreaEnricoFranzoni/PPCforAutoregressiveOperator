@@ -53,6 +53,18 @@ devtools::test()
 
 The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
+## Data
+
+A time series of functions (synthetic data) can be loaded on the global environment using
+~~~
+PPCKO::data(data_1d)
+~~~
+
+A time series of surfaces (synthetic data) can be loaded on the global environment using
+~~~
+PPCKO::data(data_2d)
+~~~
+
 
 
 # Documentation
