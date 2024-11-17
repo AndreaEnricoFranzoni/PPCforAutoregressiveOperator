@@ -171,7 +171,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                    labs( x = "alpha", y = "k", fill = "Validation Error" ) +
                    labs( title = "Validation error for CV on reg param and number of PPCs" ) +
                    theme_minimal() + 
-                   scale_x_continuous( breaks = seq(1,length(test_cv$Alphas), by = 1), labels = as.character(test_cv$Alphas)) + 
+                   scale_x_continuous( breaks = seq(1,length(results_ko$Alphas), by = 1), labels = as.character(results_ko$Alphas)) + 
                    theme( plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
                           legend.position = "bottom",
                           panel.grid.major = element_blank(),  
@@ -445,7 +445,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
           labs( x = "alpha", y = "k", fill = "Validation Error" ) +
           labs( title = "Validation error for CV on reg param and number of PPCs" ) +
           theme_minimal() + 
-          scale_x_continuous( breaks = seq(1,length(test_cv$Alphas), by = 1), labels = as.character(test_cv$Alphas)) + 
+          scale_x_continuous( breaks = seq(1,length(results_ko$Alphas), by = 1), labels = as.character(results_ko$Alphas)) + 
           theme( plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
                  legend.position = "bottom",
                  panel.grid.major = element_blank(),  
