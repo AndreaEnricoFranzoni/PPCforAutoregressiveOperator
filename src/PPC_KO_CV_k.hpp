@@ -19,9 +19,9 @@ private:
 public:
   
   template<typename STOR_OBJ>
-  PPC_KO_CV_k(STOR_OBJ&& X, std::vector<int> &k_s, double alpha, double toll, int min_size_ts, int max_size_ts) 
+  PPC_KO_CV_k(STOR_OBJ&& X, std::vector<int> &k_s, double alpha, double toll, int min_size_ts, int max_size_ts, int number_threads) 
     : 
-    PPC_KO_base<PPC_KO_CV_k,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
+    PPC_KO_base<PPC_KO_CV_k,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
     m_k_s(k_s),
     m_X_non_cent(this->m(),this->n()),
     m_toll(toll),
@@ -31,24 +31,13 @@ public:
       this->alpha() = alpha;
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
       
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(this->number_threads())
+#endif
       for (size_t i = 0; i < this->n(); ++i)
       {
         m_X_non_cent.col(i) = this->X().col(i).array() + this->means();
       }
-      
-      
-       /*
-        * std::cout << "PPC KO CV k CRTP: dim dom: " << dom_dim << ", k imp: " << k_imp << ", ver: " << valid_err_ret << std::endl;
-        std::cout << "My data centered have " << this->X().rows() << " rows and " << this->X().cols() << " cols" << std::endl;
-        std::cout << this->X() << std::endl;
-        std::cout << "My data non centered have " << m_X_non_cent.rows() << " rows and " << m_X_non_cent.cols() << " cols" << std::endl;
-        std::cout << m_X_non_cent << std::endl;
-        std::cout << "alpha:" << this->alpha() <<  std::endl;
-        std::cout << "ks:" << std::endl;
-        for(std::size_t i = 0; i < m_k_s.size(); ++i){std::cout<<m_k_s[i]<<std::endl;}
-        std::cout << "PPC KO CV k END" << std::endl;
-        */
-       
     }
   
   
@@ -61,24 +50,20 @@ public:
     //scrivere una l'oggetto CV strategy
     auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(m_min_size_ts,m_max_size_ts);
 
-    for (size_t i = 0; i < (*strategy_cv).strategy().size(); ++i)
-    {
-      std::cout << "Train: " << (*strategy_cv).strategy()[i].first.front() << std::endl;
-      std::cout << "Valid: " << (*strategy_cv).strategy()[i].second.front() << std::endl;
-    }
-    
-    
     //lambda wrapper for the correct overload
-    auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k);};
+    auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k, int number_threads) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k,number_threads);};
     
+    //to stop the algorithm if not too much difference in adding a PPC
     double toll_param = m_toll*this->trace_cov();
-    //CV_PPC::CV_KO_PPC_k_CRTP<cv_strat,cv_err_eval,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,m_toll,this->alpha(),PPC::ko_single_cv_CRTP<dom_dim,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval>);
-    CV_k<cv_strat,cv_err_eval,K_IMP::YES,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,toll_param,this->alpha(),predictor);
     
+    //CV for k
+    CV_k<cv_strat,cv_err_eval,K_IMP::YES,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_k_s,toll_param,this->alpha(),predictor,this->number_threads());
+    
+    //best number of PPCs
     cv.best_param_search();
     this->k() = cv.param_best();
     
-    //da qui
+    //if errors to be saved
     if constexpr (valid_err_ret == VALID_ERR_RET::YES_err)
     {
       valid_err_cv_1_t m;

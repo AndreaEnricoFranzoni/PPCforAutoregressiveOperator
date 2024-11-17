@@ -29,26 +29,14 @@ public:
              const std::vector<double> &alphas,
              const std::vector<int> &k_s,
              double toll,
-             const pred_func_t<K_IMP::YES> & pred_f)
-    : CV_base<CV_alpha_k,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy)), 
+             const pred_func_t<K_IMP::YES> & pred_f,
+             int number_threads)
+    : CV_base<CV_alpha_k,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy),number_threads), 
       m_alphas(alphas),
       m_k_s(k_s),
       m_toll(toll),
       m_pred_f(pred_f)
-      {
-        
-         /*
-          * std::cout << "CV alpha-k" << std::endl;
-          std::cout << "Data" << std::endl;
-          std::cout << this->Data() << std::endl;
-          std::cout << "tol: " << m_toll << std::endl;
-          std::cout << "alphas:" << std::endl;
-          for(std::size_t i = 0; i < m_alphas.size(); ++i){std::cout<<m_alphas[i]<<std::endl;}
-          std::cout << "k_s: " << std::endl;
-          for(std::size_t i = 0; i < m_k_s.size(); ++i){std::cout<<m_k_s[i]<<std::endl;}
-          */
-         
-      }
+      {}
   
   
   //Getters
@@ -84,15 +72,44 @@ public:
   void 
   best_param_search()
   {
+    std::size_t tot_alphas = m_alphas.size();
+    
+#ifdef _OPENMP
     //preparing the containers for the errors
     if constexpr(valid_err_ret == VALID_ERR_RET::YES_err)
     {
-      m_valid_errors.reserve(m_alphas.size());  //for each alpha: valid error for each k
+      m_valid_errors.resize(tot_alphas);  //for each alpha: valid error for each k
     }
     
-    m_valid_errors_best_pairs.reserve(m_alphas.size()); //for each alpha: valid error only for the best k
-    
+    m_valid_errors_best_pairs.resize(tot_alphas); //for each alpha: valid error only for the best k
 
+#pragma omp parallel for shared(m_alphas,m_k_s,m_toll,m_pred_f,tot_alphas) num_threads(this->number_threads()) schedule(guided)
+    for(std::size_t i = 0; i < tot_alphas; ++i)
+    {
+      //alpha fixed: doing CV on k
+      CV_k<cv_strat,err_eval,k_imp,valid_err_ret> cv(std::move(this->Data()),std::move(this->strategy()),m_k_s,m_toll,m_alphas[i],m_pred_f,this->number_threads());
+      cv.best_param_search();
+      
+      //best k given the alpha
+      m_best_pairs.insert(std::make_pair(m_alphas[i],cv.param_best()));
+      //saving the validation error for the best pair
+      m_valid_errors_best_pairs[i]=cv.best_valid_error();
+      
+      if constexpr(valid_err_ret == VALID_ERR_RET::YES_err)
+      {
+        //saving the validation error for each pair (further inspection)
+        m_valid_errors[i]=cv.valid_errors();
+      }
+    }
+#else
+    //preparing the containers for the errors
+    if constexpr(valid_err_ret == VALID_ERR_RET::YES_err)
+    {
+      m_valid_errors.reserve(tot_alphas);  //for each alpha: valid error for each k
+    }
+    
+    m_valid_errors_best_pairs.reserve(tot_alphas); //for each alpha: valid error only for the best k
+    
     for(const auto & alpha : m_alphas)
     {
       //alpha fixed: doing CV on k
@@ -109,8 +126,8 @@ public:
         //saving the validation error for each pair (further inspection)
         m_valid_errors.emplace_back(cv.valid_errors());
       }
-      
     }
+#endif
     
     //best validation error
     auto min_err = std::min_element(m_valid_errors_best_pairs.begin(),m_valid_errors_best_pairs.end());

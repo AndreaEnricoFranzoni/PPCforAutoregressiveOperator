@@ -11,9 +11,39 @@
 
 #include "mesh.hpp"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 
 //utilities to wrap the input parameters of the R function
 
+//algo implemented
+struct CV_algo
+{
+  std::string CV1 = "NoCV";
+  std::string CV2 = "CV_alpha";
+  std::string CV3 = "CV_k";
+  std::string CV4 = "CV";
+};
+
+
+inline 
+std::string
+wrap_string_CV_to_be_printed(const std::string &id_cv)
+{
+  CV_algo cv_algo;
+  
+  if(id_cv==cv_algo.CV1){  return "no cross-validation";}
+  if(id_cv==cv_algo.CV2){  return "cross validation on regularization parameter";}
+  if(id_cv==cv_algo.CV3){  return "cross validation on number of PPCs";}
+  if(id_cv==cv_algo.CV4){  return "cross validation on both regularization parameter and number of PPCs";}
+  else
+  {
+    std::string error_message = "Wrong input string";
+    throw std::invalid_argument(error_message);
+  }
+}
 
 
 //check that threshold_ppc is in the correct range
@@ -200,6 +230,31 @@ wrap_sizes_set_CV(Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_
   }
 
   return std::make_pair(min_dim_ts,max_dim_ts);
+}
+
+
+//to wrap the number of threads
+inline
+int
+wrap_num_thread(Rcpp::Nullable<int> num_threads)
+{
+#ifndef _OPENMP
+  return 1;
+#endif
+  
+  int max_n_t = omp_get_num_procs();
+  
+  if(num_threads.isNull())
+  {
+    return max_n_t;
+  }
+  else
+  {
+    int n_t = Rcpp::as<int>(num_threads);
+    if(n_t <= 1 || n_t > max_n_t){  return max_n_t;}
+    
+    return n_t;
+  }
 }
 
 

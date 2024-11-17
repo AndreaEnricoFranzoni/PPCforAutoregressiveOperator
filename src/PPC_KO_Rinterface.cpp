@@ -1,6 +1,6 @@
 #include <RcppEigen.h>
 
-
+#include <string>
 #include "traits_ko.hpp"
 #include "parameters_wrapper.hpp"
 #include "utils.hpp"
@@ -36,6 +36,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
                   Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
                   Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                   int                           err_ret       = 0,
+                  Rcpp::Nullable<int>           num_threads   = R_NilValue,
                   Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue
                   )
 { 
@@ -53,7 +54,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   auto sizes_CV_sets                 = wrap_sizes_set_CV(min_size_ts,max_size_ts,X.ncol());
   int min_dim_train_set              = sizes_CV_sets.first;
   int max_dim_train_set              = sizes_CV_sets.second;
-  
+  int number_threads                 = wrap_num_thread(num_threads);
+
   //reading data, handling NANs
   auto data_read = reader_data<T>(X,id_RN);
   KO_Traits::StoringMatrix x = data_read.first;
@@ -63,6 +65,12 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   
   //returning element
   Rcpp::List l;
+  
+  
+  
+  Rcout << "--------------------------------------------------------------------------------------------" << std::endl;
+  Rcout << "Running Kargin-Onatski algorithm, " << wrap_string_CV_to_be_printed(id_CV) << std::endl;
+  Rcout << "Functional data defined over: [" << left_extreme << "," << right_extreme << "], with " << disc_ev_points.size() << " discrete evaluations" << std::endl;
 
   
   
@@ -73,7 +81,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -111,7 +119,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -155,7 +163,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -190,7 +198,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -262,6 +270,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
                      Rcpp::Nullable<int>           min_size_ts      = R_NilValue,
                      Rcpp::Nullable<int>           max_size_ts      = R_NilValue,
                      int                           err_ret          = 0,
+                     Rcpp::Nullable<int>           num_threads      = R_NilValue,
                      Rcpp::Nullable<std::string>   id_rem_nan       = R_NilValue
 )
 { 
@@ -280,6 +289,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
   auto sizes_CV_sets                    = wrap_sizes_set_CV(min_size_ts,max_size_ts,X.ncol());
   int min_dim_train_set                 = sizes_CV_sets.first;
   int max_dim_train_set                 = sizes_CV_sets.second;
+  int number_threads                    = wrap_num_thread(num_threads);
 
   //reading data, handling NANs
   auto data_read = reader_data<T>(X,id_RN);
@@ -291,6 +301,11 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
   //returning element
   Rcpp::List l;
   
+  Rcout << "--------------------------------------------------------------------------------------------" << std::endl;
+  Rcout << "Running Kargin-Onatski algorithm, " << wrap_string_CV_to_be_printed(id_CV) << std::endl;
+  Rcout << "Functional data defined over: [" << left_extreme_x1 << "," << right_extreme_x1 << "] x [" << left_extreme_x2 << "," << right_extreme_x2 <<"], with " << disc_ev_points_x1.size() << " x " << disc_ev_points_x2.size() << " discrete evaluations" << std::endl;
+  
+  
   
   if(err_ret_b)                                         //VALIDATION ERRORS STORED AND RETURNED
   {
@@ -299,7 +314,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -336,7 +351,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -380,7 +395,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     { 
       //2D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -415,7 +430,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set);
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -473,6 +488,9 @@ Rcpp::List KO_check_hps(Rcpp::NumericMatrix X)
 {
   using T = double; 
   
+  Rcout << "--------------------------------------" << std::endl;
+  Rcout << "Pointwise ADF test p-values evaluation" << std::endl;
+  
   auto data_read = reader_data<T>(X, REM_NAN::MR);
   KO_Traits::StoringMatrix x = data_read.first;
   
@@ -490,7 +508,7 @@ Rcpp::List KO_check_hps(Rcpp::NumericMatrix X)
     auto pv = adf_t.p_values();
     auto pv_final = add_nans_vec(Eigen::Map<const KO_Traits::StoringVector>(pv.data(),pv.size()),data_read.second,X.nrow());
     
-    l["Pvalues ADF"] = pv_final;
+    l["P-values ADF"] = pv_final;
     return l;
   }
   
@@ -513,6 +531,9 @@ Rcpp::List KO_check_hps_2d(Rcpp::NumericMatrix X, int dim_x1, int dim_x2)
 { 
   //X is the matrix containing the 2d grid already dispatched
   using T = double; 
+  
+  Rcout << "--------------------------------------" << std::endl;
+  Rcout << "Pointwise ADF test p-values evaluation" << std::endl;
   
   auto data_read = reader_data<T>(X, REM_NAN::MR);
   KO_Traits::StoringMatrix x = data_read.first;
@@ -586,28 +607,4 @@ Rcpp::NumericMatrix data_2d_wrapper_from_list(Rcpp::List Xt)
   }
    
   return x;
-}
-
-
-
-
-
-
-
-//
-// [[Rcpp::export]]
-Rcpp::List read_data_na(Rcpp::NumericMatrix X)
-{ 
-  using T = double;       //version for double
-  Rcpp::List l;
-  
-  REM_NAN id_RN = REM_NAN::MR;
-  auto data_read = reader_data<T>(X, id_RN);
-  KO_Traits::StoringMatrix x = data_read.first;
-  std::vector<int> rr = data_read.second;
-  
-
-  l["data_read"] = x;
-  l["rw"] = rr;
-  return l;
 }

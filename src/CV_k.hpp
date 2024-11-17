@@ -26,26 +26,14 @@ public:
        const std::vector<int> &params,
        double toll,
        double alpha,
-       const pred_func_t<K_IMP::YES> & pred_f)
-    : CV_base<CV_k,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy)), 
+       const pred_func_t<K_IMP::YES> & pred_f,
+       int number_threads)
+    : CV_base<CV_k,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy),number_threads), 
       m_params(params), 
       m_toll(toll),
       m_alpha(alpha),
       m_pred_f(pred_f)
-      {
-        
-         /*
-          * std::cout << "INSIDE CV K" << std::endl;
-          std::cout << "Cv k" << std::endl;
-          std::cout << "Data:" << this->Data().rows() << "x" << this->Data().cols() << std::endl;
-          std::cout << this->Data() << std::endl;
-          std::cout << "alpha: " << m_alpha << ", toll " << m_toll << std::endl;
-          std::cout << "ks:" << std::endl;
-          for(std::size_t i = 0; i < m_params.size(); ++i){std::cout<<m_params[i]<<std::endl;}
-          std::cout << "INSIDE CV k END" << std::endl;
-          */
-         
-      }
+      {}
   
   
   //Getters
@@ -73,8 +61,8 @@ public:
    {
       //train the model to make prediction
       //auto pred = m_pred_f(training_set,0.95,m_alpha,param);
-      auto pred = m_pred_f(training_set,m_alpha,param);
-      return this->err_valid_set_eval(pred,validation_set);
+      auto pred = m_pred_f(training_set,m_alpha,param,this->number_threads());
+      return this->err_valid_set_eval(pred,validation_set,this->number_threads());
    }
    
    
@@ -84,13 +72,24 @@ public:
    error_single_param(const int &param, const cv_strategy_t &strat, const std::size_t &number_cv_iter) 
    const
    {
-      double err = std::transform_reduce(strat.cbegin(),
-                                         strat.cend(),
-                                         0.0,
-                                         std::plus{},
-                                         [this,&param](auto el){ auto train_valid_set = this->strategy().train_validation_set(this->Data(),el); return this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);});
-    
-      return err/(static_cast<double>(number_cv_iter));
+     double err = 0.0;
+     
+#ifdef _OPENMP
+#pragma omp parallel for shared(param,strat) num_threads(this->number_threads()) reduction(+:err)
+     for (int i = 0; i < number_cv_iter; ++i)
+     {
+       auto train_valid_set = this->strategy().train_validation_set(this->Data(),strat[i]); 
+       err += this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);
+     }
+#else
+     err = std::transform_reduce(strat.cbegin(),
+                                 strat.cend(),
+                                 0.0,
+                                 std::plus{},
+                                 [this,&param](auto el){ auto train_valid_set = this->strategy().train_validation_set(this->Data(),el); return this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);});
+#endif     
+     
+     return err/(static_cast<double>(number_cv_iter));
    }
   
   
@@ -113,7 +112,6 @@ public:
       m_valid_errors.emplace_back(curr_err);
       
       if(std::abs(curr_err - previous_error) < m_toll) {break;} else {previous_error = curr_err;}
-
     }
     
     //Shrinking

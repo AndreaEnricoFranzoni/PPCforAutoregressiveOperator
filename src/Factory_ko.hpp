@@ -4,10 +4,16 @@
 #include <string>
 #include <memory>
 #include <stdexcept>
-#include "utility"
+#include <utility>
+#include <iostream>
 
 #include "traits_ko.hpp"
+#include "parameters_wrapper.hpp"
 #include "PPC_KO_wrapper.hpp"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 
@@ -27,29 +33,35 @@ public:
               const std::vector<int>& k_s,
               double toll,
               int min_size_ts,
-              int max_size_ts)
+              int max_size_ts,
+              int num_threads)
     {
+      CV_algo cv_algo;
       
-      if (id == "NoCV")
+#ifdef _OPENMP
+      std::cout << "Running parallel version" << std::endl;
+#else
+      std::cout << "Running serial version" << std::endl;
+#endif
+      
+      if (id == cv_algo.CV1)   //No CV
       {
-        if(k==0){return std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,threshold_ppc);}
-        else    {return std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k);}
+        return k==0 ? std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,threshold_ppc,num_threads) : std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k,num_threads);
       }
       
-      if (id == "CV_alpha")
+      if (id == cv_algo.CV2)   //CV on alpha
       {
-        if(k==0){return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts);}
-        else    {return std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts);}
+        return k==0 ? std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts,num_threads) : std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts,num_threads);
       }
       
-      if (id == "CV_k")
+      if (id == cv_algo.CV3)   //CV on k
       {
-        return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts);
+        return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
       
-      if (id == "CV")
+      if (id == cv_algo.CV4)   //CV on both alpha and k
       {
-        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts);
+        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
       
       else

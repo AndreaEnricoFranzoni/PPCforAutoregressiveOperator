@@ -12,11 +12,13 @@
 #include <tuple>
 
 #include "traits_ko.hpp"
-
-
 #include "CV_include.hpp"
 #include "Factory_cv_strategy.hpp"
 #include "strategy_cv.hpp"
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 //templates params
@@ -43,26 +45,30 @@ private:
   std::vector<double> m_explanatory_power;    //vector containing the cumulative explanatory power (will have size k)
   double m_alpha;                             //regularization parameter
   int m_k;                                    //number of PPCs retained
-  double m_threshold_ppc;                       //threshold according to how much predictive power has to be retained by the PPCs
-
-  valid_err_variant m_valid_err;            //just for debugging
+  double m_threshold_ppc;                     //threshold according to how much predictive power has to be retained by the PPCs
+  valid_err_variant m_valid_err;              //validation errors
+  int m_number_threads;                       //number of threads for OMP
   
   
   
 public:
   
   template<typename STOR_OBJ>
-  PPC_KO_base(STOR_OBJ&& X)
+  PPC_KO_base(STOR_OBJ&& X,int number_threads)
     :   
     m_X{std::forward<STOR_OBJ>(X)},
     m_m(X.rows()),
-    m_n(X.cols())
+    m_n(X.cols()),
+    m_number_threads(number_threads)
     {  
       
       //evaluating row mean and saving it in the m_means
       m_means = (m_X.rowwise().sum())/m_n;
       
       //normalizing
+#ifdef _OPENMP
+#pragma omp parallel for num_threads(m_number_threads)
+#endif
       for (size_t i = 0; i < m_n; ++i)
       {
         m_X.col(i) = m_X.col(i).array() - m_means;
@@ -180,21 +186,20 @@ public:
    */
   inline valid_err_variant & ValidErr() {return m_valid_err;};
   
-  
+  /*!
+   * Getter for m_number_threads
+   */
+  inline int number_threads() const {return m_number_threads;};
   
 
   //methods common to all child classes
   //number of PPCs retained, eigvalues and eigvcts di phi
   std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained(const KO_Traits::StoringMatrix & phi, double tot_exp_pow) const;
 
-  
-  //Inverse square for regularized covariance (k is chosen in this function)
-  //KO_Traits::StoringMatrix matrix_inverse_square_root(const KO_Traits::StoringMatrix& mat) const;
-  
   //KO algorithm, once parameters have been set
   void KO_algo();
   
-  //doing one-step ahead prediction
+  //one-step ahead prediction
   KO_Traits::StoringArray prediction() const;
   
   //scores evaluation

@@ -18,7 +18,9 @@
 #include "strategy_cv.hpp"
 #include "cv_eval_valid_err.hpp"
 
-
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 
@@ -31,8 +33,8 @@ using ERR_EVAL_T = std::integral_constant<CV_ERR_EVAL, err_eval>;
 //using pred_func_t       = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)>;
 //if k not imp: for using KO I need data, alpha and the threshold
 //if k imp: for using KO I need data, alpha and k
-using pred_func_k_yes_t = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,int)>;
-using pred_func_k_no_t  = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double)>;
+using pred_func_k_yes_t = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,int,int)>;
+using pred_func_k_no_t  = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)>;
 
 template <K_IMP k_imp>
 using pred_func_t = std::conditional<k_imp, pred_func_k_yes_t,pred_func_k_no_t>::type;
@@ -50,15 +52,17 @@ private:
   cv_strategy<cv_strat> m_strategy;
 
   //how to evaluate the error between prediction on training set and validation set
-  double err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid, ERR_EVAL_T<CV_ERR_EVAL::MSE>) const;
+  double err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid, int number_threads, ERR_EVAL_T<CV_ERR_EVAL::MSE>) const;
   
+  //number of threads for OMP
+  int m_number_threads;
   
 public:
   
   //constructor
   template<typename STOR_OBJ,typename STRATEGY>
-  CV_base(STOR_OBJ&& Data, STRATEGY && strategy)
-    : m_Data{std::forward<STOR_OBJ>(Data)}, m_strategy{std::forward<STRATEGY>(strategy)}  {}
+  CV_base(STOR_OBJ&& Data, STRATEGY && strategy, int number_threads)
+    : m_Data{std::forward<STOR_OBJ>(Data)}, m_strategy{std::forward<STRATEGY>(strategy)}, m_number_threads(number_threads)  {}
   
   //getter for data
   inline KO_Traits::StoringMatrix Data() const {return m_Data;}
@@ -66,8 +70,11 @@ public:
   //getter for the strategy
   inline cv_strategy<cv_strat> strategy() const {return m_strategy;}
   
+  //getter for the number of threads
+  inline int number_threads() const {return m_number_threads;}
+  
   //error evaluation
-  double err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid) const { return err_valid_set_eval(pred,valid,ERR_EVAL_T<err_eval>{});};
+  double err_valid_set_eval(const KO_Traits::StoringVector &pred, const KO_Traits::StoringVector &valid, int number_threads) const { return err_valid_set_eval(pred,valid,number_threads,ERR_EVAL_T<err_eval>{});};
   
 };
 

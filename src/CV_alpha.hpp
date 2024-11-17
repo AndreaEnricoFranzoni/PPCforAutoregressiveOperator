@@ -28,26 +28,13 @@ public:
            STRATEGY && strategy,
            const std::vector<double> &params,
            int k,
-           const pred_func_t<k_imp> & pred_f)
-    : CV_base<CV_alpha,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy)), 
+           const pred_func_t<k_imp> & pred_f,
+           int number_threads)
+    : CV_base<CV_alpha,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy),number_threads), 
       m_params(params), 
       m_k(k),
       m_pred_f(pred_f)
-      {
-        
-         /*
-          * std::cout << "INSIDE CV ALPHA" << std::endl;
-          std::cout << "Cv alpha" << std::endl;
-          std::cout << "Data:" << this->Data().rows() << "x" << this->Data().cols() << std::endl;
-          std::cout << this->Data() << std::endl;
-          std::cout << "k: " << m_k << std::endl;
-          std::cout << "alphas:" << std::endl;
-          for(std::size_t i = 0; i < m_params.size(); ++i){std::cout<<m_params[i]<<std::endl;}
-          std::cout << "INSIDE CV ALPHA END" << std::endl;
-          */
-         
-        
-        }
+      {}
   
   //costructor if k is not known
   template<typename STOR_OBJ,typename STRATEGY>
@@ -55,25 +42,13 @@ public:
            STRATEGY && strategy,
            const std::vector<double> &params,
            double threshold_ppc,
-           const pred_func_t<k_imp> & pred_f)
-    : CV_base<CV_alpha,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy)), 
+           const pred_func_t<k_imp> & pred_f,
+           int number_threads)
+    : CV_base<CV_alpha,cv_strat,err_eval,k_imp,valid_err_ret>(std::move(Data),std::move(strategy),number_threads), 
       m_params(params), 
       m_threshold_ppc(threshold_ppc),
       m_pred_f(pred_f)
-      { 
-        
-         /*
-          * std::cout << "INSIDE CV ALPHA" << std::endl;
-          std::cout << "Cv alpha" << std::endl;
-          std::cout << "Data:" << this->Data().rows() << "x" << this->Data().cols() << std::endl;
-          std::cout << this->Data() << std::endl;
-          std::cout << "thresh: " << m_threshold_ppc << std::endl;
-          std::cout << "alphas:" << std::endl;
-          for(std::size_t i = 0; i < m_params.size(); ++i){std::cout<<m_params[i]<<std::endl;}
-          std::cout << "INSIDE CV ALPHA END" << std::endl;
-          */
-         
-        }
+      {}
   
   
   //Getters
@@ -103,13 +78,13 @@ public:
       //auto pred = m_pred_f(training_set,m_threshold_ppc,param,m_k);
       if constexpr( k_imp == YES)
       {
-        auto pred = m_pred_f(training_set,param,m_k);
-        return this->err_valid_set_eval(pred,validation_set);
+        auto pred = m_pred_f(training_set,param,m_k,this->number_threads());
+        return this->err_valid_set_eval(pred,validation_set,this->number_threads());
       }
       else
       {
-        auto pred = m_pred_f(training_set,param,m_threshold_ppc);
-        return this->err_valid_set_eval(pred,validation_set);
+        auto pred = m_pred_f(training_set,param,m_threshold_ppc,this->number_threads());
+        return this->err_valid_set_eval(pred,validation_set,this->number_threads());
       }
       
    }
@@ -121,13 +96,24 @@ public:
    error_single_param(const double &param, const cv_strategy_t &strat, const std::size_t &number_cv_iter) 
    const
    { 
-     double err = std::transform_reduce(strat.cbegin(),
-                                        strat.cend(),
-                                        0.0,
-                                        std::plus{},
-                                        [this,&param](auto el){ auto train_valid_set = this->strategy().train_validation_set(this->Data(),el); return this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);});
+     double err = 0.0;
      
-      return err/(static_cast<double>(number_cv_iter));
+#ifdef _OPENMP
+#pragma omp parallel for shared(param,strat) num_threads(this->number_threads()) reduction(+:err)
+     for (int i = 0; i < number_cv_iter; ++i)
+     {
+       auto train_valid_set = this->strategy().train_validation_set(this->Data(),strat[i]); 
+       err += this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);
+     }
+#else     
+     err = std::transform_reduce(strat.cbegin(),
+                                 strat.cend(),
+                                 0.0,
+                                 std::plus{},
+                                 [this,&param](auto el){ auto train_valid_set = this->strategy().train_validation_set(this->Data(),el); return this->error_single_cv_iter(param,train_valid_set.first,train_valid_set.second);});
+#endif
+  
+     return err/(static_cast<double>(number_cv_iter));
    }
    
   
@@ -136,13 +122,23 @@ public:
   void 
   best_param_search() 
   { 
-    //preparing the container for the errors: resize to use transform
-    m_valid_errors.resize(m_params.size());
+    int tot_params = m_params.size();
     
+    //preparing the container for the errors: resize to use transform
+    m_valid_errors.resize(tot_params);
+    
+#ifdef _OPENMP
+#pragma omp parallel for shared(m_params,tot_params) num_threads(this->number_threads())
+    for(std::size_t i = 0; i < tot_params; ++i)
+    {
+      m_valid_errors[i] = this->error_single_param(m_params[i],this->strategy().strategy(),this->strategy().strategy().size());
+    }
+#else
     std::transform(m_params.cbegin(),
                    m_params.cend(),
                    m_valid_errors.begin(),
                    [this](double const &param_i){return this->error_single_param(param_i,this->strategy().strategy(),this->strategy().strategy().size());});
+#endif
     
     //best validation error
     auto min_err = (std::min_element(m_valid_errors.begin(),m_valid_errors.end()));
