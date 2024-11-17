@@ -360,12 +360,12 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
     ~~~
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     ~~~
-      1. macOS *M1* or *M2*
+      1. *M1* or *M2*
       ~~~
       echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
       eval "$(/opt/homebrew/bin/brew shellenv)"
       ~~~
-      2. macOS *Intel*
+      2. *Intel*
       ~~~
       echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
       eval "$(/usr/local/bin/brew shellenv)"
