@@ -37,7 +37,7 @@ using pred_func_k_yes_t = std::function<KO_Traits::StoringVector(KO_Traits::Stor
 using pred_func_k_no_t  = std::function<KO_Traits::StoringVector(KO_Traits::StoringMatrix,double,double,int)>;
 
 template <K_IMP k_imp>
-using pred_func_t = std::conditional<k_imp, pred_func_k_yes_t,pred_func_k_no_t>::type;
+using pred_func_t = typename std::conditional<k_imp, pred_func_k_yes_t,pred_func_k_no_t>::type;
 
 
 template< class D, CV_STRAT cv_strat, CV_ERR_EVAL err_eval, K_IMP k_imp, VALID_ERR_RET valid_err_ret >
