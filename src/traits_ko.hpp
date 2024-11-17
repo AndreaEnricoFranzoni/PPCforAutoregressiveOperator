@@ -91,7 +91,7 @@ using results_no_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::
 
 // if errors are saved or not
 template <VALID_ERR_RET valid_err_ret>
-using results_t = std::conditional<valid_err_ret,results_err_t,results_no_err_t>::type;
+using results_t = typename std::conditional<valid_err_ret,results_err_t,results_no_err_t>::type;
 
 
 
