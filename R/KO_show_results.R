@@ -59,7 +59,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
     
     if(length(hp_ko)!=1){ stop("Second parameter (hp_ko) could be not from hp-check KO")}
     
-    data_hp <- data.frame( x = results_ko$`Function discrete evaluations points`, y = hp_ko$`Pvalues ADF`)
+    data_hp <- data.frame( x = results_ko$`Function discrete evaluations points`, y = hp_ko$`P-values ADF`)
     
     plot_pvalues <- ggplot(data_hp, aes(x = x, y = y, fill = y)) +
                     geom_bar( stat = "identity", color = "black" ) +  # 'stat = "identity"' per utilizzare i valori di y
@@ -271,7 +271,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
     data <- expand.grid(x = results_ko$`Function discrete evaluations points dim1`, y = results_ko$`Function discrete evaluations points dim2`)
     
     # Usa gli indici per ottenere i valori da m$`Pvalues ADF`
-    data$z <- (hp_ko$`Pvalues ADF`)[cbind(
+    data$z <- (hp_ko$`P-values ADF`)[cbind(
       match(data$x, results_ko$`Function discrete evaluations points dim1`),  # Trova gli indici di x in x_coords
       match(data$y, results_ko$`Function discrete evaluations points dim2`)   # Trova gli indici di y in y_coords
     )]
