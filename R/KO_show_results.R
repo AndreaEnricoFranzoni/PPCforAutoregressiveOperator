@@ -5,7 +5,7 @@
 #' 
 #' 
 
-open_window <- function() {
+.open_window <- function() {
   os <- Sys.info()["sysname"]
   
   if (os == "Windows") {
@@ -71,7 +71,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                     theme( plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
                            panel.grid.major.x = element_line( color = "gray", linewidth = 0.1) )
     
-    open_window()
+    .open_window()
     print(plot_pvalues)}
   
   
@@ -92,7 +92,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                       legend.title = element_text(size = 12),
                       legend.text = element_text(size = 10) )
   
-  open_window()
+  .open_window()
   print(plot_pred)
   
   
@@ -128,7 +128,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
           theme(plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
                 panel.grid.major.x = element_line( color = "gray", linewidth = 0.5))}
       
-      open_window()
+      .open_window()
       print(plot_cv_alpha)}
     
     
@@ -145,7 +145,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
         theme(plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
               panel.grid.major.x = element_line( color = "gray", linewidth = 0.5)) 
       
-      open_window()
+      .open_window()
       print(plot_cv_k)}
     
     
@@ -193,7 +193,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                    geom_hline( yintercept = data$y, linetype = "solid", color = "grey", size = 0.05 ) +  
                    geom_vline( xintercept = data$x, linetype = "solid", color = "grey", size = 0.1 )}
       
-      open_window()
+      .open_window()
       print(plot_cv)}
   }
   
@@ -222,7 +222,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                  theme( plot.title = element_text(face = "bold",hjust = 0.5))
     
     plot_dir_we <- direction + weight + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
-    open_window()
+    .open_window()
     print(plot_dir_we)}
 }
 
@@ -297,7 +297,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                geom_hline( yintercept = seq(min(data$y), max(data$y), by = (quantile(data$y)[2]-quantile(data$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
                geom_vline( xintercept = seq(min(data$x), max(data$x), by = (quantile(data$x)[2]-quantile(data$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
     
-    open_window()
+    .open_window()
     print(plot_pv)}
   
   
@@ -348,7 +348,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   
   combined_plot <- plot1 + plot2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 
-  open_window()
+  .open_window()
   print(combined_plot)
   
   #then, a plot to see the increment
@@ -366,7 +366,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                geom_hline( yintercept = seq(min(diff$y), max(diff$y), by = (quantile(diff$y)[2]-quantile(diff$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
                geom_vline( xintercept = seq(min(diff$x), max(diff$x), by = (quantile(diff$x)[2]-quantile(diff$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
   
-  open_window()
+  .open_window()
   print(increment)
   
   
@@ -402,7 +402,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
           theme(plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
                 panel.grid.major.x = element_line( color = "gray", linewidth = 0.5))}
       
-      open_window()
+      .open_window()
       print(plot_cv_alpha)}
     
     
@@ -419,7 +419,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
         theme(plot.title = element_text( family = "Arial", face = "bold", color = "black", size = 16, hjust = 0.5),
               panel.grid.major.x = element_line( color = "gray", linewidth = 0.5)) 
       
-      open_window()
+      .open_window()
       print(plot_cv_k)}
     
     
@@ -467,7 +467,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
           geom_hline( yintercept = data$y, linetype = "solid", color = "grey", size = 0.05 ) +  
           geom_vline( xintercept = data$x, linetype = "solid", color = "grey", size = 0.1 )}
       
-      open_window()
+      .open_window()
       print(plot_cv)}
   }
   
@@ -511,6 +511,6 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                   geom_vline( xintercept = seq(min(wei$x), max(wei$x), by = (quantile(wei$x)[2]-quantile(wei$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
     
     plot_dir_we <- dir_plot + weight_plot + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
-    open_window()
+    .open_window()
     print(plot_dir_we)}
 }
