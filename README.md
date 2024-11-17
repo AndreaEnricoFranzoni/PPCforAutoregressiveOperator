@@ -22,25 +22,24 @@ library(Rcpp)
 library(RcppEigen)
 library(devtools)
 ~~~
-If MacOS is used, having Fortran installed is mandatory. In case of error during the installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
 
-If others errors occur, could be that the other needed dependencies have not been actually imported: can be done manually from Rstudio. If already installed:
-~~~
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(viridis)
-library(patchwork)
-library(latex2exp)
-~~~
+If MacOS is used, having Fortran installed is mandatory (for Linux and Windows environments is already installed). In case of error during the installation, follow the instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
 
+The parallel version exploits *OpenMP* to speed up the computation doing CV, and it is highly recommended. How to set up *OpenMP* can be found [Here](#prerequisites-appendix).
 
 
 # Installation
 
 To install the package:
+
+- Parallel version
 ~~~
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
+~~~
+
+- Serial version
+~~~
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp", force = TRUE)
 ~~~
 
 
@@ -330,6 +329,23 @@ PPCKO::data_2d_wrapper_from_list(Rcpp::List Xt)
 -**`Xt`**: list in which each element is a matrix containing the evaluation of the functional data. Each matrix is a time instants (temporally equispaced). Put NaNs in each matrix for the points that actually do not belong the data domain (to represent more complex domains).
 
 **RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
+
+
+
+# Prerequisites: appendix
+## OpenMP setting
+
+## Other R dependencies
+If others errors occur, checking that other needed dependencies have been actually imported could be useful.
+~~~
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(viridis)
+library(patchwork)
+library(latex2exp)
+~~~
+
 
 
 
