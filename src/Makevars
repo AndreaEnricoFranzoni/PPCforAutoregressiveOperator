@@ -1,10 +1,10 @@
 ###############
 ## NO OPENMP ##
 ###############
-#PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include 
-#PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
+PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include 
+PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
 
-#CXX_STD = CXX20
+CXX_STD = CXX20
 
 
 
@@ -14,20 +14,20 @@
 ## OPENMP    ##
 ###############
 
-CXX_STD = CXX20
+#CXX_STD = CXX20
 # Determina il sistema operativo
-OS = $(shell uname -s)
+#OS = $(shell uname -s)
 # architettura
-ARCH = $(shell uname -m)
+#ARCH = $(shell uname -m)
 
 # Configurazione per macOS
-ifeq ($(OS),Darwin)
+#ifeq ($(OS),Darwin)
     # Determina il percorso corretto di Homebrew in base all'architettura
-    ifeq ($(ARCH),arm64)
-        HOMEBREW_PREFIX = /opt/homebrew
-    else
-        HOMEBREW_PREFIX = /usr/local
-    endif
+#    ifeq ($(ARCH),arm64)
+#        HOMEBREW_PREFIX = /opt/homebrew
+#    else
+#        HOMEBREW_PREFIX = /usr/local
+#    endif
 
     #CC = $(HOMEBREW_PREFIX)/opt/llvm/bin/clang
     #CXX = $(HOMEBREW_PREFIX)/opt/llvm/bin/clang++
@@ -36,17 +36,17 @@ ifeq ($(OS),Darwin)
     PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
     PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
     PKG_LIBS += -L$(HOMEBREW_PREFIX)/opt/libomp/lib -lomp
-endif
+#endif
 
 # Configurazione per Linux
-ifeq ($(OS),Linux)
+#ifeq ($(OS),Linux)
     #CC = gcc
     #CXX = g++
-    PKG_CXXFLAGS = -fopenmp
-    PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
-    PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
-    PKG_LIBS += -fopenmp
-endif
+#    PKG_CXXFLAGS = -fopenmp
+#    PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
+#    PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
+#    PKG_LIBS += -fopenmp
+#endif
 
 # Configurazione per Windows (RTools)
 #ifeq ($(OS),Windows)
