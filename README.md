@@ -370,7 +370,8 @@ brew install libomp
 ~~~
 
 3. **LLVM**
-[LLVM](https://llvm.org) is needed too configure clang on macOS in order to use an external OMP version
+   
+[LLVM](https://llvm.org) is needed to configure clang on macOS in order to use an external OMP version
 - Check its presence
 ~~~
 llvm-config --version
@@ -380,7 +381,7 @@ llvm-config --version
 brew install llvm
 ~~~
 
-4. Everything is now set and the parallel version of the package can be used.
+4. OMP is now set and the parallel version of the package can be used.
   
 
 ## Other R dependencies
@@ -393,7 +394,6 @@ library(viridis)
 library(patchwork)
 library(latex2exp)
 ~~~
-
 
 
 
