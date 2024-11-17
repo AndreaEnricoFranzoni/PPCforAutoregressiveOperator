@@ -25,11 +25,7 @@ std::pair<KO_Traits::StoringMatrix,std::vector<int>>
 reader_data(Rcpp::NumericMatrix X,
             REM_NAN MA_t)
 {
-  std::cout << "Remote version 2.1" << std::endl;
-
-#ifdef _OPENMP
-  std::cout << "Remote par version 2.1.9" << std::endl;
-#endif
+  std::cout << "Remote version 1.0.0" << std::endl;
 
   //taking the dimensions: n_row is the number of time series, n_col is the number of time istants
   int n_row = X.nrow();
