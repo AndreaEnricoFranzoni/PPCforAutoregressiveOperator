@@ -36,9 +36,9 @@ To install the package:
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
 ~~~
 
-- Serial version
+- Serial version (not available at the moment)
 ~~~
-devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp", force = TRUE) (not available at the moment)
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp", force = TRUE) 
 ~~~
 
 
