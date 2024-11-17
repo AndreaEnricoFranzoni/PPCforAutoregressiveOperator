@@ -31,11 +31,11 @@ CXX_STD = CXX20
 
     #CC = $(HOMEBREW_PREFIX)/opt/llvm/bin/clang
     #CXX = $(HOMEBREW_PREFIX)/opt/llvm/bin/clang++
-    PKG_CXXFLAGS = -Xpreprocessor -fopenmp -I$(HOMEBREW_PREFIX)/opt/libomp/include -O3
-    PKG_CFLAGS = -fopenmp
-    PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
-    PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
-    PKG_LIBS += -L$(HOMEBREW_PREFIX)/opt/libomp/lib -lomp
+#    PKG_CXXFLAGS = -Xpreprocessor -fopenmp -I$(HOMEBREW_PREFIX)/opt/libomp/include -O3
+#    PKG_CFLAGS = -fopenmp
+#    PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
+#    PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
+#    PKG_LIBS += -L$(HOMEBREW_PREFIX)/opt/libomp/lib -lomp
 #endif
 
 # Configurazione per Linux
