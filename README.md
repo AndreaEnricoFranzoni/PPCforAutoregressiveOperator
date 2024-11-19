@@ -17,6 +17,7 @@ where:
 
 
 # Prerequisites
+The R version has to be at least 4.0.0
 ~~~
 library(Rcpp)
 library(RcppEigen)
