@@ -83,7 +83,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
   
   plot_pred <- ggplot(data_pred, aes(x = x, y = y, color = function_type)) +
                geom_line( size = 1.2 ) +
-               scale_color_manual( values = c("f_n+1" = "blue", "f_n" = "black"), labels = c(TeX("$f_{n+1}$"), TeX("$f_{n}$")) ) +
+               scale_color_manual( values = c("f_n+1" = "blue", "f_n" = "black"), labels = c(TeX("$f_{n}$"), TeX("$f_{n+1}$")) ) +
                labs(color = "Time instant") +  
                labs( x = x_lab, y = y_lab ) +
                labs(title = "One step ahead prediction") + 
