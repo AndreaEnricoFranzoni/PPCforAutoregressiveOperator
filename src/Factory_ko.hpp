@@ -36,30 +36,36 @@ public:
               int max_size_ts,
               int num_threads)
     {
-      CV_algo cv_algo;
       
 #ifdef _OPENMP
-      std::cout << "Running parallel version" << std::endl;
+      if(num_threads==1)
+      {
+        std::cout << "Running parallel version with " << num_threads << " thread" << std::endl;
+      }
+      else
+      {
+        std::cout << "Running parallel version with " << num_threads << " threads" << std::endl;
+      }
 #else
       std::cout << "Running serial version" << std::endl;
 #endif
       
-      if (id == cv_algo.CV1)   //No CV
+      if (id == CV_algo::CV1)   //No CV
       {
         return k==0 ? std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,threshold_ppc,num_threads) : std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k,num_threads);
       }
       
-      if (id == cv_algo.CV2)   //CV on alpha
+      if (id == CV_algo::CV2)   //CV on alpha
       {
         return k==0 ? std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts,num_threads) : std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts,num_threads);
       }
       
-      if (id == cv_algo.CV3)   //CV on k
+      if (id == CV_algo::CV3)   //CV on k
       {
         return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
       
-      if (id == cv_algo.CV4)   //CV on both alpha and k
+      if (id == CV_algo::CV4)   //CV on both alpha and k
       {
         return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
