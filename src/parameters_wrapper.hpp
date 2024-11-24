@@ -243,7 +243,7 @@ wrap_num_thread(Rcpp::Nullable<int> num_threads)
   else
   {
     int n_t = Rcpp::as<int>(num_threads);
-    if(n_t <= 1 || n_t > max_n_t){  return max_n_t;}
+    if(n_t < 1 || n_t > max_n_t){  return max_n_t;}
     
     return n_t;
   }
