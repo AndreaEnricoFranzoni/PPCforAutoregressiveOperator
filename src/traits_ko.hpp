@@ -7,6 +7,7 @@
 #include <variant>
 #include <type_traits>
 #include <cmath>
+#include <string>
 
 
 // Types for doing algebric operations
@@ -23,6 +24,16 @@ public:
   
   using StoringArray  = Eigen::ArrayXd;
   
+};
+
+
+//algo implemented
+struct CV_algo
+{
+  static constexpr std::string CV1 = "NoCV";
+  static constexpr std::string CV2 = "CV_alpha";
+  static constexpr std::string CV3 = "CV_k";
+  static constexpr std::string CV4 = "CV";
 };
 
 
