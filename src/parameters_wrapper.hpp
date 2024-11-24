@@ -18,26 +18,17 @@
 
 //utilities to wrap the input parameters of the R function
 
-//algo implemented
-struct CV_algo
-{
-  std::string CV1 = "NoCV";
-  std::string CV2 = "CV_alpha";
-  std::string CV3 = "CV_k";
-  std::string CV4 = "CV";
-};
 
 
+//to print which version is used
 inline 
 std::string
 wrap_string_CV_to_be_printed(const std::string &id_cv)
-{
-  CV_algo cv_algo;
-  
-  if(id_cv==cv_algo.CV1){  return "no cross-validation";}
-  if(id_cv==cv_algo.CV2){  return "cross validation on regularization parameter";}
-  if(id_cv==cv_algo.CV3){  return "cross validation on number of PPCs";}
-  if(id_cv==cv_algo.CV4){  return "cross validation on both regularization parameter and number of PPCs";}
+{ 
+  if(id_cv==CV_algo::CV1){  return "no cross-validation";}
+  if(id_cv==CV_algo::CV2){  return "cross validation on regularization parameter";}
+  if(id_cv==CV_algo::CV3){  return "cross validation on number of PPCs";}
+  if(id_cv==CV_algo::CV4){  return "cross validation on both regularization parameter and number of PPCs";}
   else
   {
     std::string error_message = "Wrong input string";
