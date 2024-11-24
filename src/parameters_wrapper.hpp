@@ -8,6 +8,7 @@
 #include <utility>
 #include <string>
 #include <stdexcept>
+#include "traits_ko.hpp"
 
 #include "mesh.hpp"
 
