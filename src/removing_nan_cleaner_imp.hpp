@@ -8,7 +8,7 @@ inline
 bool 
 is_row_all_nan(const Rcpp::NumericMatrix::ConstRow& row, int tot_cols) 
 {
-  return std::count_if(row.cbegin(),row.cend(),[](auto el){return isnan(el);}) == tot_cols  ?  true  :  false;
+  return std::count_if(row.cbegin(),row.cend(),[](auto el){return std::isnan(el);}) == tot_cols  ?  true  :  false;
 }
 
 
