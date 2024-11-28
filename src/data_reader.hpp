@@ -65,7 +65,7 @@ reader_data(Rcpp::NumericMatrix X,
   KO_Traits::StoringMatrix x = Eigen::Map<KO_Traits::StoringMatrix>(X_clean.begin(),rows_to_be_retained.size(),n_col);
   
   //check if there are nans
-  auto check_nan = std::find_if(x.reshaped().cbegin(),x.reshaped().cend(),[](T el){return isnan(el);});
+  auto check_nan = std::find_if(x.reshaped().cbegin(),x.reshaped().cend(),[](T el){return std::isnan(el);});
   
   //if there are nans: remove them
   if (check_nan!=x.reshaped().end())
