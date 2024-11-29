@@ -1,30 +1,42 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-R package for estimating an autoregressive operator using Principal Predictive Components (PPC) according to [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf), to compute one-step ahead prediction of functional time series. The domain of the functional element can be unidimensional (time serie of functions) or bidimensional (time serie of surfaces).
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) to compute one-step ahead prediction of time series of curves and surfaces.
 
-Assumptions: data a stationary Functional AutoRegressive of order 1 (*FAR(1)*) process. 
-
-The point predictor assumes the form of:
+Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
 $\hat{f}_{n+1} = \sum _{i=1}^{k} \langle f_n, b_i \rangle  a_i$
 
 where: 
-- k is the number of PPCs;
-- $f_n$ is the last instant functional element;
+- k is the number of retained PPCs;
+- $f_n$ is the curve/surface at the last available instant;
 - $a_i$ are the directions along which the prediction is approximated (directions that have the most predictive power) (predictive loadings);
 - $b_i$ weights the prediction along the $i$-th PPC: $\langle f_n, b_i \rangle$ is the projection along it (predictive factors).
 
-
+> ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ and its interface on R using RcppEigen. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 # Prerequisites
-The R version has to be at least 4.0.0
+R has to be updated at least to 4.0.0 version.
+
+On R console:
 ~~~
 library(Rcpp)
 library(RcppEigen)
 library(devtools)
 ~~~
 
-Depending on the operative system, the instructions to totally set up the environment can be found [here](#prerequisites-depending-on-operative-system).
+Or, alternatively, if packages not installed:
+~~~
+install.packages("Rcpp")
+install.packages("RcppEigen")
+install.packages("devtools")
+
+library(Rcpp)
+library(RcppEigen)
+library(devtools)
+~~~
+
+**`PPCKO`** depends also on having Fortran, Lapack, BLAS and, if parallel version is used, OpenMP installed.
+Depending on the operative system, the instructions to set up everything can be found [here below](#prerequisites-depending-on-operative-system).
 
 
 
@@ -50,8 +62,6 @@ To automatically test the package:
 ~~~
 devtools::test()
 ~~~
-
-The repository contains only the development of the algorithm through C++ and the interface with R through Rcpp. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 
 
@@ -348,9 +358,12 @@ data_2d_wrapper_from_list(Rcpp::List Xt)
 
 
 # Prerequisites: depending on operative system
+
+More detailed documentation can be found in [this section](https://cran.r-project.org) of `The R Manuals`.
+
 ## macOS
 
-1. **Fortran**:  unlike Linux and Windows, Fortran has to be installed on macOS: instructions in this [link](https://cran.r-project.org/bin/macosx/tools/).
+1. **Fortran**:  unlike Linux and Windows, Fortran has to be installed on macOS: instructions in this [link](https://cran.r-project.org/bin/macosx/tools/). Lapack and BLAS will be consequently installed.
 
 2. **OpenMP**: unlike Linux and Windows, OMP is not installed by default on macOS. Open the terminal and digit the following commands.
 
@@ -407,7 +420,30 @@ data_2d_wrapper_from_list(Rcpp::List Xt)
 
 ## Linux
 
-No other prerequisites.
+Linux installation depends on its distributor. All the commands here reported will refer to Ubuntu and Debian distributors.
+
+Standard developement packages have to be installed. In Ubuntu and Debian, for example, all the packages have been collected into a single one, that is possible to install digiting into the terminal:
+
+   ~~~
+sudo apt install r-base-dev
+sudo apt install build-essential
+   ~~~
+
+## Linux image
+Before being able to run the commands explained above for Linux, R has to be downloaded. Afterward, the installation of Fortran, Lapack, BLAS, devtools and its dependecies can be done by digiting into the terminal:
+   ~~~
+sudo apt-get update
+sudo apt install gfortran
+sudo apt install liblapack-dev libblas-dev
+   ~~~
+   ~~~
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libssl-dev
+sudo apt-get install libz-dev
+sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+sudo apt install zlib1g-dev
+sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo2-dev libpango1.0-dev pandoc
+   ~~~
 
                 
 
