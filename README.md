@@ -15,7 +15,7 @@ where:
 > ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ and its interface on R using RcppEigen. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 # Prerequisites
-R has to be updated at least to 4.0.0 version.
+R has to be updated at least to 4.0.0 version. If Windows is used, R version has to be at least 4.4.0.
 
 On R console:
 ~~~
@@ -411,12 +411,7 @@ More detailed documentation can be found in [this section](https://cran.r-projec
 
 ## Windows
 
-1. **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). It will take for Fortran and OMP; select the most recent version. After, all the default options have to be selected to add it to the *PATH* variable. If successfull, the following commands on the R console result in a positive output
-   ~~~
-   Sys.which("gcc")
-   Sys.which("g++")
-   Sys.which("make")
-   ~~~
+1. **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). Version 4.4 is needed to install parallel version.
 
 ## Linux
 
