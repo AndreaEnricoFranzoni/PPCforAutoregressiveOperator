@@ -53,7 +53,7 @@ ifeq ($(OS),Windows)
     CC = gcc
     CXX = g++
     PKG_CXXFLAGS = -fopenmp
-		PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
+    PKG_CPPFLAGS = -I./cereal/include -I./ensmallen/include -I./armadillo/include -I./mlpack/src -I./spectra/include/Spectra -I../inst/include
     PKG_LIBS = $(LAPACK_LIBS) $(FLIBS) $(BLAS_LIBS)
     PKG_LIBS += -fopenmp
 endif
