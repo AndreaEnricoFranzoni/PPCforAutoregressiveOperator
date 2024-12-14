@@ -628,7 +628,8 @@ Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
   int dim2_size = dimensions[1];
   int number_point_evaluations = dim1_size*dim2_size;
   int number_time_instants = dimensions[2];   //this works only for 1-step time series
-
+  
+  Rcout << "Dim1: " << dim1_size << ", dim2: " << dim2_size << ", times: " << number_time_instants << std::endl;
   if(number_time_instants==0)
   {
     std::string error_message1 = "Empty array";
@@ -645,7 +646,7 @@ Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
     
     for (int i1 = 0; i1 < dim1_size; ++i1) {
       for (int i2 = 0; i2 < dim2_size; ++i2) {
-        instant_data(i1, i2) = Xt[i1 + 12*dim1_size + i*dim1_size*dim2_size];  
+        instant_data(i1, i2) = Xt[i1 + i2*dim1_size + i*dim1_size*dim2_size];  
       }
     }
     
