@@ -104,12 +104,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // data_2d_wrapper_from_array
-Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericArray<3> Xt);
+Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt);
 RcppExport SEXP _PPCKO_data_2d_wrapper_from_array(SEXP XtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericArray<3> >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type Xt(XtSEXP);
     rcpp_result_gen = Rcpp::wrap(data_2d_wrapper_from_array(Xt));
     return rcpp_result_gen;
 END_RCPP

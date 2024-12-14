@@ -619,14 +619,15 @@ Rcpp::NumericMatrix data_2d_wrapper_from_list(Rcpp::List Xt)
 
 //
 // [[Rcpp::export]]
-Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericArray<3> Xt)
+Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
 {
   using T = double;
   
-  int dim1_size = Xt.dim()[0];
-  int dim2_size = Xt.dim()[1];
+  IntegerVector dimensions = Xt.attr("dim");
+  int dim1_size = dimensions[0];
+  int dim2_size = dimensions[1];
   int number_point_evaluations = dim1_size*dim2_size;
-  int number_time_instants = Xt.dim()[2];   //this works only for 1-step time series
+  int number_time_instants = dimensions[2];   //this works only for 1-step time series
 
   if(number_time_instants==0)
   {
@@ -644,7 +645,7 @@ Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericArray<3> Xt)
     
     for (int i1 = 0; i1 < dim1_size; ++i1) {
       for (int i2 = 0; i2 < dim2_size; ++i2) {
-        instant_data(i1, i2) = Xt(i1, i2, i);  
+        instant_data(i1, i2) = Xt[i1 + j2*dim1_size + i*dim1_size*dim2_size];  
       }
     }
     
