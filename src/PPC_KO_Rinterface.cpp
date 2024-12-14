@@ -608,3 +608,52 @@ Rcpp::NumericMatrix data_2d_wrapper_from_list(Rcpp::List Xt)
    
   return x;
 }
+
+
+
+
+
+
+
+
+
+//
+// [[Rcpp::export]]
+Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericArray<3> Xt)
+{
+  using T = double;
+  
+  int dim1_size = Xt.dim()[0];
+  int dim2_size = Xt.dim()[1];
+  int number_point_evaluations = dim1_size*dim2_size;
+  int number_time_instants = Xt.dim()[2];   //this works only for 1-step time series
+
+  if(number_time_instants==0)
+  {
+    std::string error_message1 = "Empty array";
+    throw std::invalid_argument(error_message1);
+  }
+  
+  //object that will be returned
+  Rcpp::NumericMatrix x(number_point_evaluations,number_time_instants);
+  
+  for(std::size_t i = 0; i < static_cast<std::size_t>(number_time_instants); ++i)
+  { 
+    //to save the result for each instant
+    Rcpp::NumericMatrix instant_data(dim1_size, dim2_size);
+    
+    for (int i1 = 0; i1 < dim1_size; ++i1) {
+      for (int i2 = 0; i2 < dim2_size; ++i2) {
+        instant_data(i1, i2) = Xt(i1, i2, i);  
+      }
+    }
+    
+    //wrapping into usual data format
+    KO_Traits::StoringMatrix col = reader_data<T>(instant_data,REM_NAN::NR).first;
+    KO_Traits::StoringVector first_col = from_matrix_to_col(col);
+    Rcpp::NumericVector col_wrapped = Rcpp::wrap(first_col);
+    x(_,i) = col_wrapped;
+  }
+  
+  return x;
+}

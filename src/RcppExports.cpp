@@ -103,6 +103,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// data_2d_wrapper_from_array
+Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericArray<3> Xt);
+RcppExport SEXP _PPCKO_data_2d_wrapper_from_array(SEXP XtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericArray<3> >::type Xt(XtSEXP);
+    rcpp_result_gen = Rcpp::wrap(data_2d_wrapper_from_array(Xt));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 16},
@@ -110,6 +121,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_KO_check_hps", (DL_FUNC) &_PPCKO_KO_check_hps, 1},
     {"_PPCKO_KO_check_hps_2d", (DL_FUNC) &_PPCKO_KO_check_hps_2d, 3},
     {"_PPCKO_data_2d_wrapper_from_list", (DL_FUNC) &_PPCKO_data_2d_wrapper_from_list, 1},
+    {"_PPCKO_data_2d_wrapper_from_array", (DL_FUNC) &_PPCKO_data_2d_wrapper_from_array, 1},
     {NULL, NULL, 0}
 };
 
