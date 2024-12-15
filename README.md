@@ -64,6 +64,9 @@ library(PPCKO)
 ~~~
 opens up the documentation. The links to the documentation of all **`PPCKO`** functions can be found here.
 
+PDF: TODO
+DOC c++ internal code: TODO
+
 
 
 ## Tutorials
