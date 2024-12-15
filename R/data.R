@@ -1,12 +1,10 @@
-#' Dataset for 1dim domain data
+#' Functional time series of curves
 #'
-#' A dataset with 200 rows (discrete evaluation of the functional data) and 100 cols (time instants).
+#' FAR(1) process generating data.
+#' Every row (200) represents one point of the domain (0,1) for which the curve evaluation is available.
+#' Every column (100) represents the curve at one time instant. 
 #'
-#' @format A dataset with 200 rows and 100 cols:
-#' \describe{
-#'   \item{x}{a numeric vector (1:10)}
-#'   \item{y}{a numeric vector with random values}
-#' }
+#' @format A numeric matrix with 200 rows and 100 cols.
 #' @usage data(data_1d)
 #' @examples
 #' data(data_1d)
@@ -15,15 +13,14 @@
 
 
 
-#' Dataset for 2dim domain data
+#' Functional time series of surfaces
+#' 
+#' FAR(1) process generating data.
+#' Every element of the list represents the surface at one time instant.
+#' Every element of the list is a numeric matrix: it represents the grid over which the 
+#' evaluations of the surface are available. 
 #'
-#' A list with 20 10x10 matrices: each matrix are the evaluation of the surface in a specific time instant (number of element of the list).
-#'
-#' @format A list with 20 10x10 matrices:
-#' \describe{
-#'   \item{x}{a numeric vector (1:10)}
-#'   \item{y}{a numeric vector with random values}
-#' }
+#' @format A list with 20 10x10 matrices.
 #' @usage data(data_2d)
 #' @examples
 #' data(data_2d)

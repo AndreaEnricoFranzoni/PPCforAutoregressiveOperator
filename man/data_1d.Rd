@@ -3,19 +3,17 @@
 \docType{data}
 \name{data_1d}
 \alias{data_1d}
-\title{Dataset for 1dim domain data}
+\title{Functional time series of curves}
 \format{
-A dataset with 200 rows and 100 cols:
-\describe{
-\item{x}{a numeric vector (1:10)}
-\item{y}{a numeric vector with random values}
-}
+A numeric matrix with 200 rows and 100 cols.
 }
 \usage{
 data(data_1d)
 }
 \description{
-A dataset with 200 rows (discrete evaluation of the functional data) and 100 cols (time instants).
+FAR(1) process generating data.
+Every row (200) represents one point of the domain (0,1) for which the curve evaluation is available.
+Every column (100) represents the curve at one time instant.
 }
 \examples{
 data(data_1d)

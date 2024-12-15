@@ -3,19 +3,18 @@
 \docType{data}
 \name{data_2d}
 \alias{data_2d}
-\title{Dataset for 2dim domain data}
+\title{Functional time series of surfaces}
 \format{
-A list with 20 10x10 matrices:
-\describe{
-\item{x}{a numeric vector (1:10)}
-\item{y}{a numeric vector with random values}
-}
+A list with 20 10x10 matrices.
 }
 \usage{
 data(data_2d)
 }
 \description{
-A list with 20 10x10 matrices: each matrix are the evaluation of the surface in a specific time instant (number of element of the list).
+FAR(1) process generating data.
+Every element of the list represents the surface at one time instant.
+Every element of the list is a numeric matrix: it represents the grid over which the
+evaluations of the surface are available.
 }
 \examples{
 data(data_2d)
