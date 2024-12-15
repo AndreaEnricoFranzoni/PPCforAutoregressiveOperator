@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) [1](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
 
 Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
@@ -472,13 +472,20 @@ sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo
 
 
 # Bibliography 
-1. <a id="ref-PPCKO"></a> **V. Kargin, A. Onatski**, *Curve forecasting by functional autoregression*, Journal of Multivariate Analysis, 99, 2508-2526, 2008, [paper](https://www.sciencedirect.com/science/article/pii/S0047259X08000961)
+1. <a id="ref-PPCKO"></a> **Kargin, V., Onatski, A.**, `Curve forecasting by functional autoregression`, *Journal of Multivariate Analysis*, 99, 2508-2526, 2008, https://www.sciencedirect.com/science/article/pii/S0047259X08000961
 
+2. <a id="ref-Rcpp"></a> **Eddelbuettel D., Francois R., Allaire J., Ushey K., Kou Q., Russell N., Ucar I., Bates D., Chambers J.**, `Rcpp: Seamless R and C++ Integration`, *R package version 1.0.13-1*, 2024, https://cran.r-project.org/web/packages/Rcpp/citation.html
 
-2. **Autore**, "Titolo dell'Articolo", *Nome della Rivista*, Volume(Número), pp. xx-yy, Anno.
-   - DOI/URL: [DOI o Collegamento](https://doi.org/esempio)
-   - Nota: Breve riassunto del contenuto e motivo della citazione.
+3. <a id="ref-eigen"></a> **Guennebaud G., Jacob B., et Al.**, `Eigen v3.4`, 2021, https://eigen.tuxfamily.org/index.php?title=Main_Page
 
-3. **Autore**, *Titolo del Documento Tecnico*, Istituzione, Anno.
-   - URL: [Collegamento alla fonte](https://esempio.com)
-   - Nota: Dettagli sulla fonte.
+4. <a id="ref-spectra"></a> **Qui X., et Al.**, `Spectra - C++ Library For Large Scale Eigenvalue Problems`, 2022, https://spectralib.org
+
+5. <a id="ref-mlpack"></a> **Curtin R. R., Edel M., Shrit O., Agrawal S., Basak S., Balamuta J. J., Birmingham R., Dutt K., Eddelbuettel D., Garg R., Jaiswal S., Kaushik A., Kim S., Mukherjee A., Gnana Sai N., Sharma N., Singh Parihar Y., Swain R., Sanderson C.**, `mlpack 4: a fast, header-only C++ machine learning library`, *Journal of Open Source Software*, 8, 82, 5026, 2023, https://www.mlpack.org
+
+6. <a id="ref-armadillo"></a> **Sanderson C., Curtin R. R.**,  `Armadillo: a template-based C++ library for linear algebra`, *Journal of Open Source Software*, 1, 2, 26, 2016, https://arma.sourceforge.net
+
+7. <a id="ref-armadillo2"></a> **Sanderson C., Curtin R. R.**,   `Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation `, *Mathematical and Computational Applications*, 24, 3, 2019, https://arxiv.org/abs/1811.08768
+
+8. <a id="ref-ensmallen"></a> **Curtin R. R., Edel M., Ganesh Prabhu R., Basak S., Lou Z., Sanderson C.**, `The ensmallen library for flexible numerical optimization`, *Journal of Machine Learning Research*, 22, 166, 1-6, 2021, https://ensmallen.org
+
+9. <a id="ref-cereal"></a> **Huebner L., et Al.**, `cereal - A C++11 library for serialization`, 2022, https://github.com/USCiLab/cereal 
