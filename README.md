@@ -489,6 +489,6 @@ sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo
 
 7. <a id="ref-armadillo2"></a> **Sanderson C., Curtin R. R.**,   `Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation `, *Mathematical and Computational Applications*, 24, 3, 2019, https://arxiv.org/abs/1811.08768
 
-8. <a id="ref-ensmallen"></a> **Curtin R. R., Edel M., Ganesh Prabhu R., Basak S., Lou Z., Sanderson C.**, `The ensmallen library for flexible numerical optimization`, *Journal of Machine Learning Research*, 22, 166, 1-6, 2021, https://ensmallen.org
+8. <a id="ref-ensmallen"></a> **Curtin R. R., Edel M., Ganesh Prabhu R., Basak S., Lou Z., Sanderson C.**, `The ensmallen library for flexible numerical optimization`, *Journal of Machine Learning Research*, 22, 166, 2021, https://ensmallen.org
 
 9. <a id="ref-cereal"></a> **Huebner L., et Al.**, `cereal - A C++11 library for serialization`, 2022, https://github.com/USCiLab/cereal 
