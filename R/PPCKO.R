@@ -46,11 +46,11 @@
 #' 
 #' # upload data
 #' data(data_2d)
-#' x = data_2d_wrapper_from_list(data_2d)
+#' data_2d_wrap = data_2d_wrapper_from_list(data_2d)
 #' # check hp
-#' check_hp_2d <- KO_check_hps_2d(x,dim_x1=10,dim_x2=10)
+#' check_hp_2d <- KO_check_hps_2d(data_2d_wrap,dim_x1=10,dim_x2=10)
 #' # forecasting algorithm
-#' res_2d <- PPC_KO_2d( X = data_1d,
+#' res_2d <- PPC_KO_2d( X = data_2d_wrap,
 #'                      id_CV = "NoCV",
 #'                      alpha = 0.1,
 #'                      k = 3,
