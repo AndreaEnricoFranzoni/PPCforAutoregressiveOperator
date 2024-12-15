@@ -4,18 +4,18 @@
 \alias{data_2d_wrapper_from_array}
 \title{data_2d_wrapper_from_array}
 \arguments{
-\item{Xt}{R-array of doubles, dimensions: [dim_x1,dim_x2,n], where dim_x1 is the number of discrete evaluations of the 
-surface along dimension one, dim_x2 the same along dimension two, n the number of time instants}
+\item{Xt}{\strong{\verb{numeric vector}}, dimensions (dim_x1,dim_x2,n), where dim_x1 is the number of discrete evaluations of the
+surface along dimension one, dim_x2 the same along dimension two, n the number of time instants.}
 }
 \value{
-an R matrix of double, as described above
+\strong{\verb{numeric matrix}}, as described above.
 }
 \description{
-Wrap an R-array of double into an R matrix of double. Each column of the output matrix represents a time instants,
+Wrap an numeric array into an numeric matrix as suitable input for \link{PPC_KO_2d} and \link{KO_check_hps_2d}. Each column of the output matrix represents a time instants,
 while each rows a discrete evaluation of the surface. The grid is stored column-wise.
 }
 \details{
-NaNs values have to be passed anyway, and they are handled by PPCKO algorithm coherently.
+NaNs values have to be passed anyway as explained in \link{PPC_KO_2d}.
 }
 \examples{
 Xt = array(c(1,2,NaN,3,4,5,NaN,7),dim=c(2,2,2))
@@ -24,6 +24,12 @@ PPCKO::data_2d_wrapper_from_array(Xt)
 #         [  2,   5]
 #         [NaN, NaN]
 #         [  3,   7]
+}
+\references{
+Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+}
+\seealso{
+\link{PPC_KO_2d}, \link{KO_check_hps_2d}
 }
 \author{
 Andrea Enrico Franzoni

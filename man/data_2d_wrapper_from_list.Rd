@@ -4,20 +4,20 @@
 \alias{data_2d_wrapper_from_list}
 \title{data_2d_wrapper_from_list}
 \arguments{
-\item{Xt}{R-list of matrices of doubles. Length of the list: n: number of time instants. Each matrix
-needs to have the same dimensions: [dim_x1,dim_x2], where dim_x1 is the number of discrete evaluations of the 
-surface along dimension one, dim_x2 the same along dimension two}
+\item{Xt}{\strong{\verb{list of numeric matrices}}. Length of the list: n: number of time instants. Each matrix
+needs to have the same dimensions (dim_x1,dim_x2), where dim_x1 is the number of discrete evaluations of the
+surface along dimension one, dim_x2 the same along dimension two.}
 }
 \value{
-an R matrix of double, as described above
+\strong{\verb{numeric matrix}}, as described above.
 }
 \description{
-Wrapping a R-list of matrices of doubles into an R matrix of double. Each element of the list represents a time instant,
+Wrapping a R-list of numeric matrices into an numeric matrix as suitable input for \link{PPC_KO_2d} and \link{KO_check_hps_2d}. Each element of the list represents a time instant,
 in which the discrete evaluations of the surface is represented by the matrix. Each column of the output matrix represents a time instants,
-while each rows a discrete evaluation of the surface. The grid is stored column-wise.
+while each rows a discrete evaluation of the surface.
 }
 \details{
-NaNs values have to be passed anyway, and they are handled by PPCKO algorithm coherently.
+NaNs values have to be passed anyway as explained in \link{PPC_KO_2d}.
 }
 \examples{
 library(PPCKO)
@@ -27,6 +27,12 @@ data_2d_wrapper_from_list(Xt)
 #         [  2,   5]
 #         [NaN, NaN]
 #         [  3,   7]
+}
+\references{
+Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+}
+\seealso{
+\link{PPC_KO_2d}, \link{KO_check_hps_2d}
 }
 \author{
 Andrea Enrico Franzoni

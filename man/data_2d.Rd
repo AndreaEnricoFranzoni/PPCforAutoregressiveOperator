@@ -7,8 +7,8 @@
 \format{
 A list with 20 10x10 matrices:
 \describe{
-  \item{x}{a numeric vector (1:10)}
-  \item{y}{a numeric vector with random values}
+\item{x}{a numeric vector (1:10)}
+\item{y}{a numeric vector with random values}
 }
 }
 \usage{

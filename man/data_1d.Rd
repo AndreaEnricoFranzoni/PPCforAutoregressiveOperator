@@ -7,8 +7,8 @@
 \format{
 A dataset with 200 rows and 100 cols:
 \describe{
-  \item{x}{a numeric vector (1:10)}
-  \item{y}{a numeric vector with random values}
+\item{x}{a numeric vector (1:10)}
+\item{y}{a numeric vector with random values}
 }
 }
 \usage{
