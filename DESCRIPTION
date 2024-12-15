@@ -12,3 +12,4 @@ LinkingTo: Rcpp, RcppEigen
 Depends: R (>= 4.0)
 SystemRequirements: C++20, BLAS, LAPACK
 Suggests: testthat (>= 3.0.0)
+RoxygenNote: 7.3.2
