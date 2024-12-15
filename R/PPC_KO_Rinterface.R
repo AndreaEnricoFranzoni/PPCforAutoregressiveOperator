@@ -1,3 +1,50 @@
+#' @title PPC_KO
+#' 
+#' @name PPC_KO
+#' @description
+#' Performs Principal Components Analysis Kargin-Onatski algorithm to compute one-step
+#' ahead prediction of Functional time series of curves.
+#' @param X R-matrix of doubles. Each row [m] represents a point of the domain in which the curve is evaluated.
+#'          Each column [n] represents a time instant.
+#' @param id_CV **`string`** (default: **`NoCV`**). Which version of PPCKO is performed. Alternatives: 
+#'              \itemize{
+#'              \item "NoCV": PPCKO is performed with the parameters passed as input;
+#'              \item "CV_alpha": cv for regularization parameter is performed;
+#'              \item "CV_k": cv for the number of retained PPC is performed;
+#'              \item "CV": cv for both the regularization parameter and the number of retained PPCs is performed.
+#'              }
+#' @param alpha double, strictly positive. Default 0.75. Regularization parameter. Will be ignored in "CV_alpha" and "CV" versions.
+#' @param k integer, between 0 up to the number of available discrete evaluations of the curve (m). Default 0.
+#'          Number of retained PPCs. Will be ignored in "CV_k" and "CV" versions. If "NoCV" and "CV_alpha" versions:
+#'          if it is 0: the number of PPCs retained is chosen through the level of explanatory power criterion (see next parameter);
+#'          if it is greater than 0: the number of PPCs retained is k.
+#' @param threshold_ppc double. Threshold of explanatory power retained. Double in [0,1]. Will be ignored in "CV_k" and "CV" versions,
+#'                      and in "
+#' 
+#'
+NULL
+
+
+#'
+#'
+NULL
+
+
+#'
+#'
+NULL
+
+
+#'
+#'
+NULL
+
+
+#'
+#'
+NULL
+
+
 #' @title data_2d_wrapper_from_list
 #' 
 #' @name data_2d_wrapper_from_list
