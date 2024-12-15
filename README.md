@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) [1] to compute one-step ahead prediction of time series of curves and surfaces.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) [1](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
 
 Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
@@ -12,7 +12,7 @@ where:
 - $a_i$ are the directions along which the prediction is approximated (directions that have the most predictive power) (predictive loadings);
 - $b_i$ weights the prediction along the $i$-th PPC: $\langle f_n, b_i \rangle$ is the projection along it (predictive factors).
 
-> ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ and its interface on R using RcppEigen. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
+> ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ its interface on R using RcppEigen and documentation. More detailed analysis about statistical properties of the predictor and implementation performances can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 
 
@@ -472,7 +472,7 @@ sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo
 
 
 # Bibliography 
-1. **V. Kargin, A. Onatski**, *Curve forecasting by functional autoregression*, Journal of Multivariate Analysis, 99, 2508-2526, 2008, [paper](https://www.sciencedirect.com/science/article/pii/S0047259X08000961)
+1. <a id="ref-PPCKO"></a> **V. Kargin, A. Onatski**, *Curve forecasting by functional autoregression*, Journal of Multivariate Analysis, 99, 2508-2526, 2008, [paper](https://www.sciencedirect.com/science/article/pii/S0047259X08000961)
 
 
 2. **Autore**, "Titolo dell'Articolo", *Nome della Rivista*, Volume(Número), pp. xx-yy, Anno.
