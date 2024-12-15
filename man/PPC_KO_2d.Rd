@@ -39,12 +39,12 @@ the predictor. Tolerance for stopping adding PPCs in the cv, evaluated as toll*t
 \item{disc_ev_x1}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). Has to have size m1. The points of the domain for which the evaluation is available along dimension one.
 If NULL: a discrete equally spaced grid with m1 points is assumed.}
 
-\item{num_disc_ev_x1}{\strong{\code{integer}} (default: \strong{\code{10}}). The number of discrete evaluations along dimension one (has to be m1).}
+\item{num_disc_ev_x1}{\strong{\code{integer}} (default: \strong{\code{10}}). The number of discrete evaluations along dimension one (has to be m1). \strong{\verb{IMPORTANT TO PASS IT CORRECTLY}}.}
 
 \item{disc_ev_x2}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). Has to have size m2. The points of the domain for which the evaluation is available along dimension two.
 If NULL: a discrete equally spaced grid with m2 points is assumed.}
 
-\item{num_disc_ev_x2}{\strong{\code{integer}} (default: \strong{\code{10}}). The number of discrete evaluations along dimension two (has to be m2).}
+\item{num_disc_ev_x2}{\strong{\code{integer}} (default: \strong{\code{10}}). The number of discrete evaluations along dimension two (has to be m2). \strong{\verb{IMPORTANT TO PASS IT CORRECTLY}}.}
 
 \item{left_extreme_x1}{\strong{\code{double}} (default: \strong{\code{0}}). Left extreme of the domain of the functional object along dimension one.}
 
@@ -92,9 +92,10 @@ to the domain (strategy for handling more complex domains).
 \item 'Validation errors': \strong{\verb{numeric vector}} or \strong{\verb{numeric matrix}}: available only if err_ret==1. For "CV_alpha" and "CV_k"
 is a vector containing the validation errors for every parameter (for number of PPCs, it is truncated
 to the number of PPCs actually tested in the cv process). For "CV" is a matrix, for each pair alpha (row) - k (col);
-\item 'Function discrete evaluations points': the points of the domain for which the evaluations are available;
+\item 'Function discrete evaluations points dim1': the points of the domain for which the evaluations are available along dimension one;
 \item 'Left extreme domain dim1': left extreme domain for dimension one;
 \item 'Right extreme domain dim1': right extreme domain for dimension one;
+\item 'Function discrete evaluations points dim2': the points of the domain for which the evaluations are available along dimension two;
 \item 'Left extreme domain dim2': left extreme domain for dimension two;
 \item 'Right extreme domain dim2': right extreme domain for dimension two;
 \item 'f_n': surface at the last instant;
