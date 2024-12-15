@@ -6,7 +6,7 @@ Date: 2024-07-05
 Author: Andrea Enrico Franzoni [aut, cre], Simone Vantini [aut], Alessandra Menafoglio [aut], Teresa Bortolotti [aut]
 Maintainer: Andrea Enrico Franzoni <andreaenrico.franzoni@gmail.com>
 Description: PPCKO provides one-step ahead prediction, predictive factors and loading for an functional order-1 autoregressive process
-License: What license is it under?
+License: GPL-3
 Imports: Rcpp (>= 1.0.12), ggplot2, grid, gridExtra, viridis, patchwork, latex2exp
 LinkingTo: Rcpp, RcppEigen
 Depends: R (>= 4.0)
