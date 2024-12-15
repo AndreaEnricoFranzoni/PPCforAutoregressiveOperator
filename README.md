@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) to compute one-step ahead prediction of time series of curves and surfaces.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](https://core.ac.uk/download/pdf/82625156.pdf) [1] to compute one-step ahead prediction of time series of curves and surfaces.
 
 Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
@@ -14,24 +14,20 @@ where:
 
 > ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ and its interface on R using RcppEigen. More details about examples, tests on the package and statistical properties of the predictor can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
+
+
 # Prerequisites
+
 R has to be updated at least to 4.0.0 version. If Windows is used, R version has to be at least 4.4.0.
 
 On R console:
 ~~~
-library(Rcpp)
-library(RcppEigen)
 library(devtools)
 ~~~
 
-Or, alternatively, if packages not installed:
+Or, alternatively, if not installed:
 ~~~
-install.packages("Rcpp")
-install.packages("RcppEigen")
 install.packages("devtools")
-
-library(Rcpp)
-library(RcppEigen)
 library(devtools)
 ~~~
 
@@ -46,19 +42,42 @@ To install the package:
 
 - Parallel version (highly recommended)
 ~~~
-devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator", force = TRUE)
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator")
 ~~~
 
 - Serial version (not available at the moment)
 ~~~
-devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp", force = TRUE) 
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp") 
+~~~
+
+And upload the library in the R environment
+~~~
+library(PPCKO)
 ~~~
 
 
 
-# Test
+# Documentation 
 
-To automatically test the package:
+~~~
+?PPCKO
+~~~
+opens up the documentation. The links to the documentation of all **`PPCKO`** functions can be found here.
+
+
+
+## Tutorials
+
+~~~
+?PPCKO
+~~~
+opens up the **`PPCKO`** documentation. In the section `Examples`, there is one tutorial for unidimensional case and one for bidimensional case. Although they do not run directly from here, can be easily reproduced locally. 
+
+
+
+## Test
+
+To automatically test the package installation:
 ~~~
 devtools::test()
 ~~~
@@ -76,12 +95,6 @@ A time series of surfaces (synthetic data) can be loaded on the global environme
 ~~~
 data(data_2d)
 ~~~
-
-
-
-# Documentation
-
-TODO
 
 
 
@@ -355,11 +368,26 @@ data_2d_wrapper_from_list(Rcpp::List Xt)
 
 **RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
 
+## From array
+~~~
+data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
+~~~
+-**`Xt`**: array that stores sequentially the surfaces in time. Element [i,j,k] means evaluation in the point (i,j) of the surface at instant k. Put NaNs in (i,j) at each instant for the points that actually do not belong the data domain (to represent more complex domains).
+
+**RETURN**: matrix with the data to be used as `X` for PPCKO algorithm and PPCKO check hps.
+
 
 
 # Prerequisites: depending on operative system
 
 More detailed documentation can be found in [this section](https://cran.r-project.org) of `The R Manuals`.
+Although installing **`PPCKO`** shpuld automatically install all the R dependecies, could be worth trying install them manaully if an error occurs.
+~~~
+install.packages("Rcpp")
+install.packages("RcppEigen")
+library(Rcpp)
+library(RcppEigen)
+~~~
 
 ## macOS
 
@@ -444,4 +472,13 @@ sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo
 
 
 # Bibliography 
-TODO
+1. **V. Kargin, A. Onatski**, *Curve forecasting by functional autoregression*, Journal of Multivariate Analysis, 99, 2508-2526, 2008, [paper](https://www.sciencedirect.com/science/article/pii/S0047259X08000961)
+
+
+2. **Autore**, "Titolo dell'Articolo", *Nome della Rivista*, Volume(Número), pp. xx-yy, Anno.
+   - DOI/URL: [DOI o Collegamento](https://doi.org/esempio)
+   - Nota: Breve riassunto del contenuto e motivo della citazione.
+
+3. **Autore**, *Titolo del Documento Tecnico*, Istituzione, Anno.
+   - URL: [Collegamento alla fonte](https://esempio.com)
+   - Nota: Dettagli sulla fonte.
