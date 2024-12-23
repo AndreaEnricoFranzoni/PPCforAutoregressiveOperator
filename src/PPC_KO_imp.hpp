@@ -132,7 +132,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   //explanatory power
   m_explanatory_power.resize(m_k);
   std::partial_sum(std::get<1>(ppcs_ret).begin(),std::get<1>(ppcs_ret).end(),m_explanatory_power.begin());        
-  std::for_each(m_explanatory_power.begin(),m_explanatory_power.end(),[&m_tot_exp_pow](auto &el){el=el/m_tot_exp_pow;});
+  std::for_each(m_explanatory_power.begin(),m_explanatory_power.end(),[this](auto &el){el=el/m_tot_exp_pow;});
   
   //Weights (b_i)
   m_b = m_CovRegRoot*std::get<2>(ppcs_ret);
