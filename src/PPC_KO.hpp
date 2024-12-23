@@ -10,6 +10,8 @@
 #include <functional>
 #include <utility>
 #include <tuple>
+#include <cmath>
+#include <array>
 
 #include "traits_ko.hpp"
 #include "CV_include.hpp"
