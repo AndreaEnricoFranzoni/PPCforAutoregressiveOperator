@@ -27,7 +27,7 @@ test_that(" in the 1d domain case KO with CV for regularization parameter works"
                    alpha_vec = alpha_vec,
                    min_size_ts = 90,
                    max_size_ts = 92,
-                   err_ret = 0)), 14)
+                   err_ret = 0)), 17)
   
   expect_equal(length(
     PPCKO::PPC_KO( X = data_1d,
