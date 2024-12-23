@@ -22,7 +22,7 @@
 #third input: true if you want to plot real values of alpha, false if you prefer using them equispaced (vis purposes)
 KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_alphas=FALSE){
   
-  lenght_res_with_er = 15
+  lenght_res_with_er = 18
   
   #checking correct input
   if (length(results_ko) == 0) {
@@ -231,7 +231,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
 KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_lab="value",true_alphas=FALSE){
   
   
-  lenght_res_with_er = 18 #with errors
+  lenght_res_with_er = 21 #with errors
   
   #checking correct input
   if (length(results_ko) == 0) {
