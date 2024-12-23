@@ -676,5 +676,5 @@ Rcpp::List test(int sz)
   Rcpp::List l;
   l["Res"] = res;
   
-  return res;
+  return l;
 }
