@@ -69,7 +69,7 @@ const
     for(std::size_t i = 0; i < m_m; ++i)
     {
       int n_ppcs = i+1;
-      Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::SparseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, n_ppcs, 2*n_ppcs);
+      Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::DenseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, n_ppcs, 2*n_ppcs);
       
       eigsolver_ppc.init();
       int nconv = eigsolver_ppc.compute(Spectra::SortRule::LargestAlge);
@@ -82,7 +82,7 @@ const
   }
   else
   {
-    Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::SparseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, m_k, 2*m_k);
+    Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::DenseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, m_k, 2*m_k);
     
     eigsolver_ppc.init();
     int nconv = eigsolver_ppc.compute(Spectra::SortRule::LargestAlge);
