@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <tuple>
 #include <vector>
+#include <array>
 #include <variant>
 #include <type_traits>
 #include <cmath>

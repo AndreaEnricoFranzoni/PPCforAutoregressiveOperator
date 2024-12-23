@@ -103,3 +103,58 @@ const
   
   return scores;
 }
+
+
+//evaluating the sd of the scores on directions and weights
+template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+std::vector<std::array<double,2>>
+PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::sd_scores_dir_wei()
+const
+{
+  std::vector<std::array<double,2>> standard_dev;
+  standard_dev.reserve(m_k);
+  
+  //the number of computed scalar prods is all the instants - 1
+  std::size_t n = m_X.cols() - 1;
+  
+  // for each one of the PPC
+  for(std::size_t comp = 0; comp < m_k; ++comp){
+    
+    std::vector<double> scores_dir;
+    scores_dir.reserve(n);
+    std::vector<double> scores_wei;
+    scores_wei.reserve(n);
+    
+    //computing the scores of directions (it has to be for the next value) and weights (current value)
+    for(std::size_t i = 0; i < n; ++i){
+      scores_dir.emplace_back(m_X.col(i+1).dot(m_a.col(comp)));
+      scores_wei.emplace_back(m_X.col(i).dot(m_b.col(comp)));
+    }
+    
+    //compute the standard deviation
+    // mean
+    double mean_dir = std::accumulate(scores_dir.begin(), scores_dir.end(), 0.0)/n;
+    double mean_wei = std::accumulate(scores_wei.begin(), scores_wei.end(), 0.0)/n;
+    
+    // variance 
+    double variance_dir = std::transform_reduce(scores_dir.begin(), 
+                                                scores_dir.end(), 
+                                                0.0,
+                                                std::plus{},
+                                                [mean_dir](auto el) {
+                                                return std::pow(el-mean_dir,2);})/n;
+    
+    double variance_wei = std::transform_reduce(scores_wei.begin(), 
+                                                scores_wei.end(), 
+                                                0.0,
+                                                std::plus{},
+                                                [mean_wei](auto el) {
+                                                return std::pow(el-mean_wei,2);})/n;
+    
+    // standard deviation
+    standard_dev.emplace_back({std::sqrt(variance_dir),std::sqrt(variance_wei)});
+    
+    scores_dir.clear();
+    scores_wei.clear();
+  }
+}
