@@ -659,3 +659,22 @@ Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
   
   return x;
 }
+
+
+
+//
+// [[Rcpp::export]]
+Rcpp::List test(int sz)
+{
+  std::vector<std::array<double,2>> res;
+  res.reserve(sz);
+  
+  for(int i = 0; i < sz; ++i){
+    res.emplace_back(std::array<double,2>{0.2+i,0.3+i});
+  }
+  
+  Rcpp::List l;
+  l["Res"] = res;
+  
+  return res;
+}
