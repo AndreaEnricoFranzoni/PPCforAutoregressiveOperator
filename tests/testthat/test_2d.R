@@ -23,9 +23,9 @@ test_that(" in the 2d domain case KO without CV and hps check work", {
   
   
   expect_equal(length(
-    PPCKO.local2::KO_check_hps_2d( X = x_t,
-                                   dim_x1 = dim_grid_x1,
-                                   dim_x2 = dim_grid_x2)), 1)
+    PPCKO::KO_check_hps_2d( X = x_t,
+                            dim_x1 = dim_grid_x1,
+                            dim_x2 = dim_grid_x2)), 1)
   
   expect_equal(length(
     PPCKO::PPC_KO_2d( X = x_t )), 20)

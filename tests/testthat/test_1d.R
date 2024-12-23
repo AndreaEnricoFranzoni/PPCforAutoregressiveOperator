@@ -22,12 +22,12 @@ test_that(" in the 1d domain case KO with CV for regularization parameter works"
   alpha_vec <- c(1e-3,1e-2,1e-1,1,1e1,1e2)
   
   expect_equal(length(
-    PPCKO.local2::PPC_KO( X = data_1d,
-                          id_CV = "CV_alpha",
-                          alpha_vec = alpha_vec,
-                          min_size_ts = 90,
-                          max_size_ts = 92,
-                          err_ret = 0)), 14)
+    PPCKO::PPC_KO( X = data_1d,
+                   id_CV = "CV_alpha",
+                   alpha_vec = alpha_vec,
+                   min_size_ts = 90,
+                   max_size_ts = 92,
+                   err_ret = 0)), 14)
   
   expect_equal(length(
     PPCKO::PPC_KO( X = data_1d,
