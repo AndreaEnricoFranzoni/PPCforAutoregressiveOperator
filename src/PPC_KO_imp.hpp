@@ -1,9 +1,14 @@
 #include "PPC_KO.hpp"
 
 #include <Eigen/Core>
+#include <Eigen/Eigenvalues>
 #include "spectra/include/Spectra/MatOp/DenseSymMatProd.h"
+#include "spectra/include/Spectra/MatOp/SparseCholesky.h"
 #include "spectra/include/Spectra/SymEigsSolver.h"
 #include "spectra/include/Spectra/SymGEigsSolver.h"
+
+
+
 
 
 //how many PPCs have to be retained
