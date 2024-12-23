@@ -152,7 +152,7 @@ const
                                                 return std::pow(el-mean_wei,2);})/n;
     
     // standard deviation
-    standard_dev.emplace_back(std::sqrt(variance_dir),std::sqrt(variance_wei));
+    standard_dev.emplace_back(std::array<double, 2>{std::sqrt(variance_dir),std::sqrt(variance_wei)});
     
     scores_dir.clear();
     scores_wei.clear();
