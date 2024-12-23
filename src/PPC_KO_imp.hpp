@@ -30,7 +30,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
     m_tot_exp_pow = phi_hat.trace();
     
     std::cout << "Usando metodo diretto" << std::endl;
-    Spectra::DenseSymMatProd<double> op(phi);
+    Spectra::DenseSymMatProd<double> op(phi_hat);
     
     if constexpr( k_imp == K_IMP::NO )    //number of PPCs to be detected
     {
@@ -41,7 +41,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
         eigsolver_phi.init();
         int nconv = eigsolver_phi.compute(Spectra::SortRule::LargestAlge);
         
-        if(eigsolver_phi.eigenvalues().sum()/tot_exp_pow >= m_threshold_ppc)
+        if(eigsolver_phi.eigenvalues().sum()/m_tot_exp_pow >= m_threshold_ppc)
         {
           return std::make_tuple(n_ppcs,eigsolver_phi.eigenvalues(),eigsolver_phi.eigenvectors());
         }
@@ -65,6 +65,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
     // Construct matrix operation objects using the wrapper classes
     Spectra::DenseSymMatProd<double> op(m_GammaSquared);
     Spectra::DenseCholesky<double>  Bop(m_CovReg);
+    m_tot_exp_pow = 100.0;
     
     if constexpr(k_imp == K_IMP::NO)
     {
@@ -76,7 +77,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
         eigsolver_ppc.init();
         int nconv = eigsolver_ppc.compute(Spectra::SortRule::LargestAlge);
         
-        if(eigsolver_ppc.eigenvalues().sum()/tot_exp_pow >= m_threshold_ppc)
+        if(eigsolver_ppc.eigenvalues().sum()/m_tot_exp_pow >= m_threshold_ppc)
         {
           return std::make_tuple(n_ppcs,eigsolver_ppc.eigenvalues(),eigsolver_ppc.eigenvectors());
         }
