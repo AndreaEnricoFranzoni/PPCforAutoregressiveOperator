@@ -197,7 +197,9 @@ public:
   //methods common to all child classes
   //number of PPCs retained, eigvalues and eigvcts di phi
   std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained(const KO_Traits::StoringMatrix & phi, double tot_exp_pow) const;
-
+  //number of PPCs retained, eigvalues and eigvcts di phi tramite metodo generalizzato
+  std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained(double tot_exp_pow) const;
+  
   //KO algorithm, once parameters have been set
   void KO_algo();
   
