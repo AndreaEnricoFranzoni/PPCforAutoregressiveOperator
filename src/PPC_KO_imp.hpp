@@ -20,7 +20,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
   //exact method
   if constexpr(dom_dim == DOM_DIM::uni_dim)
   {
-    std::cout << "Now we do spectral dec reg cov" << std::endl;
+    std::cout << "Now we do spectral dec reg cov: " << m_alpha << std::endl;
     //Square root inverse of reg covariance: self-adjoint:exploiting it
     Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
     std::cout << "Inverted square root reg cov" << std::endl;
