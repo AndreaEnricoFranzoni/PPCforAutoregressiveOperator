@@ -16,7 +16,7 @@ template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV
 std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix>
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
 {
-  
+  std::cout << "DEntro ppcs_ret: " << std::m_tot_exp_pow << std::endl;
   //exact method
   if constexpr(dom_dim == DOM_DIM::uni_dim)
   {
@@ -107,6 +107,10 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   std::cout << "SOLVING" << std::endl;
   //finding the PPCs
   auto ppcs_ret = this->PPC_retained();
+  
+  std::cout << "Number of PPCs: " << std::get<0>(ppcs_ret) << std::endl;
+  std::cout << "Eigvls: " << std::get<1>(ppcs_ret) << std::endl;
+  std::cout << "Tot eigvals: " << std::m_tot_exp_pow << std::endl;
   
   if constexpr( k_imp == K_IMP::NO)
   {
