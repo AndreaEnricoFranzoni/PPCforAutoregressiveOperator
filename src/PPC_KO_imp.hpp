@@ -24,7 +24,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
     //Square root inverse of reg covariance: self-adjoint:exploiting it
     Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
     std::cout << "Inverted square root reg cov" << std::endl;
-    KO_Traits::StoringMatrix m_CovRegRoot = eigensolver_cov_reg.operatorInverseSqrt();
+    m_CovRegRoot = eigensolver_cov_reg.operatorInverseSqrt();
     
     std::cout << "Estimating phi" << std::endl;
     //Phi hat: self-adjoint:exploiting it
