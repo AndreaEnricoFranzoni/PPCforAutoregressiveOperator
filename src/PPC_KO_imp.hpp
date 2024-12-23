@@ -110,7 +110,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   
   std::cout << "Number of PPCs: " << std::get<0>(ppcs_ret) << std::endl;
   std::cout << "Eigvls: " << std::get<1>(ppcs_ret) << std::endl;
-  std::cout << "Tot eigvals: " << std::m_tot_exp_pow << std::endl;
+  std::cout << "Tot eigvals: " << m_tot_exp_pow << std::endl;
   
   if constexpr( k_imp == K_IMP::NO)
   {
