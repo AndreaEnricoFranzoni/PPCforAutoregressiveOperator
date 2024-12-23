@@ -205,6 +205,9 @@ public:
   //scores evaluation
   std::vector<double> scores() const;
   
+  //sd scores dir and wei
+  std::vector<std::array<double,2>> sd_scores_dir_wei() const;
+  
   //solving
   inline
   void 

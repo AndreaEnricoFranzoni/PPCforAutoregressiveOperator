@@ -157,4 +157,6 @@ const
     scores_dir.clear();
     scores_wei.clear();
   }
+  
+  return standard_dev;
 }
