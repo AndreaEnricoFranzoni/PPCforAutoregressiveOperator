@@ -15,9 +15,10 @@ PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko(
     
     KO.solve(); 
     auto scores = KO.scores();
+    auto sd_scores = KO.sd_scores_dir_wei();
     
-    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),KO.ValidErr());}
-    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
+    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),KO.ValidErr());}
+    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}
   }
   if constexpr(k_imp == K_IMP::NO)    //k to be found with explanatory power
   {
@@ -25,9 +26,10 @@ PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko(
     
     KO.solve();
     auto scores = KO.scores();
+    auto sd_scores = KO.sd_scores_dir_wei();
     
-    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),KO.ValidErr());}
-    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
+    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),KO.ValidErr());}
+    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}
   }
 }
   
@@ -45,10 +47,11 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
     
     KO.solve();
     auto scores = KO.scores();
+    auto sd_scores = KO.sd_scores_dir_wei();
     
     
-    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
-    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
+    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
+    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}
   }
   if constexpr(k_imp == K_IMP::NO)    //k to be found with explanatory power
   {
@@ -57,9 +60,10 @@ PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_
     
     KO.solve();
     auto scores = KO.scores();
+    auto sd_scores = KO.sd_scores_dir_wei();
     
-    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
-    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}  
+    if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
+    else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}  
   }
 }
 
@@ -74,9 +78,10 @@ PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_ko()
   
   KO.solve();
   auto scores = KO.scores();
+  auto sd_scores = KO.sd_scores_dir_wei();
   
-  if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
-  else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
+  if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),std::get<valid_err_cv_1_t>(KO.ValidErr()));}
+  else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}
 }
 
 
@@ -90,8 +95,9 @@ PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>::cal
   
   KO.solve();
   auto scores = KO.scores();
+  auto sd_scores = KO.sd_scores_dir_wei();
   
   
-  if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),std::get<valid_err_cv_2_t>(KO.ValidErr()));}
-  else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b());}
+  if constexpr( valid_err_ret == VALID_ERR_RET::YES_err){this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means(),std::get<valid_err_cv_2_t>(KO.ValidErr()));}
+  else  {this->results() = std::make_tuple(KO.prediction(),KO.alpha(),KO.k(),scores,KO.explanatory_power(),KO.a(),KO.b(),sd_scores,KO.means());}
 }

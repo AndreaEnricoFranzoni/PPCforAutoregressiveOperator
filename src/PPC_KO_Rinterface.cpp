@@ -92,16 +92,24 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
       auto directions           = std::get<5>(ko->results());
       auto weights              = std::get<6>(ko->results());
-      auto valid_err            = std::get<7>(ko->results());   //valid errors
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      auto valid_err            = std::get<9>(ko->results());   //valid errors
       Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
       Rcpp::List directions_wrapped;
       Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
       for(std::size_t i = 0; i < n_PPC; ++i)
       {
         std::string name_d = "Direction PPC " + std::to_string(i+1);
         std::string name_w = "Weight PPC " + std::to_string(i+1);
         directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
         weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
       }
       
       //saving results in a list, that will be returned
@@ -112,6 +120,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       l["Explanatory power PPCs"]    = explanatory_power;
       l["Directions of PPCs"]        = directions_wrapped;
       l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
       l["Validation errors"]         = errors["Errors"];
     }
     
@@ -130,16 +140,24 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
       auto directions           = std::get<5>(ko->results());
       auto weights              = std::get<6>(ko->results());
-      auto valid_err            = std::get<7>(ko->results());   //valid errors
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      auto valid_err            = std::get<9>(ko->results());   //valid errors
       Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
       Rcpp::List directions_wrapped;
       Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
       for(std::size_t i = 0; i < n_PPC; ++i)
       {
         std::string name_d = "Direction PPC " + std::to_string(i+1);
         std::string name_w = "Weight PPC " + std::to_string(i+1);
         directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
         weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
       }
       
       //saving results in a list, that will be returned
@@ -150,6 +168,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       l["Explanatory power PPCs"]    = explanatory_power;
       l["Directions of PPCs"]        = directions_wrapped;
       l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
       l["Validation errors"]         = errors["Errors"];
       
     }
@@ -174,14 +194,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
       auto directions           = std::get<5>(ko->results());
       auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
       Rcpp::List directions_wrapped;
       Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
       for(std::size_t i = 0; i < n_PPC; ++i)
       {
         std::string name_d = "Direction PPC " + std::to_string(i+1);
         std::string name_w = "Weight PPC " + std::to_string(i+1);
         directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
         weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
       }
 
       //saving results in a list, that will be returned
@@ -192,6 +220,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       l["Explanatory power PPCs"]    = explanatory_power;
       l["Directions of PPCs"]        = directions_wrapped;
       l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
     }
     
     else                                                                                      //K NOT IMPOSED
@@ -209,14 +239,22 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
       auto directions           = std::get<5>(ko->results());
       auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
       Rcpp::List directions_wrapped;
       Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
       for(std::size_t i = 0; i < n_PPC; ++i)
       {
         std::string name_d = "Direction PPC " + std::to_string(i+1);
         std::string name_w = "Weight PPC " + std::to_string(i+1);
         directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
         weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
       }
 
       //saving results in a list, that will be returned
@@ -227,6 +265,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       l["Explanatory power PPCs"]    = explanatory_power;
       l["Directions of PPCs"]        = directions_wrapped;
       l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
     }        
   }
   

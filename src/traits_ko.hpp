@@ -98,8 +98,8 @@ using valid_err_variant = std::variant<valid_err_cv_1_t,valid_err_cv_2_t>;
 //        right extreme of the domain
 //        grid for the discrete evaluations
 //        errors (eventually)                           Y
-using results_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix, valid_err_variant>; 
-using results_no_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix>; 
+using results_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix, std::vector<std::array<double,2>>, KO_Traits::StoringArray, valid_err_variant>; 
+using results_no_err_t = std::tuple<KO_Traits::StoringVector, double, int, std::vector<double>, std::vector<double>, KO_Traits::StoringMatrix, KO_Traits::StoringMatrix, std::vector<std::array<double,2>>, KO_Traits::StoringArray>; 
 
 // if errors are saved or not
 template <VALID_ERR_RET valid_err_ret>
