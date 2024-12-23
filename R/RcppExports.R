@@ -25,3 +25,7 @@ data_2d_wrapper_from_array <- function(Xt) {
     .Call('_PPCKO_data_2d_wrapper_from_array', PACKAGE = 'PPCKO', Xt)
 }
 
+test <- function(sz) {
+    .Call('_PPCKO_test', PACKAGE = 'PPCKO', sz)
+}
+

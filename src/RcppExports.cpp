@@ -114,6 +114,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test
+Rcpp::List test(int sz);
+RcppExport SEXP _PPCKO_test(SEXP szSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type sz(szSEXP);
+    rcpp_result_gen = Rcpp::wrap(test(sz));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 16},
@@ -122,6 +133,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_KO_check_hps_2d", (DL_FUNC) &_PPCKO_KO_check_hps_2d, 3},
     {"_PPCKO_data_2d_wrapper_from_list", (DL_FUNC) &_PPCKO_data_2d_wrapper_from_list, 1},
     {"_PPCKO_data_2d_wrapper_from_array", (DL_FUNC) &_PPCKO_data_2d_wrapper_from_array, 1},
+    {"_PPCKO_test", (DL_FUNC) &_PPCKO_test, 1},
     {NULL, NULL, 0}
 };
 
