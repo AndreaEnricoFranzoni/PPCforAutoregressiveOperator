@@ -751,17 +751,266 @@ Rcpp::NumericMatrix data_2d_wrapper_from_array(Rcpp::NumericVector Xt)
 
 //
 // [[Rcpp::export]]
-Rcpp::List test(int sz)
-{
-  std::vector<std::array<double,2>> res;
-  res.reserve(sz);
+Rcpp::List PPC_KO_gen_solv(Rcpp::NumericMatrix           X,
+                  std::string                   id_CV         = "NoCV",
+                  double                        alpha         = 0.75,
+                  int                           k             = 0, 
+                  double                        threshold_ppc = 0.95,
+                  Rcpp::Nullable<NumericVector> alpha_vec     = R_NilValue,
+                  Rcpp::Nullable<IntegerVector> k_vec         = R_NilValue,
+                  double                        toll          = 1e-4,
+                  Rcpp::Nullable<NumericVector> disc_ev       = R_NilValue,
+                  double                        left_extreme  = 0,
+                  double                        right_extreme = 1,
+                  Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
+                  Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
+                  int                           err_ret       = 0,
+                  Rcpp::Nullable<int>           num_threads   = R_NilValue,
+                  Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue
+)
+{ 
+  //1D DOMAIN
+  using T = double;       //version for real-values time series
   
-  for(int i = 0; i < sz; ++i){
-    res.emplace_back(std::array<double,2>{0.2+i,0.3+i});
+  //wrapping and checking parameters
+  check_threshold_ppc(threshold_ppc);
+  check_alpha(alpha);
+  check_k(k,X.nrow());
+  std::vector<double> alphas         = wrap_alpha_vec(alpha_vec);
+  std::vector<int> k_s               = wrap_k_vec(k_vec,X.nrow());
+  const REM_NAN id_RN                = wrap_id_rem_nans(id_rem_nan);
+  std::vector<double> disc_ev_points = wrap_disc_ev(disc_ev,left_extreme,right_extreme,X.nrow());
+  auto sizes_CV_sets                 = wrap_sizes_set_CV(min_size_ts,max_size_ts,X.ncol());
+  int min_dim_train_set              = sizes_CV_sets.first;
+  int max_dim_train_set              = sizes_CV_sets.second;
+  int number_threads                 = wrap_num_thread(num_threads);
+  
+  //reading data, handling NANs
+  auto data_read = reader_data<T>(X,id_RN);
+  KO_Traits::StoringMatrix x = data_read.first;
+  
+  //checking which 
+  bool err_ret_b = err_ret==1 ? true : false;
+  
+  //returning element
+  Rcpp::List l;
+  
+  
+  
+  Rcout << "--------------------------------------------------------------------------------------------" << std::endl;
+  Rcout << "Running Kargin-Onatski algorithm, " << wrap_string_CV_to_be_printed(id_CV) << std::endl;
+  Rcout << "Functional data defined over: [" << left_extreme << "," << right_extreme << "], with " << disc_ev_points.size() << " discrete evaluations" << std::endl;
+  
+  
+  
+  if(err_ret_b)                                         //VALIDATION ERRORS STORED AND RETURNED
+  {
+    
+    if(k>0)                                                                                   //K IMPOSED
+    { 
+      //1D domain, k imposed, returning errors
+      //solver
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      //solving
+      ko->call_ko();
+      //results
+      auto one_step_ahead_pred  = add_nans_vec(std::get<0>(ko->results()),data_read.second,X.nrow());  //estimate of the prediction (NaN for the points in which you do not have measurements)
+      double alpha_used         = std::get<1>(ko->results());   //alpha used
+      int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
+      auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
+      auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+      auto directions           = std::get<5>(ko->results());
+      auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      auto valid_err            = std::get<9>(ko->results());   //valid errors
+      Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
+      Rcpp::List directions_wrapped;
+      Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
+      for(std::size_t i = 0; i < n_PPC; ++i)
+      {
+        std::string name_d = "Direction PPC " + std::to_string(i+1);
+        std::string name_w = "Weight PPC " + std::to_string(i+1);
+        directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
+        weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
+      }
+      
+      //saving results in a list, that will be returned
+      l["One-step ahead prediction"] = one_step_ahead_pred;
+      l["Alpha"]                     = alpha_used;
+      l["Number of PPCs retained"]   = n_PPC;
+      l["Scores along PPCs"]         = scores_PPC;
+      l["Explanatory power PPCs"]    = explanatory_power;
+      l["Directions of PPCs"]        = directions_wrapped;
+      l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
+      l["Mean function"]             = mean_func;
+      l["Validation errors"]         = errors["Errors"];
+    }
+    
+    else                                                                                      //K NOT IMPOSED
+    { 
+      //1D domain, k not imposed, returning errors
+      //solver
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      //solving
+      ko->call_ko();
+      //results
+      auto one_step_ahead_pred  = add_nans_vec(std::get<0>(ko->results()),data_read.second,X.nrow());  //estimate of the prediction (NaN for the points in which you do not have measurements)
+      double alpha_used         = std::get<1>(ko->results());   //alpha used
+      int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
+      auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
+      auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+      auto directions           = std::get<5>(ko->results());
+      auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      auto valid_err            = std::get<9>(ko->results());   //valid errors
+      Rcpp::List errors = valid_err_disp(valid_err);            //dispatching correctly valid errors
+      Rcpp::List directions_wrapped;
+      Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
+      for(std::size_t i = 0; i < n_PPC; ++i)
+      {
+        std::string name_d = "Direction PPC " + std::to_string(i+1);
+        std::string name_w = "Weight PPC " + std::to_string(i+1);
+        directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
+        weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
+      }
+      
+      //saving results in a list, that will be returned
+      l["One-step ahead prediction"] = one_step_ahead_pred;
+      l["Alpha"]                     = alpha_used;
+      l["Number of PPCs retained"]   = n_PPC;
+      l["Scores along PPCs"]         = scores_PPC;
+      l["Explanatory power PPCs"]    = explanatory_power;
+      l["Directions of PPCs"]        = directions_wrapped;
+      l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
+      l["Mean function"]             = mean_func;
+      l["Validation errors"]         = errors["Errors"];
+      
+    }
   }
   
-  Rcpp::List l;
-  l["Res"] = res;
+  
+  else                                                //VALIDATION ERRORS NOT STORED
+  {
+    
+    if(k>0)                                                                                   //K IMPOSED
+    {
+      //1D domain, k imposed, not returning errors
+      //solver
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      //solving
+      ko->call_ko();
+      //results
+      auto one_step_ahead_pred  = add_nans_vec(std::get<0>(ko->results()),data_read.second,X.nrow());  //estimate of the prediction (NaN for the points in which you do not have measurements)
+      double alpha_used         = std::get<1>(ko->results());   //alpha used
+      int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
+      auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
+      auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+      auto directions           = std::get<5>(ko->results());
+      auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      Rcpp::List directions_wrapped;
+      Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
+      for(std::size_t i = 0; i < n_PPC; ++i)
+      {
+        std::string name_d = "Direction PPC " + std::to_string(i+1);
+        std::string name_w = "Weight PPC " + std::to_string(i+1);
+        directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
+        weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
+      }
+      
+      //saving results in a list, that will be returned
+      l["One-step ahead prediction"] = one_step_ahead_pred;
+      l["Alpha"]                     = alpha_used;
+      l["Number of PPCs retained"]   = n_PPC;
+      l["Scores along PPCs"]         = scores_PPC;
+      l["Explanatory power PPCs"]    = explanatory_power;
+      l["Directions of PPCs"]        = directions_wrapped;
+      l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
+      l["Mean function"]             = mean_func;
+    }
+    
+    else                                                                                      //K NOT IMPOSED
+    {
+      //1D domain, k not imposed, not returning errors
+      //solver
+      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      //solving
+      ko->call_ko();
+      //results
+      auto one_step_ahead_pred  = add_nans_vec(std::get<0>(ko->results()),data_read.second,X.nrow());  //estimate of the prediction (NaN for the points in which you do not have measurements)
+      double alpha_used         = std::get<1>(ko->results());   //alpha used
+      int n_PPC                 = std::get<2>(ko->results());   //number of PPC retained
+      auto scores_PPC           = std::get<3>(ko->results());   //scores along the k PPCs
+      auto explanatory_power    = std::get<4>(ko->results());   //explanatory power
+      auto directions           = std::get<5>(ko->results());
+      auto weights              = std::get<6>(ko->results());
+      auto sd_scores_dir_wei    = std::get<7>(ko->results());
+      auto mean_func            = add_nans_vec(std::get<8>(ko->results()),data_read.second,X.nrow());
+      Rcpp::List directions_wrapped;
+      Rcpp::List weights_wrapped;
+      std::vector<double> scores_dir_sd;
+      scores_dir_sd.reserve(n_PPC);
+      std::vector<double> scores_wei_sd;
+      scores_wei_sd.reserve(n_PPC);
+      for(std::size_t i = 0; i < n_PPC; ++i)
+      {
+        std::string name_d = "Direction PPC " + std::to_string(i+1);
+        std::string name_w = "Weight PPC " + std::to_string(i+1);
+        directions_wrapped[name_d] = add_nans_vec(directions.col(i),data_read.second,X.nrow());
+        weights_wrapped[name_w] = add_nans_vec(weights.col(i),data_read.second,X.nrow());
+        scores_dir_sd.emplace_back(sd_scores_dir_wei[i][0]);
+        scores_wei_sd.emplace_back(sd_scores_dir_wei[i][1]);
+      }
+      
+      //saving results in a list, that will be returned
+      l["One-step ahead prediction"] = one_step_ahead_pred;
+      l["Alpha"]                     = alpha_used;
+      l["Number of PPCs retained"]   = n_PPC;
+      l["Scores along PPCs"]         = scores_PPC;
+      l["Explanatory power PPCs"]    = explanatory_power;
+      l["Directions of PPCs"]        = directions_wrapped;
+      l["Weights of PPCs"]           = weights_wrapped;
+      l["Sd scores directions"]      = scores_dir_sd;
+      l["Sd scores weights"]         = scores_wei_sd;
+      l["Mean function"]             = mean_func;
+    }        
+  }
+  
+  
+  l["Function discrete evaluations points"] = disc_ev_points;
+  l["Left extreme domain"]                  = left_extreme; 
+  l["Right extreme domain"]                 = right_extreme;
+  l["f_n"]                                  = X(_, X.ncol() - 1);
+  l["CV"]                                   = id_CV;
+  l["Alphas"]                               = alphas;
+  l["K_s"]                                  = k_s;
   
   return l;
 }
