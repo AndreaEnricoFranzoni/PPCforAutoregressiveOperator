@@ -16,22 +16,22 @@ template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV
 std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix>
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
 {
-  std::cout << "DEntro ppcs_ret: " << m_tot_exp_pow << std::endl;
+  //std::cout << "DEntro ppcs_ret: " << m_tot_exp_pow << std::endl;
   //exact method
   if constexpr(dom_dim == DOM_DIM::uni_dim)
   {
-    std::cout << "Now we do spectral dec reg cov: " << m_alpha << std::endl;
+    //std::cout << "Now we do spectral dec reg cov: " << m_alpha << std::endl;
     //Square root inverse of reg covariance: self-adjoint:exploiting it
     Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
-    std::cout << "Inverted square root reg cov" << std::endl;
+    //std::cout << "Inverted square root reg cov" << std::endl;
     m_CovRegRoot = eigensolver_cov_reg.operatorInverseSqrt();
     
-    std::cout << "Estimating phi" << std::endl;
+    //std::cout << "Estimating phi" << std::endl;
     //Phi hat: self-adjoint:exploiting it
     KO_Traits::StoringMatrix phi_hat = m_CovRegRoot*m_GammaSquared*m_CovRegRoot.transpose();
     m_tot_exp_pow = phi_hat.trace();
     
-    std::cout << "Usando metodo diretto" << std::endl;
+    //std::cout << "Usando metodo diretto" << std::endl;
     Spectra::DenseSymMatProd<double> op(phi_hat);
     
     if constexpr( k_imp == K_IMP::NO )    //number of PPCs to be detected
@@ -62,7 +62,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
   else if constexpr(dom_dim == DOM_DIM::bi_dim)
   {
 
-    std::cout << "Usando metodo generalizzato" << std::endl;
+    //std::cout << "Usando metodo generalizzato" << std::endl;
     
     // Construct matrix operation objects using the wrapper classes
     Spectra::DenseSymMatProd<double> op(m_GammaSquared);
@@ -106,13 +106,13 @@ template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV
 void
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
 { 
-  std::cout << "SOLVING" << std::endl;
+  //std::cout << "SOLVING" << std::endl;
   //finding the PPCs
   auto ppcs_ret = this->PPC_retained();
   
-  std::cout << "Number of PPCs: " << std::get<0>(ppcs_ret) << std::endl;
-  std::cout << "Eigvls: " << std::get<1>(ppcs_ret) << std::endl;
-  std::cout << "Tot eigvals: " << m_tot_exp_pow << std::endl;
+  //std::cout << "Number of PPCs: " << std::get<0>(ppcs_ret) << std::endl;
+  //std::cout << "Eigvls: " << std::get<1>(ppcs_ret) << std::endl;
+  //std::cout << "Tot eigvals: " << m_tot_exp_pow << std::endl;
   
   if constexpr( k_imp == K_IMP::NO)
   {
