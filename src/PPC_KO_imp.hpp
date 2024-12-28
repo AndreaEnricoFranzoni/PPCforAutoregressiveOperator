@@ -65,9 +65,9 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
 
       for (std::size_t i = 0; i < m_m; ++i)
       {
-        if(eigsolver_phi.eigenvalues().reverse().head(i+1).sum()/m_tot_exp_pow >= m_threshold_ppc)
+        if(eigsolver_ppc.eigenvalues().reverse().head(i+1).sum()/m_tot_exp_pow >= m_threshold_ppc)
         {
-          return std::make_tuple(i+1,eigsolver_ppc.eigenvalues().reverse().head(i+1),eigsolver_phi.eigenvectors().rowwise().reverse().leftCols(i+1));
+          return std::make_tuple(i+1,eigsolver_ppc.eigenvalues().reverse().head(i+1),eigsolver_ppc.eigenvectors().rowwise().reverse().leftCols(i+1));
         }
       }
       
