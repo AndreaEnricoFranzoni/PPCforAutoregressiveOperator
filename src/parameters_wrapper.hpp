@@ -85,6 +85,22 @@ check_k(const int &k, const int &max_k)
 
 
 
+//check that the solver is passed correctly
+inline
+void
+check_solver(bool solver_ex, const std::string &id_cv, int k)
+{
+  if(solver_ex == false)
+  {
+    if ( (k==0 && (id_cv==CV_algo::CV1 || id_cv==CV_algo::CV2))  )
+    {
+      std::string error_message = "GEP solver can be used only if the number of PPCs is imposed or retrieved through CV";
+      throw std::invalid_argument(error_message);
+    }
+  }
+}
+
+
 //to wrap the vector of alphas passed in input
 inline
 std::vector<double>
