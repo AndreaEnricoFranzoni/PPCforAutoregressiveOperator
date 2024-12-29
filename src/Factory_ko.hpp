@@ -17,13 +17,13 @@
 
 
 
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
 class KO_Factory
 {	
 public:
   //! Static method that takes a string as identifier and builds a pointer to the right object for the cross-validation requested
   static 
-  std::unique_ptr<PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>> 
+  std::unique_ptr<PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>> 
     KO_solver(const std::string &id,
               KO_Traits::StoringMatrix && X,
               double alpha,
@@ -52,22 +52,22 @@ public:
       
       if (id == CV_algo::CV1)   //No CV
       {
-        return k==0 ? std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,threshold_ppc,num_threads) : std::make_unique<PPC_KO_wrapper_no_cv<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k,num_threads);
+        return k==0 ? std::make_unique<PPC_KO_wrapper_no_cv<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,threshold_ppc,num_threads) : std::make_unique<PPC_KO_wrapper_no_cv<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k,num_threads);
       }
       
       if (id == CV_algo::CV2)   //CV on alpha
       {
-        return k==0 ? std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts,num_threads) : std::make_unique<PPC_KO_wrapper_cv_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts,num_threads);
+        return k==0 ? std::make_unique<PPC_KO_wrapper_cv_alpha<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,threshold_ppc,min_size_ts,max_size_ts,num_threads) : std::make_unique<PPC_KO_wrapper_cv_alpha<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k,min_size_ts,max_size_ts,num_threads);
       }
       
       if (id == CV_algo::CV3)   //CV on k
       {
-        return std::make_unique<PPC_KO_wrapper_cv_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts,num_threads);
+        return std::make_unique<PPC_KO_wrapper_cv_k<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alpha,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
       
       if (id == CV_algo::CV4)   //CV on both alpha and k
       {
-        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts,num_threads);
+        return std::make_unique<PPC_KO_wrapper_cv_alpha_k<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>>(std::move(X),alphas,k_s,toll,min_size_ts,max_size_ts,num_threads);
       }
       
       else

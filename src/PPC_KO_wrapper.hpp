@@ -11,7 +11,7 @@
 
 
 //base
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
 class PPC_KO_wrapper
 {
 private:
@@ -58,8 +58,8 @@ public:
 
 
 //no cv
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
-class PPC_KO_wrapper_no_cv  : public PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+class PPC_KO_wrapper_no_cv  : public PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   double m_alpha;                       //reg parameter
@@ -70,12 +70,12 @@ public:
   //constructor if the k is already known (k_imp = YES)
   template<typename STOR_OBJ>
   PPC_KO_wrapper_no_cv(STOR_OBJ&& data, double alpha, int k, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_k(k) {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_k(k) {}
   
   //constructor for finding the number of PPCs (k_imp = NO)
   template<typename STOR_OBJ>
   PPC_KO_wrapper_no_cv(STOR_OBJ&& data, double alpha, double threshold_ppc, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_threshold_ppc(threshold_ppc)  {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_threshold_ppc(threshold_ppc)  {}
   
   void call_ko() override;
 };
@@ -83,8 +83,8 @@ public:
 
 
 //cv alpha
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
-class PPC_KO_wrapper_cv_alpha  : public PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+class PPC_KO_wrapper_cv_alpha  : public PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   std::vector<double> m_alphas;         //CV on alpha
@@ -97,12 +97,12 @@ public:
   //k given
   template<typename STOR_OBJ>
   PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, int k, int min_size_ts, int max_size_ts, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_k(k), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_k(k), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   //k to be found
   template<typename STOR_OBJ>
   PPC_KO_wrapper_cv_alpha(STOR_OBJ&& data, const std::vector<double> & alphas, double threshold_ppc, int min_size_ts, int max_size_ts, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_threshold_ppc(threshold_ppc), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_threshold_ppc(threshold_ppc), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };
@@ -110,8 +110,8 @@ public:
 
 
 //cv k
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
-class PPC_KO_wrapper_cv_k  : public PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+class PPC_KO_wrapper_cv_k  : public PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   double m_alpha;
@@ -123,7 +123,7 @@ private:
 public:
   template<typename STOR_OBJ>
   PPC_KO_wrapper_cv_k(STOR_OBJ&& data, double alpha, const std::vector<int> & k_s, double toll, int min_size_ts, int max_size_ts, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alpha(alpha), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };
@@ -131,8 +131,8 @@ public:
 
 
 //cv alpha-k
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
-class PPC_KO_wrapper_cv_alpha_k  : public PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+class PPC_KO_wrapper_cv_alpha_k  : public PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   std::vector<double> m_alphas;
@@ -144,7 +144,7 @@ private:
 public:
   template<typename STOR_OBJ>
   PPC_KO_wrapper_cv_alpha_k(STOR_OBJ&& data, const std::vector<double> &alphas, const std::vector<int> &k_s, double toll, int min_size_ts, int max_size_ts, int number_threads)
-    : PPC_KO_wrapper<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
+    : PPC_KO_wrapper<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(data),number_threads), m_alphas(alphas), m_k_s(k_s), m_toll(toll), m_min_size_ts(min_size_ts), m_max_size_ts(max_size_ts) {}
   
   void call_ko() override;
 };

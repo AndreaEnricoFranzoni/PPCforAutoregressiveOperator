@@ -12,12 +12,12 @@
 
 
 //how many PPCs have to be retained
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix>
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
+PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
 {
   //exact method: can be used for k not imp and k imp
-  if constexpr(dom_dim == DOM_DIM::uni_dim)
+  if constexpr(solver == SOLVER::ex_solver)
   {
     //Square root inverse of reg covariance: self-adjoint:exploiting it
     Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
@@ -54,7 +54,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
     }
   }
   //generalized method: quicker, but only if you impose k
-  else if constexpr(dom_dim == DOM_DIM::bi_dim)
+  else if constexpr(solver == SOLVER::gep_solver)
   {
     if constexpr(k_imp == K_IMP::YES)    //devo calcolarli comunque tutti per sapere quanti tenere
     {
@@ -78,9 +78,9 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
 
 
 //KO algorithm (all parameters been set)
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 void
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
+PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
 { 
   //finding the PPCs
   auto ppcs_ret = this->PPC_retained();
@@ -96,7 +96,7 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   std::for_each(m_explanatory_power.begin(),m_explanatory_power.end(),[this](auto &el){el=el/m_tot_exp_pow;});
   
   //Weights (b_i)
-  if constexpr(dom_dim == DOM_DIM::uni_dim){m_b = m_CovRegRoot*std::get<2>(ppcs_ret);}  else{m_b = std::get<2>(ppcs_ret);}
+  if constexpr(solver == SOLVER::ex_solver){m_b = m_CovRegRoot*std::get<2>(ppcs_ret);}  else{m_b = std::get<2>(ppcs_ret);}
   
   //Directions (a_i)
   m_a = m_CrossCov*m_b;
@@ -138,9 +138,9 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
 
 
 //one step ahead prediction
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 KO_Traits::StoringArray
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::prediction()
+PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::prediction()
 const 
 {
   return (m_rho*m_X.col(m_n-1)).array() + m_means;
@@ -149,9 +149,9 @@ const
 
 
 //evaluating the scores on the PPCs
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 std::vector<double>
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::scores()
+PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::scores()
 const
 { 
   std::vector<double> scores;
@@ -167,9 +167,9 @@ const
 
 
 //evaluating the sd of the scores on directions and weights
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 std::vector<std::array<double,2>>
-PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::sd_scores_dir_wei()
+PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::sd_scores_dir_wei()
 const
 {
   std::vector<std::array<double,2>> standard_dev;

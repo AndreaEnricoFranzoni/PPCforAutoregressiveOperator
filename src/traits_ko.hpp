@@ -39,10 +39,10 @@ struct CV_algo
 
 
 //domain dimension
-enum DOM_DIM
+enum SOLVER
 {
-  uni_dim  = 0,      //1D domain
-  bi_dim   = 1,      //2D domain
+  ex_solver  = 0,      //1D domain
+  gep_solver = 1,      //2D domain
 };
 
 

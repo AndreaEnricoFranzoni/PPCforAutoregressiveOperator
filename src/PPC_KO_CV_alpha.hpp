@@ -6,8 +6,8 @@
 
 
 //class for doing for alpha
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
-class PPC_KO_CV_alpha : public PPC_KO_base<PPC_KO_CV_alpha<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+class PPC_KO_CV_alpha : public PPC_KO_base<PPC_KO_CV_alpha<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   std::vector<double> m_alphas;
@@ -21,7 +21,7 @@ public:
   template<typename STOR_OBJ>
   PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, int k, int min_size_ts, int max_size_ts, int number_threads) 
     : 
-    PPC_KO_base<PPC_KO_CV_alpha,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
+    PPC_KO_base<PPC_KO_CV_alpha,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
     m_alphas(alphas),
     m_X_non_cent(this->m(),this->n()),
     m_min_size_ts(min_size_ts),
@@ -42,7 +42,7 @@ public:
   template<typename STOR_OBJ>
   PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, double threshold_ppc, int min_size_ts, int max_size_ts) 
     : 
-    PPC_KO_base<PPC_KO_CV_alpha,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
+    PPC_KO_base<PPC_KO_CV_alpha,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
     m_alphas(alphas),
     m_X_non_cent(this->m(),this->n()),
     m_min_size_ts(min_size_ts),
@@ -70,7 +70,7 @@ public:
     if constexpr(k_imp == K_IMP::YES)
     {
       //lambda wrapper for the correct overload for predictor
-      auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k, int number_threads) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k,number_threads);};
+      auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k, int number_threads) { return cv_pred_func<solver,K_IMP::YES,VALID_ERR_RET::NO_err,cv_strat,cv_err_eval>(std::move(data),alpha,k,number_threads);};
       
       //CV already knowing k
       CV_alpha<cv_strat,cv_err_eval,k_imp,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_alphas,this->k(),predictor,this->number_threads());
@@ -93,7 +93,7 @@ public:
     if constexpr(k_imp == K_IMP::NO)
     {
       //lambda wrapper to resolve the overload
-      auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, double threshold_ppc, int number_threads) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::NO,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,threshold_ppc,number_threads);};
+      auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, double threshold_ppc, int number_threads) { return cv_pred_func<solver,K_IMP::NO,VALID_ERR_RET::NO_err,cv_strat,cv_err_eval>(std::move(data),alpha,threshold_ppc,number_threads);};
       
       //CV already with k to be found with explanatory power
       CV_alpha<cv_strat,cv_err_eval,k_imp,valid_err_ret> cv(std::move(m_X_non_cent),std::move(*strategy_cv),m_alphas,this->threshold_ppc(),predictor,this->number_threads());

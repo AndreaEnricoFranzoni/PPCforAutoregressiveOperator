@@ -78,7 +78,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       { 
         //exact solver, k imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+        auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
         //solving
         ko->call_ko();
         //results
@@ -127,7 +127,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
       { 
         //1D domain, k not imposed, returning errors
         //solver
-        auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+        auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -182,7 +182,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -228,7 +228,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -280,7 +280,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -329,7 +329,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -384,7 +384,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -430,7 +430,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
     {
       //1D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -558,7 +558,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -606,7 +606,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -661,7 +661,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     { 
       //2D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -707,7 +707,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::uni_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::ex_solver, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -759,7 +759,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -807,7 +807,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -862,7 +862,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     { 
       //2D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -908,7 +908,7 @@ Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix           X,
     {
       //2D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -1214,7 +1214,7 @@ Rcpp::List PPC_KO_gen_solv(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -1263,7 +1263,7 @@ Rcpp::List PPC_KO_gen_solv(Rcpp::NumericMatrix           X,
     { 
       //1D domain, k not imposed, returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::YES_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -1318,7 +1318,7 @@ Rcpp::List PPC_KO_gen_solv(Rcpp::NumericMatrix           X,
     {
       //1D domain, k imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::YES, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results
@@ -1364,7 +1364,7 @@ Rcpp::List PPC_KO_gen_solv(Rcpp::NumericMatrix           X,
     {
       //1D domain, k not imposed, not returning errors
       //solver
-      auto ko = KO_Factory< DOM_DIM::bi_dim, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
+      auto ko = KO_Factory< SOLVER::gep_solver, K_IMP::NO, VALID_ERR_RET::NO_err, CV_STRAT::AUGMENTING_WINDOW, CV_ERR_EVAL::MSE >::KO_solver(id_CV,std::move(x),alpha,k,threshold_ppc,alphas,k_s,toll,min_dim_train_set,max_dim_train_set,number_threads);
       //solving
       ko->call_ko();
       //results

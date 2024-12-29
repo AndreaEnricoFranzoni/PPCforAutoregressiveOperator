@@ -25,7 +25,7 @@
 
 //templates params
 //derived class (CRTP), domain dimension, if k is passed as param, if validation errors have to be stored and returned
-template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
+template< class D, SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval > 
 class PPC_KO_base
 {
   

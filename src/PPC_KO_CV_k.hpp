@@ -6,8 +6,8 @@
 
 
 //class for doing CV for k
-template< DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
-class PPC_KO_CV_k : public PPC_KO_base<PPC_KO_CV_k<dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>
+template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
+class PPC_KO_CV_k : public PPC_KO_base<PPC_KO_CV_k<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>
 {
 private:
   std::vector<int> m_k_s;
@@ -21,7 +21,7 @@ public:
   template<typename STOR_OBJ>
   PPC_KO_CV_k(STOR_OBJ&& X, std::vector<int> &k_s, double alpha, double toll, int min_size_ts, int max_size_ts, int number_threads) 
     : 
-    PPC_KO_base<PPC_KO_CV_k,dom_dim,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
+    PPC_KO_base<PPC_KO_CV_k,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
     m_k_s(k_s),
     m_X_non_cent(this->m(),this->n()),
     m_toll(toll),
@@ -51,7 +51,7 @@ public:
     auto strategy_cv = Factory_cv_strat<cv_strat>::cv_strat_obj(m_min_size_ts,m_max_size_ts);
 
     //lambda wrapper for the correct overload
-    auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k, int number_threads) { return cv_pred_func<DOM_DIM::uni_dim,K_IMP::YES,VALID_ERR_RET::NO_err,CV_STRAT::AUGMENTING_WINDOW,CV_ERR_EVAL::MSE>(std::move(data),alpha,k,number_threads);};
+    auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, int k, int number_threads) { return cv_pred_func<solver,K_IMP::YES,VALID_ERR_RET::NO_err,cv_strat,cv_err_eval>(std::move(data),alpha,k,number_threads);};
     
     //to stop the algorithm if not too much difference in adding a PPC
     double toll_param = m_toll*this->trace_cov();
