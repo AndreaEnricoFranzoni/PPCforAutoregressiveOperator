@@ -16,7 +16,7 @@ template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV
 std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix>
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
 {
-  //exact method
+  //exact method: can be used for k not imp and k imp
   if constexpr(dom_dim == DOM_DIM::uni_dim)
   {
     //Square root inverse of reg covariance: self-adjoint:exploiting it
@@ -53,62 +53,21 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
       return std::make_tuple(m_k,eigsolver_phi.eigenvalues(),eigsolver_phi.eigenvectors());
     }
   }
-  //generalized method
+  //generalized method: quicker, but only if you impose k
   else if constexpr(dom_dim == DOM_DIM::bi_dim)
   {
     
-    if constexpr(k_imp == K_IMP::NO)    //devo calcolarli comunque tutti per sapere quanti tenere
+    if constexpr(k_imp == K_IMP::YES)    //devo calcolarli comunque tutti per sapere quanti tenere
     {
       
-      Eigen::GeneralizedSelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigsolver_ppc(m_GammaSquared,m_CovReg);
-      m_tot_exp_pow = eigsolver_ppc.eigenvalues().sum();
-
-      for (std::size_t i = 0; i < m_m; ++i)
-      {
-        if(eigsolver_ppc.eigenvalues().reverse().head(i+1).sum()/m_tot_exp_pow >= m_threshold_ppc)
-        {
-          return std::make_tuple(i+1,eigsolver_ppc.eigenvalues().reverse().head(i+1),eigsolver_ppc.eigenvectors().rowwise().reverse().leftCols(i+1));
-        }
-      }
-      
- 
-
-/*
-    Spectra::DenseSymMatProd<double> op(m_GammaSquared);
-    Spectra::DenseCholesky<double>  Bop(m_CovReg);
-    m_tot_exp_pow = 100.0;
-      for(std::size_t i = 0; i < m_m; ++i)
-      {
-        int n_ppcs = i+1;
-        Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::DenseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, n_ppcs, 2*n_ppcs);
-        
-        eigsolver_ppc.init();
-        int nconv = eigsolver_ppc.compute(Spectra::SortRule::LargestAlge);
-        
-        if(eigsolver_ppc.eigenvalues().sum()/m_tot_exp_pow >= m_threshold_ppc)
-        {
-          return std::make_tuple(n_ppcs,eigsolver_ppc.eigenvalues(),eigsolver_ppc.eigenvectors());
-        }
-      }
-
-
-*/
-
-
-
-    }
-    else            //so già quanti tenere, dunque mi basta calcolare i primi k
-    {
-
-
       Spectra::DenseSymMatProd<double> op(m_GammaSquared);
       Spectra::DenseCholesky<double>  Bop(m_CovReg);
-      m_tot_exp_pow = 100.0;
 
       Spectra::SymGEigsSolver<Spectra::DenseSymMatProd<double>, Spectra::DenseCholesky<double>, Spectra::GEigsMode::Cholesky> eigsolver_ppc(op, Bop, m_k, 2*m_k);
-      
+  
       eigsolver_ppc.init();
       int nconv = eigsolver_ppc.compute(Spectra::SortRule::LargestAlge);
+      m_tot_exp_pow = eigsolver_ppc.eigenvalues().sum();
       
       return std::make_tuple(m_k,eigsolver_ppc.eigenvalues(),eigsolver_ppc.eigenvectors());
     }
@@ -124,14 +83,9 @@ template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV
 void
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
 { 
-  //std::cout << "SOLVING" << std::endl;
   //finding the PPCs
   auto ppcs_ret = this->PPC_retained();
-  
-  //std::cout << "Number of PPCs: " << std::get<0>(ppcs_ret) << std::endl;
-  //std::cout << "Eigvls: " << std::get<1>(ppcs_ret) << std::endl;
-  //std::cout << "Tot eigvals: " << m_tot_exp_pow << std::endl;
-  
+    
   if constexpr( k_imp == K_IMP::NO)
   {
     m_k = std::get<0>(ppcs_ret);
@@ -149,10 +103,6 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::KO_algo()
   m_a = m_CrossCov*m_b;
   //predictor estimate
   m_rho = m_a*(m_b.transpose());
-  
-  
-  
-  
   
   
   /*
