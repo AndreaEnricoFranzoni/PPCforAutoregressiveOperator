@@ -48,7 +48,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   check_threshold_ppc(threshold_ppc);
   check_alpha(alpha);
   check_k(k,X.nrow());
-  check_solver(ex_solver,id_CV,k)
+  check_solver(ex_solver,id_CV,k);
   std::vector<double> alphas         = wrap_alpha_vec(alpha_vec);
   std::vector<int> k_s               = wrap_k_vec(k_vec,X.nrow());
   const REM_NAN id_RN                = wrap_id_rem_nans(id_rem_nan);
