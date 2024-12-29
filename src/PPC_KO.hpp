@@ -67,6 +67,7 @@ public:
       std::cout << "Creation obj PPCKO" << std::endl;
       //evaluating row mean and saving it in the m_means
       m_means = (m_X.rowwise().sum())/m_n;
+      std::cout << "Mean data" << std::endl;
       
       //normalizing
 #ifdef _OPENMP
@@ -76,18 +77,28 @@ public:
       {
         m_X.col(i) = m_X.col(i).array() - m_means;
       }
+
+      std::cout << "Data centered" << std::endl;
       
       // X * X' 
       m_Cov =  ((m_X*m_X.transpose()).array())/static_cast<double>(m_n);
+
+      std::cout << "Covariance" << std::endl;
       
       // trace of covariance
       m_trace_cov = m_Cov.trace();
+
+      std::cout << "Cov trace" << std::endl;
       
       // (X[,2:n]*(X[,1:(n-1)])')/(n-1)
       m_CrossCov =  ((m_X.rightCols(m_n-1)*m_X.leftCols(m_n-1).transpose()).array())/(static_cast<double>(m_n-1));
+
+      std::cout << "Cross cov" << std::endl;
       
       //squared of cross covariance
       m_GammaSquared = m_CrossCov.transpose()*m_CrossCov;
+
+      std::cout << "Square cross cov" << std::endl;
     }
   
   
