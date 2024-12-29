@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // PPC_KO
-Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, Rcpp::Nullable<NumericVector> disc_ev, double left_extreme, double right_extreme, Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, int err_ret, bool ex_solver, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<std::string> id_rem_nan);
+Rcpp::List PPC_KO(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, Rcpp::Nullable<NumericVector> disc_ev, double left_extreme, double right_extreme, Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, bool err_ret, bool ex_solver, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<std::string> id_rem_nan);
 RcppExport SEXP _PPCKO_PPC_KO(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP disc_evSEXP, SEXP left_extremeSEXP, SEXP right_extremeSEXP, SEXP min_size_tsSEXP, SEXP max_size_tsSEXP, SEXP err_retSEXP, SEXP ex_solverSEXP, SEXP num_threadsSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -30,7 +30,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type right_extreme(right_extremeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type min_size_ts(min_size_tsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type max_size_ts(max_size_tsSEXP);
-    Rcpp::traits::input_parameter< int >::type err_ret(err_retSEXP);
+    Rcpp::traits::input_parameter< bool >::type err_ret(err_retSEXP);
     Rcpp::traits::input_parameter< bool >::type ex_solver(ex_solverSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
