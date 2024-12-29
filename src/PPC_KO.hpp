@@ -45,7 +45,7 @@ private:
   KO_Traits::StoringMatrix m_b;               //matrix containing predictive factors (each col)   (m x k)        
   KO_Traits::StoringMatrix m_rho;             //matrix containing the estimate of the operator for doing 1-step ahead prediction (m x m)
   std::vector<double> m_explanatory_power;    //vector containing the cumulative explanatory power (will have size k)
-  mutable double m_tot_exp_pow;               //total explanatory power 
+  double m_tot_exp_pow;               //total explanatory power 
   double m_alpha;                             //regularization parameter
   int m_k;                                    //number of PPCs retained
   double m_threshold_ppc;                     //threshold according to how much predictive power has to be retained by the PPCs
@@ -197,7 +197,7 @@ public:
 
   //methods common to all child classes
   //number of PPCs retained, eigvalues and eigvcts di phi
-  std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained() const;
+  std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained();
   //number of PPCs retained, eigvalues and eigvcts di phi tramite metodo generalizzato
   //std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix> PPC_retained(double tot_exp_pow) const;
   

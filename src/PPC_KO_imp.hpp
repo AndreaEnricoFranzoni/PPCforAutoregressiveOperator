@@ -15,7 +15,6 @@
 template< class D, DOM_DIM dom_dim, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_strat, CV_ERR_EVAL cv_err_eval >
 std::tuple<int,KO_Traits::StoringVector,KO_Traits::StoringMatrix>
 PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retained()
-const
 {
   //exact method: can be used for k not imp and k imp
   if constexpr(dom_dim == DOM_DIM::uni_dim)
