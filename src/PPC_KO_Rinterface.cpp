@@ -472,10 +472,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   }
   }
 
-
-
-  
-
+  //return some information useful for plots
   l["Function discrete evaluations points"] = disc_ev_points;
   l["Left extreme domain"]                  = left_extreme; 
   l["Right extreme domain"]                 = right_extreme;
