@@ -36,6 +36,7 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
                   Rcpp::Nullable<int>           min_size_ts   = R_NilValue,
                   Rcpp::Nullable<int>           max_size_ts   = R_NilValue,
                   int                           err_ret       = 0,
+                  bool                          ex_solver     = true,
                   Rcpp::Nullable<int>           num_threads   = R_NilValue,
                   Rcpp::Nullable<std::string>   id_rem_nan    = R_NilValue
                   )
@@ -62,6 +63,8 @@ Rcpp::List PPC_KO(Rcpp::NumericMatrix           X,
   
   //checking which 
   bool err_ret_b = err_ret==1 ? true : false;
+
+  if(ex_solver){Rcout<<"Ex slv"<<std::endl;}
   
   //returning element
   Rcpp::List l;
