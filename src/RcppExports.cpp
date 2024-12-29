@@ -39,8 +39,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // PPC_KO_2d
-Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, Rcpp::Nullable<NumericVector> disc_ev_x1, int num_disc_ev_x1, Rcpp::Nullable<NumericVector> disc_ev_x2, int num_disc_ev_x2, double left_extreme_x1, double right_extreme_x1, double left_extreme_x2, double right_extreme_x2, Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, int err_ret, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<std::string> id_rem_nan);
-RcppExport SEXP _PPCKO_PPC_KO_2d(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP disc_ev_x1SEXP, SEXP num_disc_ev_x1SEXP, SEXP disc_ev_x2SEXP, SEXP num_disc_ev_x2SEXP, SEXP left_extreme_x1SEXP, SEXP right_extreme_x1SEXP, SEXP left_extreme_x2SEXP, SEXP right_extreme_x2SEXP, SEXP min_size_tsSEXP, SEXP max_size_tsSEXP, SEXP err_retSEXP, SEXP num_threadsSEXP, SEXP id_rem_nanSEXP) {
+Rcpp::List PPC_KO_2d(Rcpp::NumericMatrix X, std::string id_CV, double alpha, int k, double threshold_ppc, Rcpp::Nullable<NumericVector> alpha_vec, Rcpp::Nullable<IntegerVector> k_vec, double toll, Rcpp::Nullable<NumericVector> disc_ev_x1, int num_disc_ev_x1, Rcpp::Nullable<NumericVector> disc_ev_x2, int num_disc_ev_x2, double left_extreme_x1, double right_extreme_x1, double left_extreme_x2, double right_extreme_x2, Rcpp::Nullable<int> min_size_ts, Rcpp::Nullable<int> max_size_ts, bool err_ret, bool ex_solver, Rcpp::Nullable<int> num_threads, Rcpp::Nullable<std::string> id_rem_nan);
+RcppExport SEXP _PPCKO_PPC_KO_2d(SEXP XSEXP, SEXP id_CVSEXP, SEXP alphaSEXP, SEXP kSEXP, SEXP threshold_ppcSEXP, SEXP alpha_vecSEXP, SEXP k_vecSEXP, SEXP tollSEXP, SEXP disc_ev_x1SEXP, SEXP num_disc_ev_x1SEXP, SEXP disc_ev_x2SEXP, SEXP num_disc_ev_x2SEXP, SEXP left_extreme_x1SEXP, SEXP right_extreme_x1SEXP, SEXP left_extreme_x2SEXP, SEXP right_extreme_x2SEXP, SEXP min_size_tsSEXP, SEXP max_size_tsSEXP, SEXP err_retSEXP, SEXP ex_solverSEXP, SEXP num_threadsSEXP, SEXP id_rem_nanSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,10 +62,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type right_extreme_x2(right_extreme_x2SEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type min_size_ts(min_size_tsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type max_size_ts(max_size_tsSEXP);
-    Rcpp::traits::input_parameter< int >::type err_ret(err_retSEXP);
+    Rcpp::traits::input_parameter< bool >::type err_ret(err_retSEXP);
+    Rcpp::traits::input_parameter< bool >::type ex_solver(ex_solverSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<int> >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type id_rem_nan(id_rem_nanSEXP);
-    rcpp_result_gen = Rcpp::wrap(PPC_KO_2d(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, disc_ev_x1, num_disc_ev_x1, disc_ev_x2, num_disc_ev_x2, left_extreme_x1, right_extreme_x1, left_extreme_x2, right_extreme_x2, min_size_ts, max_size_ts, err_ret, num_threads, id_rem_nan));
+    rcpp_result_gen = Rcpp::wrap(PPC_KO_2d(X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, disc_ev_x1, num_disc_ev_x1, disc_ev_x2, num_disc_ev_x2, left_extreme_x1, right_extreme_x1, left_extreme_x2, right_extreme_x2, min_size_ts, max_size_ts, err_ret, ex_solver, num_threads, id_rem_nan));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -144,7 +145,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_PPCKO_PPC_KO", (DL_FUNC) &_PPCKO_PPC_KO, 17},
-    {"_PPCKO_PPC_KO_2d", (DL_FUNC) &_PPCKO_PPC_KO_2d, 21},
+    {"_PPCKO_PPC_KO_2d", (DL_FUNC) &_PPCKO_PPC_KO_2d, 22},
     {"_PPCKO_KO_check_hps", (DL_FUNC) &_PPCKO_KO_check_hps, 1},
     {"_PPCKO_KO_check_hps_2d", (DL_FUNC) &_PPCKO_KO_check_hps_2d, 3},
     {"_PPCKO_data_2d_wrapper_from_list", (DL_FUNC) &_PPCKO_data_2d_wrapper_from_list, 1},
