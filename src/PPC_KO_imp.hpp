@@ -19,7 +19,6 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
   //exact method: can be used for k not imp and k imp
   if constexpr(dom_dim == DOM_DIM::uni_dim)
   {
-    std::cout<<"Ex slv"<<std::endl;
     //Square root inverse of reg covariance: self-adjoint:exploiting it
     Eigen::SelfAdjointEigenSolver<KO_Traits::StoringMatrix> eigensolver_cov_reg(m_CovReg);
     m_CovRegRoot = eigensolver_cov_reg.operatorInverseSqrt();
@@ -57,7 +56,6 @@ PPC_KO_base<D, dom_dim, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retain
   //generalized method: quicker, but only if you impose k
   else if constexpr(dom_dim == DOM_DIM::bi_dim)
   {
-        std::cout<<"GEP slv"<<std::endl;
     if constexpr(k_imp == K_IMP::YES)    //devo calcolarli comunque tutti per sapere quanti tenere
     {
       
