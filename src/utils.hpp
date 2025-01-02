@@ -25,10 +25,10 @@ valid_err_disp
       Rcpp::List res(arg.size());
       for (size_t i = 0; i < arg.size(); ++i) 
       {
-        res[i] = Rcpp::wrap(arg[i]);  // Ogni std::vector<double> diventa un NumericVector
+        res[i] = Rcpp::wrap(arg[i]);  
       }
       
-      return Rcpp::List::create(Rcpp::Named("Errors") = res);  // Lista di NumericVector
+      return Rcpp::List::create(Rcpp::Named("Errors") = res);  // List of NumericVector
     } 
     
     else 
