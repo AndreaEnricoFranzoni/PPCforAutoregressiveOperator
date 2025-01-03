@@ -95,7 +95,6 @@ public:
     if constexpr(k_imp == K_IMP::NO)
     {
       //lambda wrapper to resolve the overload
-      std::cout << "Before starting cv " << this->threshold_ppc() << std::endl;
       auto predictor = [](KO_Traits::StoringMatrix&& data, double alpha, double threshold_ppc, int number_threads) { return cv_pred_func<solver,K_IMP::NO,VALID_ERR_RET::NO_err,cv_strat,cv_err_eval>(std::move(data),alpha,threshold_ppc,number_threads);};
       
       //CV already with k to be found with explanatory power
@@ -118,7 +117,6 @@ public:
     
     //only the evaluation of the regularized covariance was missing since there was not any regularization parameter before
     this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
-    std::cout << "After cv " << this->threshold_ppc() << std::endl;
     this->KO_algo(); 
   };
 };
