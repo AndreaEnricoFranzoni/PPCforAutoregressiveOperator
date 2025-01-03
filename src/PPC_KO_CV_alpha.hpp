@@ -41,9 +41,9 @@ public:
   
   //k to be found
   template<typename STOR_OBJ>
-  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, double threshold_ppc, int min_size_ts, int max_size_ts) 
+  PPC_KO_CV_alpha(STOR_OBJ&& X, const std::vector<double> &alphas, double threshold_ppc, int min_size_ts, int max_size_ts, int number_threads) 
     : 
-    PPC_KO_base<PPC_KO_CV_alpha,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X)),
+    PPC_KO_base<PPC_KO_CV_alpha,solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>(std::move(X),number_threads),
     m_alphas(alphas),
     m_X_non_cent(this->m(),this->n()),
     m_min_size_ts(min_size_ts),
