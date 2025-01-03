@@ -18,6 +18,7 @@ public:
       this->alpha() = alpha;
       this->k() = k;
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+      std::cout << "Con nocv k: " << this->k() << std::endl;
     }
   
   //k to be found with explanatory power
@@ -28,6 +29,7 @@ public:
       this->alpha() = alpha;
       this->threshold_ppc() = threshold_ppc;
       this->CovReg() = this->Cov().array() + this->alpha()*this->trace_cov()*(KO_Traits::StoringMatrix::Identity(this->m(),this->m()).array());
+      std::cout << "Con nocv thresh: " << this->threshold_ppc() << std::endl;
     }
   
   //run KO
@@ -50,6 +52,7 @@ template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_s
 KO_Traits::StoringVector 
 cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, int k, int number_threads)
 {  
+  std::cout << "Pred k: " << k << std::endl;
   PPC_KO_NoCV<solver,K_IMP::YES,valid_err_ret,cv_strat,cv_err_eval> iter(std::move(training_data),alpha,k,number_threads);
   iter.solving();
   
@@ -62,7 +65,7 @@ template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_s
 KO_Traits::StoringVector 
 cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, double threshold_ppc, int number_threads)
 {  
-  std::cout << "Pre" << threshold_ppc << std::endl;
+  std::cout << "Pred thresh: " << threshold_ppc << std::endl;
   PPC_KO_NoCV<solver,K_IMP::NO,valid_err_ret,cv_strat,cv_err_eval> iter(std::move(training_data),alpha,threshold_ppc,number_threads);
   iter.solving();
   
