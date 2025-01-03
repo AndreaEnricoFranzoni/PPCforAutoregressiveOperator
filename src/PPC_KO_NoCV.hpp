@@ -62,6 +62,7 @@ template< SOLVER solver, K_IMP k_imp, VALID_ERR_RET valid_err_ret, CV_STRAT cv_s
 KO_Traits::StoringVector 
 cv_pred_func(KO_Traits::StoringMatrix && training_data, double alpha, double threshold_ppc, int number_threads)
 {  
+  std::cout << "Here" std::endl;
   PPC_KO_NoCV<solver,K_IMP::NO,valid_err_ret,cv_strat,cv_err_eval> iter(std::move(training_data),alpha,threshold_ppc,number_threads);
   iter.solving();
   
