@@ -28,7 +28,6 @@ public:
     m_max_size_ts(max_size_ts)
     {
       this->k() = k; 
-      std::cout << "Constructor cv alpha k: " << this->k() << std::endl;
       
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(this->number_threads())
@@ -50,7 +49,6 @@ public:
     m_max_size_ts(max_size_ts)
     {
       this->threshold_ppc() = threshold_ppc; 
-      std::cout << "Constructor cv alpha thresh: " << this->threshold_ppc() << std::endl;
       
 #ifdef _OPENMP
 #pragma omp parallel for num_threads(this->number_threads())
