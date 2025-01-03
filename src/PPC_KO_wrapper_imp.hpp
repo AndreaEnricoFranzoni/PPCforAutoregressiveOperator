@@ -56,7 +56,7 @@ PPC_KO_wrapper_cv_alpha<solver,k_imp,valid_err_ret,cv_strat,cv_err_eval>::call_k
   if constexpr(k_imp == K_IMP::NO)    //k to be found with explanatory power
   {
     std::cout << "Wrapper: " << m_threshold_ppc << std::endl;
-    PPC_KO_CV_alpha<solver,K_IMP::NO,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,std::static_cast<double>(m_threshold_ppc),m_min_size_ts,m_max_size_ts,this->number_threads());
+    PPC_KO_CV_alpha<solver,K_IMP::NO,valid_err_ret,cv_strat,cv_err_eval> KO(std::move(this->data()),m_alphas,static_cast<double>(m_threshold_ppc),m_min_size_ts,m_max_size_ts,this->number_threads());
     
     KO.solve();
     auto scores = KO.scores();
