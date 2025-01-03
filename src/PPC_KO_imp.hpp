@@ -37,7 +37,7 @@ PPC_KO_base<D, solver, k_imp, valid_err_ret, cv_strat, cv_err_eval>::PPC_retaine
         Spectra::SymEigsSolver<Spectra::DenseSymMatProd<double>> eigsolver_phi(op, n_ppcs, 2*n_ppcs);
         eigsolver_phi.init();
         int nconv = eigsolver_phi.compute(Spectra::SortRule::LargestAlge);
-        
+        std::cout << m_threshold_ppc << std::endl;
         if(eigsolver_phi.eigenvalues().sum()/m_tot_exp_pow >= m_threshold_ppc)
         {
           return std::make_tuple(n_ppcs,eigsolver_phi.eigenvalues(),eigsolver_phi.eigenvectors());
