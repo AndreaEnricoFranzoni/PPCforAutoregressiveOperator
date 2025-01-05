@@ -557,4 +557,101 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
     plot_dir_we <- dir_plot + weight_plot + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
     .open_window()
     print(plot_dir_we)}
+
+  
+  #PPCs as perturbation of the mean
+  for (i in 1:results_ko$`Number of PPCs retained`){
+  
+  data_up_dir <- expand.grid(x = results_ko$`Function discrete evaluations points dim1`, y = results_ko$`Function discrete evaluations points dim2`)
+  
+  data_lw_dir <- expand.grid(x = results_ko$`Function discrete evaluations points dim1`, y = results_ko$`Function discrete evaluations points dim2`)
+  
+  data_lw_dir$z <- ((-1)*results_ko$`Directions of PPCs`[[i]]*results_ko$`Sd scores directions`[i])[cbind(
+          match(data_lw_dir$x, results_ko$`Function discrete evaluations points dim1`),  
+          match(data_lw_dir$y, results_ko$`Function discrete evaluations points dim2`))]
+  data_up_dir$z <- (results_ko$`Directions of PPCs`[[i]]*results_ko$`Sd scores directions`[i])[cbind(
+          match(data_up_dir$x, results_ko$`Function discrete evaluations points dim1`),  
+          match(data_up_dir$y, results_ko$`Function discrete evaluations points dim2`))]
+  
+  z_min = min(min(data_up_dir),min(data_lw_dir))
+  z_max = max(max(data_up_dir),max(data_lw_dir))
+  
+  
+  plot_up_dir <- ggplot(data_up_dir, aes(x = x, y = y, fill = z)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
+    labs( title = "Direction, upper mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    theme_minimal() +
+    theme( plot.title = element_text(face = "bold",hjust = 0.5),
+           legend.position = "bottom",
+           panel.grid.major = element_blank(),  
+           panel.grid.minor = element_blank()) +
+    geom_hline( yintercept = seq(min(data_up_dir$y), max(data_up_dir$y), by = (quantile(data_up_dir$y)[2]-quantile(data_up_dir$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
+    geom_vline( xintercept = seq(min(data_up_dir$x), max(data_up_dir$x), by = (quantile(data_up_dir$x)[2]-quantile(data_up_dir$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
+  
+  plot_bw_dir <- ggplot(data_lw_dir, aes(x = x, y = y, fill = z)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
+    labs( title = "Direction, lower mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    theme_minimal() +
+    theme( plot.title = element_text(face = "bold",hjust = 0.5),
+           legend.position = "bottom",
+           panel.grid.major = element_blank(),  
+           panel.grid.minor = element_blank()) +
+    geom_hline( yintercept = seq(min(data_lw_dir$y), max(data_lw_dir$y), by = (quantile(data_lw_dir$y)[2]-quantile(data_lw_dir$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
+    geom_vline( xintercept = seq(min(data_lw_dir$x), max(data_lw_dir$x), by = (quantile(data_lw_dir$x)[2]-quantile(data_lw_dir$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
+  
+  
+  
+  
+  data_up_wei <- expand.grid(x = results_ko$`Function discrete evaluations points dim1`, y = results_ko$`Function discrete evaluations points dim2`)
+  
+  data_lw_wei <- expand.grid(x = results_ko$`Function discrete evaluations points dim1`, y = results_ko$`Function discrete evaluations points dim2`)
+  
+  data_lw_wei$z <- ((-1)*results_ko$`Weights of PPCs`[[i]]*results_ko$`Sd scores weights`[i])[cbind(
+    match(data_lw_wei$x, results_ko$`Function discrete evaluations points dim1`),  
+    match(data_lw_wei$y, results_ko$`Function discrete evaluations points dim2`))]
+  data_up_wei$z <- (results_ko$`Weights of PPCs`[[i]]*test_2d_algo$`Sd scores weights`[i])[cbind(
+    match(data_up_wei$x, results_ko$`Function discrete evaluations points dim1`),  
+    match(data_up_wei$y, results_ko$`Function discrete evaluations points dim2`))]
+  
+  z_min = min(min(data_up_wei),min(data_lw_wei))
+  z_max = max(max(data_up_wei),max(data_lw_wei))
+  
+  
+  plot_up_wei <- ggplot(data_up_wei, aes(x = x, y = y, fill = z)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
+    labs( title = "Weight, upper mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    theme_minimal() +
+    theme( plot.title = element_text(face = "bold",hjust = 0.5),
+           legend.position = "bottom",
+           panel.grid.major = element_blank(),  
+           panel.grid.minor = element_blank()) +
+    geom_hline( yintercept = seq(min(data_up_wei$y), max(data_up_wei$y), by = (quantile(data_up_wei$y)[2]-quantile(data_up_wei$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
+    geom_vline( xintercept = seq(min(data_up_wei$x), max(data_up_wei$x), by = (quantile(data_up_wei$x)[2]-quantile(data_up_wei$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
+  
+  plot_bw_wei<- ggplot(data_lw_wei, aes(x = x, y = y, fill = z)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
+    labs( title = "Weight, lower mean perturbation", x = x1_lab, y = x2_lab, fill = increment ) +
+    theme_minimal() +
+    theme( plot.title = element_text(face = "bold",hjust = 0.5),
+           legend.position = "bottom",
+           panel.grid.major = element_blank(),  
+           panel.grid.minor = element_blank()) +
+    geom_hline( yintercept = seq(min(data_lw_wei$y), max(data_lw_wei$y), by = (quantile(data_lw_wei$y)[2]-quantile(data_lw_wei$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
+    geom_vline( xintercept = seq(min(data_lw_wei$x), max(data_lw_wei$x), by = (quantile(data_lw_wei$x)[2]-quantile(data_lw_wei$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
+  
+
+  
+  title_mean_pert <- textGrob(paste0(paste0("PPC",i), " as perturbation of the mean"), gp = gpar(fontsize = 20, fontface = "bold"))
+  ..open_window()
+  # Combinazione dei grafici con titolo complessivo
+  grid.arrange(
+    title_mean_pert,                                     # Titolo complessivo
+    arrangeGrob(plot_up_dir, plot_up_wei,plot_bw_dir, plot_bw_wei, nrow = 2, ncol = 2), # Griglia dei grafici
+    nrow = 2,                                       # Due righe: titolo + griglia
+    heights = c(1, 10)                              # Proporzione altezza: titolo più piccolo
+  )}
 }
