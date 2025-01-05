@@ -634,7 +634,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   plot_bw_wei<- ggplot(data_lw_wei, aes(x = x, y = y, fill = z)) +
     geom_tile() +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
-    labs( title = "Weight, lower mean perturbation", x = x1_lab, y = x2_lab, fill = increment ) +
+    labs( title = "Weight, lower mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
     theme_minimal() +
     theme( plot.title = element_text(face = "bold",hjust = 0.5),
            legend.position = "bottom",
