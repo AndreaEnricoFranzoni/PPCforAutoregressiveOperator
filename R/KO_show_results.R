@@ -646,7 +646,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
 
   
   title_mean_pert <- textGrob(paste0(paste0("PPC",i), " as perturbation of the mean"), gp = gpar(fontsize = 20, fontface = "bold"))
-  ..open_window()
+  .open_window()
   # Combinazione dei grafici con titolo complessivo
   grid.arrange(
     title_mean_pert,                                     # Titolo complessivo
