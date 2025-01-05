@@ -224,6 +224,50 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
     plot_dir_we <- direction + weight + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
     .open_window()
     print(plot_dir_we)}
+
+  #plot of directions and weights as perturbation of the mean
+  for (i in 1:results_ko$`Number of PPCs retained`) {
+  
+  data_dir <- data.frame(x = results_ko$`Function discrete evaluations points`,
+                         y = c(results_ko$`Mean function`,
+                               results_ko$`Mean function` + results_ko$`Sd scores directions`[i]*results_ko$`Directions of PPCs`[[i]],
+                               results_ko$`Mean function` - results_ko$`Sd scores directions`[i]*results_ko$`Directions of PPCs`[[i]]),
+                         group = rep(c("Mean", "Upper", "Lower"), each = length(results_ko$`Function discrete evaluations points`)))
+  
+  data_wei <- data.frame(x = results_ko$`Function discrete evaluations points`,
+                         y = c(results_ko$`Mean function`,
+                               results_ko$`Mean function` + results_ko$`Sd scores weights`[i]*results_ko$`Weights of PPCs`[[i]],
+                               results_ko$`Mean function` - results_ko$`Sd scores weights`[i]*results_ko$`Weights of PPCs`[[i]]),
+                         group = rep(c("Mean", "Upper", "Lower"), each = length(results_ko$`Function discrete evaluations points`)))
+  
+  direction <- ggplot(data_dir, aes(x = x, y = y)) +
+               geom_line(data = subset(data_dir, group == "Mean"), aes(color = NULL, linetype = NULL), size = 1, color = "black") +
+               geom_line(data = subset(data_dir, group != "Mean"), aes(color = group, linetype = group), size = 1, alpha = 0.4) +
+               scale_linetype_manual(values = c("dashed", "dashed")) + 
+               scale_color_manual(values = c("red", "green")) +        
+               labs(title = "Direction",
+                    x = x_lab,
+                    y = y_lab,
+                    color = "",
+                    linetype = "") +
+               theme_minimal()
+  
+  weight <- ggplot(data_dir, aes(x = x, y = y)) +
+            geom_line(data = subset(data_wei, group == "Mean"), aes(color = NULL, linetype = NULL), size = 1, color = "black") +
+            geom_line(data = subset(data_wei, group != "Mean"), aes(color = group, linetype = group), size = 1, alpha = 0.4) +
+            scale_linetype_manual(values = c("dashed", "dashed")) + 
+            scale_color_manual(values = c("red", "green")) +        
+            labs(title = "Weight",
+                 x = x_lab,
+                 y = y_lab,
+                 color = "",
+                 linetype = "") +
+            theme_minimal()
+  
+  plot_dir_we_mean_pert <- direction + weight + plot_layout(ncol = 2) + plot_annotation( title = paste0(paste("PPC",as.character(i))," as perturbation of the mean"), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
+  .open_window()
+  print(plot_dir_we_mean_pert)}
+  
 }
 
 
