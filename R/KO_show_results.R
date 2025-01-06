@@ -252,7 +252,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                     linetype = "") +
                theme_minimal()
   
-  weight <- ggplot(data_dir, aes(x = x, y = y)) +
+  weight <- ggplot(data_wei, aes(x = x, y = y)) +
             geom_line(data = subset(data_wei, group == "Mean"), aes(color = NULL, linetype = NULL), size = 1, color = "black") +
             geom_line(data = subset(data_wei, group != "Mean"), aes(color = group, linetype = group), size = 1, alpha = 0.4) +
             scale_linetype_manual(values = c("dashed", "dashed")) + 
