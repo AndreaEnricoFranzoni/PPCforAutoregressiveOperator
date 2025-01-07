@@ -648,10 +648,5 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   title_mean_pert <- textGrob(paste0(paste0("PPC",i), " as perturbation of the mean"), gp = gpar(fontsize = 20, fontface = "bold"))
   .open_window()
   # Combinazione dei grafici con titolo complessivo
-  grid.arrange(
-    title_mean_pert,                                     # Titolo complessivo
-    arrangeGrob(plot_up_dir, plot_up_wei,plot_bw_dir, plot_bw_wei, nrow = 2, ncol = 2), # Griglia dei grafici
-    nrow = 2,                                       # Due righe: titolo + griglia
-    heights = c(1, 10)                              # Proporzione altezza: titolo più piccolo
-  )}
+  grid.arrange(title_mean_pert,arrangeGrob(plot_up_dir, plot_up_wei,plot_bw_dir, plot_bw_wei, nrow = 2, ncol = 2),nrow = 2,heights = c(1, 10))}
 }
