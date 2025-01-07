@@ -20,7 +20,8 @@ No return. It simply prints and plots.
 \description{
 Print on the R console regularization parameter used, number of PPCs retained and cumulative explanatory power of the PPCs retained.
 Plot pointwise p-value (eventually), prediction at the next instant comparing to the last one available,
-the validation errors (eventually, if saved), direction and weight for each PPC retained.
+the validation errors (eventually, if saved), direction and weight for each PPC retained, direction and weight of each PPC retained
+as mean perturbation (mean function, mean function added/subtracted to PPCs direction and weight multiplied by their scores standard deviation).
 }
 \references{
 Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}

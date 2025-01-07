@@ -60,10 +60,16 @@ If NULL: is half of n if n even, ceil of half of n if n odd.}
 \item{max_size_ts}{\strong{\code{integer}} (default: \strong{\code{NULL}}). Between min_size_ts and n-1. The dimension (number of time instants) of the last training set.
 If NULL: n-1.}
 
-\item{err_ret}{\strong{\code{integer}} (default: \strong{\code{0}}).
+\item{err_ret}{\strong{\code{bool}} (default: \strong{\code{FALSE}}).
 \itemize{
-\item 0: validation errors are not returned (and not stored during the algorithm);
-\item 1: validation errors are returned;
+\item FALSE: validation errors are not returned (and not stored during the algorithm);
+\item TRUE: validation errors are returned;
+}}
+
+\item{ex_solver}{\strong{\code{bool}} (default: \strong{\code{TRUE}}).
+\itemize{
+\item FALSE: using GEP to retrieve PPCs (more efficient, but losing PPCs' explanatory power interpretation). Cannot be used if "k" found through explanatory power criterion;
+\item TRUE: solving PPCKO exactly;
 }}
 
 \item{num_threads}{\strong{\code{integer}} (default: \strong{\code{NULL}}). Number of threads for going parallel multithreading.
@@ -89,6 +95,9 @@ to the domain (strategy for handling more complex domains).
 \item 'Explanatory power PPCs': \strong{\verb{numeric vector}}: the cumulative explanatory power up to the PPC i-th;
 \item 'Directions of PPCs': \strong{\verb{list of numeric matrix}}: each element of the list is i-th PPC's direction;
 \item 'Weights of PPCs': \strong{\verb{list of numeric matrix}}: each element of the list is i-th PPC's weight;
+\item 'Sd scores directions': \strong{\verb{numeric vector}}: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 2 to instant n and the direction of PPC i-th;
+\item 'Sd scores weights': \strong{\verb{numeric vector}}: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 1 to instant n-1 and the weight of PPC i-th;
+\item 'Mean function': \strong{\verb{numeric matrix}}. Mean function of the functional time series;
 \item 'Validation errors': \strong{\verb{numeric vector}} or \strong{\verb{numeric matrix}}: available only if err_ret==1. For "CV_alpha" and "CV_k"
 is a vector containing the validation errors for every parameter (for number of PPCs, it is truncated
 to the number of PPCs actually tested in the cv process). For "CV" is a matrix, for each pair alpha (row) - k (col);
