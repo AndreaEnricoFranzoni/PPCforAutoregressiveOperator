@@ -62,10 +62,11 @@ library(PPCKO)
 ~~~
 ?PPCKO
 ~~~
-opens up the documentation of R-interfaced functions. The links to the documentation of all **`PPCKO`** functions can be found here.
+opens up the documentation of R-interfaced functions, if digited on the R console. 
 
-PDF: TODO
-DOC c++ internal code: TODO
+The documentation of all **`PPCKO`** C++ internal code can be found [here](https://andreaenricofranzoni.github.io/PPCforAutoregressiveOperator/).
+
+
 
 
 
