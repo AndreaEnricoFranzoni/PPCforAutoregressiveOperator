@@ -36,10 +36,15 @@
 #'                    If NULL: is half of n if n even, ceil of half of n if n odd.
 #' @param max_size_ts **`integer`** (default: **`NULL`**). Between min_size_ts and n-1. The dimension (number of time instants) of the last training set.
 #'                    If NULL: n-1.
-#' @param err_ret **`integer`** (default: **`0`**).
+#' @param err_ret **`bool`** (default: **`FALSE`**).
 #'              \itemize{
-#'              \item 0: validation errors are not returned (and not stored during the algorithm);
-#'              \item 1: validation errors are returned;
+#'              \item FALSE: validation errors are not returned (and not stored during the algorithm);
+#'              \item TRUE: validation errors are returned;
+#'              }
+#' @param ex_solver **`bool`** (default: **`TRUE`**).
+#'              \itemize{
+#'              \item FALSE: using GEP to retrieve PPCs (more efficient, but losing PPCs' explanatory power interpretation). Cannot be used if "k" found through explanatory power criterion;
+#'              \item TRUE: solving PPCKO exactly;
 #'              }
 #' @param num_threads **`integer`** (default: **`NULL`**). Number of threads for going parallel multithreading.
 #'                    Using 1 is equivalent to run the algorithm sequentially (not recommended if doing cv).
@@ -61,6 +66,9 @@
 #'                   \item 'Explanatory power PPCs': **`numeric vector`**: the cumulative explanatory power up to the PPC i-th;
 #'                   \item 'Directions of PPCs': **`numeric matrix`**: matrix whose columns are the direction of each PPC;
 #'                   \item 'Weights of PPCs': **`numeric matrix`**: matrix whose columns are the weights of each PPC;
+#'                   \item 'Sd scores directions': **`numeric vector`**: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 2 to instant n and the direction of PPC i-th;
+#'                   \item 'Sd scores weights': **`numeric vector`**: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 1 to instant n-1 and the weight of PPC i-th;
+#'                   \item 'Mean function': **`numeric vector`**. Mean function of the functional time series;
 #'                   \item 'Validation errors': **`numeric vector`** or **`numeric matrix`**: available only if err_ret==1. For "CV_alpha" and "CV_k"
 #'                                              is a vector containing the validation errors for every parameter (for number of PPCs, it is truncated 
 #'                                              to the number of PPCs actually tested in the cv process). For "CV" is a matrix, for each pair alpha (row) - k (col);
@@ -130,10 +138,15 @@ NULL
 #'                    If NULL: is half of n if n even, ceil of half of n if n odd.
 #' @param max_size_ts **`integer`** (default: **`NULL`**). Between min_size_ts and n-1. The dimension (number of time instants) of the last training set.
 #'                    If NULL: n-1.
-#' @param err_ret **`integer`** (default: **`0`**).
+#' @param err_ret **`bool`** (default: **`FALSE`**).
 #'              \itemize{
-#'              \item 0: validation errors are not returned (and not stored during the algorithm);
-#'              \item 1: validation errors are returned;
+#'              \item FALSE: validation errors are not returned (and not stored during the algorithm);
+#'              \item TRUE: validation errors are returned;
+#'              }
+#' @param ex_solver **`bool`** (default: **`TRUE`**).
+#'              \itemize{
+#'              \item FALSE: using GEP to retrieve PPCs (more efficient, but losing PPCs' explanatory power interpretation). Cannot be used if "k" found through explanatory power criterion;
+#'              \item TRUE: solving PPCKO exactly;
 #'              }
 #' @param num_threads **`integer`** (default: **`NULL`**). Number of threads for going parallel multithreading.
 #'                    Using 1 is equivalent to run the algorithm sequentially (not recommended if doing cv).
@@ -155,6 +168,9 @@ NULL
 #'                   \item 'Explanatory power PPCs': **`numeric vector`**: the cumulative explanatory power up to the PPC i-th;
 #'                   \item 'Directions of PPCs': **`list of numeric matrix`**: each element of the list is i-th PPC's direction;
 #'                   \item 'Weights of PPCs': **`list of numeric matrix`**: each element of the list is i-th PPC's weight;
+#'                   \item 'Sd scores directions': **`numeric vector`**: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 2 to instant n and the direction of PPC i-th;
+#'                   \item 'Sd scores weights': **`numeric vector`**: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 1 to instant n-1 and the weight of PPC i-th;
+#'                   \item 'Mean function': **`numeric matrix`**. Mean function of the functional time series;
 #'                   \item 'Validation errors': **`numeric vector`** or **`numeric matrix`**: available only if err_ret==1. For "CV_alpha" and "CV_k"
 #'                                              is a vector containing the validation errors for every parameter (for number of PPCs, it is truncated 
 #'                                              to the number of PPCs actually tested in the cv process). For "CV" is a matrix, for each pair alpha (row) - k (col);
@@ -225,7 +241,8 @@ NULL
 #' @description
 #' Print on the R console regularization parameter used, number of PPCs retained and cumulative explanatory power of the PPCs retained.
 #' Plot pointwise p-value (eventually), prediction at the next instant comparing to the last one available,
-#' the validation errors (eventually, if saved), direction and weight for each PPC retained.
+#' the validation errors (eventually, if saved), direction and weight for each PPC retained, direction and weight of each PPC retained
+#' as mean perturbation (mean function, mean function added/subtracted to PPCs direction and weight multiplied by their scores standard deviation).
 #' @param results_ko **`list`** as output from [PPC_KO].
 #' @param hp_ko **`list`** (default: **`NULL`**) as output from [KO_check_hps]. If NULL: p-values not plotted.
 #' @param x_lab **`string`** (default: **`"x"`**). Name of the x-axis in the plots.
@@ -246,7 +263,8 @@ NULL
 #' @description
 #' Print on the R console regularization parameter used, number of PPCs retained and cumulative explanatory power of the PPCs retained.
 #' Plot pointwise p-value (eventually), prediction at the next instant comparing to the last one available, the increment,
-#' the validation errors (eventually, if saved), direction and weight for each PPC retained.
+#' the validation errors (eventually, if saved), direction and weight for each PPC retained, direction and weight of each PPC retained
+#' as mean perturbation (mean function, mean function added/subtracted to PPCs direction and weight multiplied by their scores standard deviation).
 #' @param results_ko **`list`** as output from [PPC_KO_2d].
 #' @param hp_ko **`list`** (default: **`NULL`**) as output from [KO_check_hps_2d]. If NULL: p-values not plotted.
 #' @param x1_lab **`string`** (default: **`"x1"`**). Name of the ax of the first dimension in the plots.
