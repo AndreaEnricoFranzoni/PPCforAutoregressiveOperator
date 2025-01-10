@@ -17,7 +17,7 @@
 // OUT OF OR IN CONNECTION WITH PPCKO OR THE USE OR OTHER DEALINGS IN
 // PPCKO.
 
-#include "CV_err_valid_eval.hpp"
+#include "CV.hpp"
 
 
 /*!
@@ -27,7 +27,6 @@
 */
 
 
-//error evaluation on a single cv iteration
 /*!
 * @brief Error evaluation between a prediction on validation set and validation set (in a fixed cv iteration). L2 norm estimate of the error.
 * @param pred prediction on validation set
