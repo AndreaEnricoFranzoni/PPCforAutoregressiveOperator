@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relays on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relies on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
 
 Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
@@ -105,7 +105,7 @@ data(data_2d)
 # Prerequisites: depending on operative system
 
 More detailed documentation can be found in [this section](https://cran.r-project.org) of `The R Manuals`.
-Although installing **`PPCKO`** shpuld automatically install all the R dependecies, could be worth trying install them manaully if an error occurs.
+Although installing **`PPCKO`** should automatically install all the R dependecies, could be worth trying to install them manaully if an error occurs.
 ~~~
 install.packages("Rcpp")
 install.packages("RcppEigen")
@@ -161,20 +161,36 @@ library(RcppEigen)
   brew install llvm
   ~~~
 
+- Check that the command that opens the graphic window
+  ~~~
+  quartz()
+  ~~~
+  works on R, by digiting it on R console. If not, look [here](https://www.xquartz.org).
+
 ## Windows
 
-1. **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). Version 4.4 is needed to install parallel version.
+- **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). Version 4.4 is needed to install parallel version.
+
+- Check that the command that opens the graphic window
+  ~~~
+  windows()
+  ~~~
+  works on R, by digiting it on R console.
 
 ## Linux
 
-Linux installation depends on its distributor. All the commands here reported will refer to Ubuntu and Debian distributors.
-
-Standard developement packages have to be installed. In Ubuntu and Debian, for example, all the packages have been collected into a single one, that is possible to install digiting into the terminal:
+- Linux installation depends on its distributor. All the commands here reported will refer to Ubuntu and Debian distributors. Standard developement packages have to be installed.   In Ubuntu and Debian, for example, all the packages have been collected into a single one, that is possible to install digiting into the terminal:
 
    ~~~
-sudo apt install r-base-dev
-sudo apt install build-essential
+  sudo apt install r-base-dev
+  sudo apt install build-essential
    ~~~
+
+- Check that the command that opens the graphic window
+  ~~~
+  x11()
+  ~~~
+  works on R, by digiting it on R console.
 
 ## Linux image
 Before being able to run the commands explained above for Linux, R has to be downloaded. Afterward, the installation of Fortran, Lapack, BLAS, devtools and its dependecies can be done by digiting into the terminal:
@@ -212,4 +228,8 @@ sudo apt install -y libfreetype6-dev libfontconfig1-dev libharfbuzz-dev libcairo
 
 8. <a id="ref-ensmallen"></a> **Curtin R. R., Edel M., Ganesh Prabhu R., Basak S., Lou Z., Sanderson C.**, `The ensmallen library for flexible numerical optimization`, *Journal of Machine Learning Research*, 22, 166, 2021, https://ensmallen.org
 
-9. <a id="ref-cereal"></a> **Huebner L., et Al.**, `cereal - A C++11 library for serialization`, 2022, https://github.com/USCiLab/cereal 
+9. <a id="ref-cereal"></a> **Huebner L., et Al.**, `cereal - A C++11 library for serialization`, 2022, https://github.com/USCiLab/cereal
+
+10. <a id="ref-pacsexamples"></a> **Formaggia L., et Al.**, `EXAMPLES AND EXERCISES FOR AMSC and APSC (PACS) COURSES`, 2024, https://github.com/pacs-course/pacs-examples
+
+11. <a id="ref-tseries"></a> **Trapletti A., Hornik K., LeBaron B.**, `tseries: Time Series Analysis and Computational Finance`, *CRAN repository*, 2024, https://cran.r-project.org/web/packages/tseries/index.html
