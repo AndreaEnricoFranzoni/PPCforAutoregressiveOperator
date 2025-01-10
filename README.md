@@ -1,8 +1,13 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator, in the scenario of Functional Time Series (FTS). It relies on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces. The package provides functions to compute the forecasting, retaining the PPC, to test the pointwise stationarity of the FTS and to visualize the results.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator, in the scenario of Functional Time Series (FTS). It relies on Principal Predictive Components (PPCs) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces. The package provides functions to compute the forecasting, retaining the PPCs, to test the pointwise stationarity of the FTS and to visualize the results.
 
-Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
+Assuming data coming from a stationary Functional AutoRegressive of order 1 process (*FAR(1)*)
+
+$f_{n+1} = \rho f_n + \epsilon_{n+1}$
+
+
+the predictor is shaped as
 
 $\hat{f}_{n+1} = \sum _{i=1}^{k} \langle f_n, b_i \rangle  a_i$
 
@@ -161,7 +166,7 @@ library(RcppEigen)
   brew install llvm
   ~~~
 
-- Check that the command that opens the graphic window
+- Check that the command that opens the graphic window used by the visualization results functions
   ~~~
   quartz()
   ~~~
@@ -171,7 +176,7 @@ library(RcppEigen)
 
 - **Rtools**: can be installed from [here](https://cran.r-project.org/bin/windows/Rtools/). Version 4.4 is needed to install parallel version.
 
-- Check that the command that opens the graphic window
+- Check that the command that opens the graphic window used by the visualization results functions
   ~~~
   windows()
   ~~~
@@ -186,7 +191,7 @@ library(RcppEigen)
   sudo apt install build-essential
    ~~~
 
-- Check that the command that opens the graphic window
+- Check that the command that opens the graphic window used by the visualization results functions
   ~~~
   x11()
   ~~~
