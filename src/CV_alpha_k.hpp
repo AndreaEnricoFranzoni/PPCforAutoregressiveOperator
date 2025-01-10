@@ -1,3 +1,22 @@
+// Copyright (c) 2024 Andrea Enrico Franzoni (andreaenrico.franzoni@gmail.com)
+//
+// This file is part of PPCKO
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of PPCKO and associated documentation files (the PPCKO software), to deal
+// PPCKO without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of PPCKO, and to permit persons to whom PPCKO is
+// furnished to do so, subject to the following conditions:
+//
+// PPCKO IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH PPCKO OR THE USE OR OTHER DEALINGS IN
+// PPCKO.
+
 #ifndef CV_CRTP_ALPHA_K_PPC_HPP
 #define CV_CRTP_ALPHA_K_PPC_HPP
 
@@ -5,24 +24,66 @@
 #include "CV_alpha_k.hpp"
 
 
+/*!
+* @file CV_alpha_k.hpp
+* @brief Derived-from-CV_base class for performing cross-validation on both the regularization parameter and the number of retained PPCs
+* @author Andrea Enrico Franzoni
+*/
+
+
+
+/*!
+* @class CV_alpha_k
+* @brief Template class for performing cross-validation on the regularization parameter and the number of PPCs: derived-from-CV_base thorugh CRTP ('CV_alpha_k' its template D parameter).
+* @tparam cv_strat strategy for splitting training/validation sets
+* @tparam err_eval how to evaluate the loss between prediction on validation set and validation set
+* @tparam k_imp if k is imposed or has to be found through explanatory power criterion (necessary k_imp=K_IMP::YES since k is imposed at each cv iteration)
+* @tparam valid_err_ret if validation error are stored
+* @details Derived class. Polymorphism is known at compile time thanks to Curiously Recursive Template Pattern (CRTP) 
+*/
 template< CV_STRAT cv_strat, CV_ERR_EVAL err_eval, K_IMP k_imp, VALID_ERR_RET valid_err_ret >  
 class CV_alpha_k : public CV_base< CV_alpha_k<cv_strat,err_eval,k_imp,valid_err_ret>, cv_strat, err_eval, k_imp, valid_err_ret >
 {
 private:
-  std::vector<double> m_alphas;                   //vector of alphas
-  std::vector<int> m_k_s;                         //vector of k_s
-  double m_alpha_best;                            //best alpha value
-  int m_k_best;                                   //best k value
-  double m_best_valid_error;                      //validation error for the best pair
-  std::map<double,int> m_best_pairs;              //each alphas with its best k
-  valid_err_cv_2_t m_valid_errors;                //to save the error for each pair alpha-k tried
-  std::vector<double> m_valid_errors_best_pairs;  //the error in the position i-th is relative to the pair alpha-k in the map, where alpha is the i-th in m_alphas, and k is the one that gives the best validation error given the alpha
+
+  /*!Input space for regularization parameter*/
+  std::vector<double> m_alphas;
+  /*!Input space for number of PPCs*/                   
+  std::vector<int> m_k_s;
+  /*!Optimal reguòlarization parameter*/                         
+  double m_alpha_best;                            
+  /*!Optimal number of retained PPCs*/ 
+  int m_k_best;
+  /*!Validation error for the optimal pair*/                                   
+  double m_best_valid_error;                      
+  /*!For each regularizatio parameter (key): its optimal number of retained PPCs (value)*/
+  std::map<double,int> m_best_pairs;              
+  /*!Errors for each pair regularization paramter-number of retained PPCs*/
+  valid_err_cv_2_t m_valid_errors;                
+  /*!Validation errors for each one of the regularization parameter with its best number of retained PPCs (regularization parameters ordered in increasing order)*/
+  std::vector<double> m_valid_errors_best_pairs;  
+  /*!Tolerance: the cv continues only if between two parameters, that are checked in increasing order, 
+  * the absolute difference between two validation errors is bigger than tolerance*trace(covariance). 
+  * If not, stops and look for k only between the tested ones 
+  */ 
   double m_toll;
+  /*!Function to predict validation set*/
+  pred_func_t<K_IMP::YES> m_pred_f;               
   
-  pred_func_t<K_IMP::YES> m_pred_f;               //function to make predictions
-  
+
 public:
-  //constructor
+
+  /*!
+  * @brief Constructor for derived class: constructs firstly CV_base<CV_alpha_k,...>
+  * @param Data fts data matrix
+  * @param strategy splitting training/validation strategy
+  * @param alphas input space for the regularization parameter
+  * @param k_s input space for number of retained PPCs
+  * @param toll tolerance between consecutive validation errors for looking for element with bigger value in the input space
+  * @param pred_f function to make validation set prediction (overloading with k imposed)
+  * @param number_threads number of threads for OMP
+  * @details Universal constructor: move semantic used to optimazing handling big size objects
+  */
   template<typename STOR_OBJ,typename STRATEGY>
   CV_alpha_k(STOR_OBJ&& Data,
              STRATEGY && strategy,
@@ -39,41 +100,50 @@ public:
       {}
   
   
-  //Getters
   /*!
-   * Getter for m_alpha_best
-   */
+  * @brief Getter for the best regularization parameter
+  * @return the private m_alpha_best
+  */
   inline double alpha_best() const {return m_alpha_best;};
   
   /*!
-   * Getter for m_k_best
-   */
+  * @brief Getter for the best number of retained PPCs
+  * @return the private m_k_best
+  */
   inline double k_best() const {return m_k_best;};
   
   /*!
-   * Getter for m_valid_errors_best_pairs
-   */
+  * @brief Getter for validation errors for the best pairs
+  * @return the private m_valid_errors_best_pairs
+  */
   inline std::vector<double> valid_errors_best_pairs() const {return m_valid_errors_best_pairs;};
   
   /*!
-   * Getter for m_valid_errors
-   */
+  * @brief Getter for validation errors
+  * @return the private m_valid_errors
+  */
   inline std::vector<std::vector<double>> valid_errors() const {return m_valid_errors;};
   
-  
   /*!
-   * Getter for m_best_valid_error
-   */
+  * @brief Getter for the best validation error
+  * @return the private m_best_valid_error
+  */
   inline double best_valid_error() const {return m_best_valid_error;};
   
   
-  
+  /*!
+  * @brief Retaining the best pair regularization parameter-number of retained PPCs
+  * @details for each element of the input space for regularization parameters, a cross-validation on the number of retained PPCs is performed.
+  *          Consequently, the best pair is looked for within this ones.
+  * @note eventual usage of 'pragma' directive for OMP
+  */
   inline 
   void 
   best_param_search()
   {
     std::size_t tot_alphas = m_alphas.size();
     
+    //if OMP: going parallel
 #ifdef _OPENMP
     //preparing the containers for the errors
     if constexpr(valid_err_ret == VALID_ERR_RET::YES_err)

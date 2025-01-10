@@ -20,10 +20,13 @@ Some auxiliary functions (\link{data_2d_wrapper_from_list}, \link{data_2d_wrappe
 }
 }
 \description{
-Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface
+Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface. Implemented as in \code{tseries} CRAN package.
 }
 \references{
-Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+\itemize{
+\item Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+\item Original implementation: \href{https://cran.r-project.org/web/packages/tseries/index.html}{tseries}
+}
 }
 \author{
 Andrea Enrico Franzoni

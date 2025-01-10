@@ -25,7 +25,3 @@ data_2d_wrapper_from_array <- function(Xt) {
     .Call('_PPCKO_data_2d_wrapper_from_array', PACKAGE = 'PPCKO', Xt)
 }
 
-PPC_KO_gen_solv <- function(X, id_CV = "NoCV", alpha = 0.75, k = 0L, threshold_ppc = 0.95, alpha_vec = NULL, k_vec = NULL, toll = 1e-4, disc_ev = NULL, left_extreme = 0, right_extreme = 1, min_size_ts = NULL, max_size_ts = NULL, err_ret = 0L, num_threads = NULL, id_rem_nan = NULL) {
-    .Call('_PPCKO_PPC_KO_gen_solv', PACKAGE = 'PPCKO', X, id_CV, alpha, k, threshold_ppc, alpha_vec, k_vec, toll, disc_ev, left_extreme, right_extreme, min_size_ts, max_size_ts, err_ret, num_threads, id_rem_nan)
-}
-

@@ -5,6 +5,7 @@
 #' 
 #' 
 
+#function (not exported) to open a graph window depending on the operative system
 .open_window <- function() {
   os <- Sys.info()["sysname"]
   
@@ -22,9 +23,10 @@
 #third input: true if you want to plot real values of alpha, false if you prefer using them equispaced (vis purposes)
 KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_alphas=FALSE){
   
+  #length of results_ko if error saved
   lenght_res_with_er = 18
   
-  #checking correct input
+  #checking correct input by their dimension
   if (length(results_ko) == 0) {
     stop("First parameter (results_ko) must not be NULL")
   } else{
@@ -76,7 +78,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
   
   
   
-  #Plot one step ahead prediction plot
+  #Plot one step ahead prediction and comparison with last available instant
   data_pred <- data.frame(x = results_ko$`Function discrete evaluations points`,
                           y = c(results_ko$`One-step ahead prediction`, results_ko$f_n),
                           function_type = factor(rep(c("f_n+1", "f_n"), each = length(results_ko$`Function discrete evaluations points`))))
@@ -97,7 +99,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
   
   
   
-  #CV errors to be plotted
+  #if CV errors to be plotted
   if(length(results_ko) == lenght_res_with_er){
     
     #CV alpha
@@ -271,13 +273,13 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
 }
 
 
-#2d case
+#2d case: same inputs as unidimensioanl case, but from bidimensional functions
 KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_lab="value",true_alphas=FALSE){
   
-  
+  #length of results_ko if error saved
   lenght_res_with_er = 21 #with errors
   
-  #checking correct input
+  #checking correct input by their dimension
   if (length(results_ko) == 0) {
     stop("First parameter (results_ko) must not be NULL")
   } else{
@@ -415,7 +417,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   
   
 
-  #CV errors to be plotted
+  #if CV errors to be plotted
   if(length(results_ko) == lenght_res_with_er){
     
     #CV alpha

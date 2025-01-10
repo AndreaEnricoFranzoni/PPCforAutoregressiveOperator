@@ -201,7 +201,7 @@ NULL
 #' @title KO_check_hps
 #' @name KO_check_hps
 #' @description
-#' Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the curve.
+#' Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the curve. Implemented as in `tseries` CRAN package.
 #' @param Xt **`numeric matrix`**. Each row (m) represents a point of the domain in which the curve is evaluated.
 #'          Each column (n) represents a time instant.
 #' @return **`list`** whose items are:
@@ -209,7 +209,8 @@ NULL
 #'         \item 'P-values ADF': vector containing the pointwise ADF test p-values.
 #'         }
 #' @references 
-#' Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+#' - Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+#' - Original implementation: \href{https://cran.r-project.org/web/packages/tseries/index.html}{tseries}
 #' @export
 #' @author Andrea Enrico Franzoni
 NULL
@@ -218,7 +219,7 @@ NULL
 #' @title KO_check_hps_2d
 #' @name KO_check_hps_2d
 #' @description
-#' Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface
+#' Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface. Implemented as in `tseries` CRAN package.
 #' @param X **`numeric matrix`**. Each row (m) represents a point of the domain in which the surface is evaluated.
 #'          The surface is represented by a grid, of dimensions (m1,m2), such that their product is m. 
 #'          Then, the grid is encapsulated into a vector, column after column. Each column (n) represents a time instant.
@@ -230,7 +231,8 @@ NULL
 #'         \item 'P-values ADF': matrix containing the pointwise ADF test p-values.
 #'         }
 #' @references 
-#' Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+#' - Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
+#' - Original implementation: \href{https://cran.r-project.org/web/packages/tseries/index.html}{tseries}
 #' @export
 #' @author Andrea Enrico Franzoni
 NULL

@@ -1,9 +1,39 @@
+// Copyright (c) 2024 Andrea Enrico Franzoni (andreaenrico.franzoni@gmail.com)
+//
+// This file is part of PPCKO
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of PPCKO and associated documentation files (the PPCKO software), to deal
+// PPCKO without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of PPCKO, and to permit persons to whom PPCKO is
+// furnished to do so, subject to the following conditions:
+//
+// PPCKO IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH PPCKO OR THE USE OR OTHER DEALINGS IN
+// PPCKO.
+
 #include "removing_nan.hpp"
 #include <RcppEigen.h>
 
-//remove rows of nan
 
-// Funzione che verifica se una riga è interamente NaN
+/*!
+* @file removing_nan_cleaner_imp.hpp
+* @brief Implementation of dummy NaNs removal
+* @author Andrea Enrico Franzoni
+*/
+
+
+/*!
+* @brief Function checking if a row is entirely made by NaNs
+* @param row row to be checked
+* @param tot_cols total number of columns of the row
+* @return true if all NaNs in the row, false otherwise
+*/
 inline
 bool 
 is_row_all_nan(const Rcpp::NumericMatrix::ConstRow& row, int tot_cols) 
@@ -12,7 +42,12 @@ is_row_all_nan(const Rcpp::NumericMatrix::ConstRow& row, int tot_cols)
 }
 
 
-//function to identify rows of only NaNs
+/*!
+* @brief Identifying rows of only NaNs
+* @param x Rcpp::NumericMatrix
+* @return a std::set containing the position, with respect to the original matrix, of the to be retained rows
+* @note Depends on RcppEigen for interfacing with R containers
+*/
 //
 //  [[Rcpp::depends(RcppEigen)]]
 std::set<int>
@@ -39,6 +74,13 @@ rows_entire_NaNs(const Rcpp::NumericMatrix &x)
 
 
 // function to remove the all-NaNs rows
+/*!
+* @brief Removing rows of only NaNs
+* @param x Rcpp::NumericMatrix
+* @param rows_to_be_kept position, wrt to 'x', of the rows to be kept
+* @return a Rcpp::NumericMatrix  without the rows of only NaNs
+* @note Depends on RcppEigen for interfacing with R containers
+*/
 //
 //  [[Rcpp::depends(RcppEigen)]]
 Rcpp::NumericMatrix 

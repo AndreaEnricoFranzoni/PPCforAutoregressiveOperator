@@ -6,6 +6,7 @@
 #'@references
 #'\itemize{
 #'\item V. Kargin and A. Onatski, \emph{"Curve forecasting by functional autoregression"}. Journal of Multivariate Analysis, 99, 2508-2526, 2008.
+#'\item K. H. A. Trapletti and B. LeBaron, \emph{"tseries: Time series analysis and computational finance"}. CRAN repository, 2024.
 #'\item Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
 #'}
 #'@seealso
