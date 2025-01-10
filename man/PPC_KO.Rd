@@ -4,12 +4,12 @@
 \alias{PPC_KO}
 \title{PPC_KO}
 \arguments{
-\item{X}{\strong{\verb{numeric matrix}}. Each row (m) represents a point of the domain in which the curve is evaluated.
+\item{X}{\strong{\verb{numeric matrix}}. Each row (m) represents a point of the curve domain in which the curve evaluation is available.
 Each column (n) represents a time instant.}
 
 \item{id_CV}{\strong{\code{string}} (default: \strong{\code{"NoCV"}}). Which version of PPCKO is performed.
 \itemize{
-\item "NoCV": PPCKO is performed with the parameters passed as input;
+\item "NoCV": PPCKO is performed with the parameters passed as input, without performing cv;
 \item "CV_alpha": cv for regularization parameter is performed;
 \item "CV_k": cv for the number of retained PPCs is performed;
 \item "CV": cv for both the regularization parameter and the number of retained PPCs is performed.
@@ -19,11 +19,13 @@ Each column (n) represents a time instant.}
 
 \item{k}{\strong{\code{integer}} (default: \strong{\code{0}}). Between 0 and the number of available discrete evaluations of the curve (m).
 Number of retained PPCs. Will be ignored in "CV_k" and "CV" versions. If "NoCV" and "CV_alpha" versions:
-if it is 0: the number of PPCs retained is chosen through the level of explanatory power criterion (see next parameter);
-if it is greater than 0: the number of PPCs retained is k.}
+\itemize{
+\item k = 0: the number of PPCs retained is chosen through the level of explanatory power criterion (see next parameter);
+\item k > 0: the number of PPCs retained is k.
+}}
 
-\item{threshold_ppc}{\strong{\code{double}} (default: \strong{\code{0.95}}). Between 0 and 1. Threshold of explanatory power retained. Will be ignored in "CV_k" and "CV" versions,
-and in "NoCV" and "CV_alpha" if k>0. Otherwise, determines the number of PPCs retained depending on data information.}
+\item{threshold_ppc}{\strong{\code{double}} (default: \strong{\code{0.95}}). Between 0 and 1. Threshold of requested explanatory power from the retained PPCs. Will be ignored in "CV_k" and "CV" versions,
+and in "NoCV" and "CV_alpha" if k>0.}
 
 \item{alpha_vec}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). The input space for the regularization parameter in "CV_alpha" and "CV"
 versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e11 is the input space.}
@@ -31,10 +33,10 @@ versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1
 \item{k_vec}{\strong{\verb{integer vector}} (default: \strong{\code{NULL}}). The input space for the number of retained PPCs in "CV_k" and "CV" versions.
 If NULL: input space are the integer from 1 up to m.}
 
-\item{toll}{\strong{\code{double}} (default: \strong{\code{1e-4}}). If doing cv for the number of PPCs, by PPCKO construction, adding a PPC can not improve anymore
-the predictor. Tolerance for stopping adding PPCs in the cv, evaluated as toll*trace(covariance).}
+\item{toll}{\strong{\code{double}} (default: \strong{\code{1e-4}}). The cross-validation for the number of retained PPCs continues only if between two parameters, that are checked in increasing order,
+the absolute difference between two validation errors is bigger than tolerance*trace(covariance). If not, since adding PPCs would not improve the predictor, stops and look for k only between the tested ones.}
 
-\item{disc_ev}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). Has to have size m. The point of the domain for which the evaluation is available.
+\item{disc_ev}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). Has to have size m. The point of the domain for which the curve evaluation is available.
 If NULL: a discrete equally spaced grid with m points is assumed.}
 
 \item{left_extreme}{\strong{\code{double}} (default: \strong{\code{0}}). Left extreme of the domain of the functional object.}
@@ -55,17 +57,15 @@ If NULL: n-1.}
 
 \item{ex_solver}{\strong{\code{bool}} (default: \strong{\code{TRUE}}).
 \itemize{
-\item FALSE: using GEP to retrieve PPCs (more efficient, but losing PPCs' explanatory power interpretation). Cannot be used if "k" found through explanatory power criterion;
-\item TRUE: solving PPCKO exactly;
+\item FALSE: using GEP to retrieve PPCs (more efficient, since avoid regularized covariance inversion, but losing PPCs' explanatory power interpretation). Cannot be used if "k" found through explanatory power criterion;
+\item TRUE: solving PPCKO inverting regularized covariance. More costly, but explanatory power can be interpreted coherently;
 }}
 
 \item{num_threads}{\strong{\code{integer}} (default: \strong{\code{NULL}}). Number of threads for going parallel multithreading.
 Using 1 is equivalent to run the algorithm sequentially (not recommended if doing cv).
 If NULL, or a wrong integer is passed, by default the number of threads used will be equal to the maximum number of threads available for the machine.}
 
-\item{id_rem_nan}{\strong{\code{string}} (default: \strong{\code{NULL}}). Strategy for handling NaNs values. The NaNs are substitute
-only if the row contains other value that are not NaNs, if not the evaluation is interpreted as not belonging
-to the domain (strategy for handling more complex domains).
+\item{id_rem_nan}{\strong{\code{string}} (default: \strong{\code{NULL}}). Strategy for handling non-dummy NaNs values (NaNs in rows (points of curve domain) where there are curve evaluations at some instants)
 \itemize{
 \item "NO": NaNs are not replaced (\strong{N.B.:  DO NOT USE IT});
 \item "MR": NaNs are replaced by the avergage of the non-NaNs values of the row (default);
@@ -79,7 +79,7 @@ to the domain (strategy for handling more complex domains).
 \item 'Alpha': \strong{\code{double}}: regularization parameter used;
 \item 'Number of PPCs retained': \strong{\code{integer}}: number of retained PPCs;
 \item 'Scores along PPCs': \strong{\verb{numeric vector}}: scores along every PPC. Projection of the last instant over the direction of the PPC;
-\item 'Explanatory power PPCs': \strong{\verb{numeric vector}}: the cumulative explanatory power up to the PPC i-th;
+\item 'Explanatory power PPCs': \strong{\verb{numeric vector}}: the cumulative explanatory power up to the PPC i-th. If GEP solved is used: it is the relative magnitude of a PPC with respect to only the others retained;
 \item 'Directions of PPCs': \strong{\verb{numeric matrix}}: matrix whose columns are the direction of each PPC;
 \item 'Weights of PPCs': \strong{\verb{numeric matrix}}: matrix whose columns are the weights of each PPC;
 \item 'Sd scores directions': \strong{\verb{numeric vector}}: size equal to the number of retained PPCs: each element is the standard deviation of the scalar products within function from instant 2 to instant n and the direction of PPC i-th;
@@ -99,14 +99,14 @@ to the number of PPCs actually tested in the cv process). For "CV" is a matrix, 
 }
 \description{
 Performs Principal Components Analysis Kargin-Onatski algorithm to compute one-step
-ahead prediction of Functional time series of curves.
-CV is eventually performed taking an initial training set, and as validation set the next time instant.
-Then, the training set is shifted incrementally by one instant at each iteration, and so the validation set.
-The validation error is the average of the estimate of the squared error between prediction and validation set.
+ahead prediction of Functional Time Series (FTS) of curves.
+Cross-validation is eventually performed taking an initial training set (the time series from the inital time instant up to a selected one),
+and as validation set the functional element at the next time instant. The training set is shifted incrementally by one instant at each iteration,
+and so the validation set. Validation error is the average of the estimate L2 norm of the difference between prediction and validation set.
 }
 \details{
-If more complex domains have to represented, a row of NaNs is put for specific points that do not belong
-to the domain but is important to report anyway (for example, in the center of the interval the function is not defined)
+If more complex domains have to represented, put a dummy NaN (NaN at each instant) in points that do not belong to the domain but are useful to represent it.
+The point has to appear in 'disc_ev' (for example, if in the center of the interval the curve is not defined: put NaNs at each instant in the matrix rows corresponding to that points).
 }
 \references{
 \itemize{

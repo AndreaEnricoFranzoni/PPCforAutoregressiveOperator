@@ -20,7 +20,7 @@ Some auxiliary functions (\link{data_2d_wrapper_from_list}, \link{data_2d_wrappe
 }
 }
 \description{
-Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface. Implemented as in \code{tseries} CRAN package.
+Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the surface. Implemented as in \code{tseries} CRAN package, written in C++ for efficiency purposes.
 }
 \references{
 \itemize{

@@ -1,7 +1,8 @@
 #'@title Principal Predictive Components for Estimating an Autoregressive operator
 #'@description PPCKO provides the Principal Predictive Components Kargin-Onatski algorithm
-#' for performing one-step ahead prediction of Functional time series, forecasting curves
-#' and surfaces.
+#' for performing one-step ahead prediction of Functional Time Series (FTS), forecasting curves
+#' and surfaces. The package provides functions to compute the forecasting, retaining the PPCs, 
+#' to test the pointwise stationarity of the FTS and to visualize the results.
 #'
 #'@references
 #'\itemize{
@@ -11,16 +12,16 @@
 #'}
 #'@seealso
 #'\itemize{
-#'\item Functional time series of curves:
+#'\item Functional Time Series of curves:
 #'\itemize{
-#'\item algorithm: \code{\link{PPC_KO}}
-#'\item assumptions check: \code{\link{KO_check_hps}}
+#'\item PPCKO forecasting algorithm: \code{\link{PPC_KO}}
+#'\item pointwise stationarity ADF-test: \code{\link{KO_check_hps}}
 #'\item results visualization: \code{\link{KO_show_results}}
 #'\item example data: \code{\link{data_1d}}}
-#'\item Functional time series of surfaces:
+#'\item Functional Time Series of surfaces:
 #'\itemize{
-#'\item algorithm: \code{\link{PPC_KO_2d}}
-#'\item assumptions check: \code{\link{KO_check_hps_2d}}
+#'\item PPCKO forecasting algorithm: \code{\link{PPC_KO_2d}}
+#'\item pointwise stationarity ADF-test: \code{\link{KO_check_hps_2d}}
 #'\item results visualization: \code{\link{KO_show_results_2d}}
 #'\item example data: \code{\link{data_2d}}
 #'\item data wrapper: \code{\link{data_2d_wrapper_from_list}}, \code{\link{data_2d_wrapper_from_array}}}}

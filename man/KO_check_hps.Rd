@@ -14,12 +14,12 @@ Each column (n) represents a time instant.}
 }
 }
 \description{
-Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the curve. Implemented as in \code{tseries} CRAN package.
+Evaluate the pointwise Augmented DIckey-Fuller (ADF) test p-values for the available evaluations of the curve. Implemented as in \code{tseries} CRAN package, written in C++ for efficiency purposes.
 }
 \references{
 \itemize{
 \item Source code: \href{https://github.com/AndreaEnricoFranzoni/PPCforAutoregressiveOperator}{PPCKO implementation}
-\item Original implementation: \href{https://cran.r-project.org/web/packages/tseries/index.html}{tseries}
+\item Original R-implementation: \href{https://cran.r-project.org/web/packages/tseries/index.html}{tseries}
 }
 }
 \author{
