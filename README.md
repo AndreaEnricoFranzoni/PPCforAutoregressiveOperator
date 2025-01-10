@@ -1,6 +1,6 @@
 # Principal Predictive Components for Estimating an Autoregressive Operator
 
-**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator. It relies on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces.
+**`PPCKO`**  is a C++ based R package for estimating an autoregressive operator, in the scenario of Functional Time Series (FTS). It relies on Principal Predictive Components (PPC) [Kargin-Onatski algorithm](#ref-PPCKO) to compute one-step ahead prediction of time series of curves and surfaces. The package provides functions to compute the forecasting, retaining the PPC, to test the pointwise stationarity of the FTS and to visualize the results.
 
 Briefly: if data a stationary Functional AutoRegressive of order 1 process (*FAR(1)*), the point predictor assumes the form of:
 
