@@ -24,29 +24,41 @@
 */
 var NAVTREE =
 [
-  [ "My Project", "index.html", [
-    [ "Principal Predictive Components for Estimating an Autoregressive Operator", "md__r_e_a_d_m_e.html", [
-      [ "Prerequisites", "md__r_e_a_d_m_e.html#autotoc_md1", null ],
-      [ "Installation", "md__r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "Documentation", "md__r_e_a_d_m_e.html#autotoc_md3", [
-        [ "Tutorials", "md__r_e_a_d_m_e.html#autotoc_md4", null ],
-        [ "Test", "md__r_e_a_d_m_e.html#autotoc_md5", null ],
-        [ "Data", "md__r_e_a_d_m_e.html#autotoc_md6", null ]
-      ] ],
-      [ "Prerequisites: depending on operative system", "md__r_e_a_d_m_e.html#autotoc_md7", [
-        [ "macOS", "md__r_e_a_d_m_e.html#autotoc_md8", null ],
-        [ "Windows", "md__r_e_a_d_m_e.html#autotoc_md9", null ],
-        [ "Linux", "md__r_e_a_d_m_e.html#autotoc_md10", null ],
-        [ "Linux image", "md__r_e_a_d_m_e.html#autotoc_md11", null ]
-      ] ],
-      [ "Bibliography", "md__r_e_a_d_m_e.html#autotoc_md12", null ]
+  [ "PPCKO: Principal Predictive Components for Estimating an Autoregressive Operator", "index.html", [
+    [ "Todo List", "todo.html", null ],
+    [ "Topics", "topics.html", "topics" ],
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ]
+    ] ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
+      [ "Class Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", null ],
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ],
+        [ "Typedefs", "functions_type.html", null ]
+      ] ]
+    ] ],
+    [ "Files", "files.html", [
+      [ "File List", "files.html", "files_dup" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ],
+        [ "Variables", "globals_vars.html", null ],
+        [ "Typedefs", "globals_type.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"index.html"
+"_a_d_f__comp__pvalue__util_8hpp.html",
+"interp1_d_8hpp_source.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';
