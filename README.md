@@ -62,13 +62,13 @@ library(PPCKO)
 
 
 
-Due to the high number of warnings, can be useful adding as argument of `install_github`
+Due to the high number of warnings, to disable them can be useful adding as argument of `install_github`
 ~~~
 quiet=TRUE
 ~~~
-to disable them
 
-If problem arises when installing, due to problems in the dependencies, also the argument 
+
+If problem related to dependencies arises when installing, also the argument 
 ~~~
 dependencies = TRUE
 ~~~
