@@ -50,9 +50,9 @@ To install the package:
 devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator")
 ~~~
 
-- Serial version (not available at the moment)
+- Serial version
 ~~~
-devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v2.0.0.no_omp") 
+devtools::install_github("AndreaEnricoFranzoni/PPCforAutoregressiveOperator@v.2.0.0-noomp") 
 ~~~
 
 And upload the library in the R environment
