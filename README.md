@@ -125,7 +125,6 @@ devtools::test()
 after having set the R working directory to the root of the local copy of the package
 ~~~
 setwd("/Path/to/local/copy/PPCforAutoregressiveOperator")
-
 ~~~
 
 
