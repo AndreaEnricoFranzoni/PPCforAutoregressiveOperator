@@ -25,7 +25,7 @@
 #' @param threshold_ppc **`double`** (default: **`0.95`**). Between 0 and 1. Threshold of requested explanatory power from the retained PPCs. Will be ignored in "CV_k" and "CV" versions,
 #'                      and in "NoCV" and "CV_alpha" if k>0.
 #' @param alpha_vec **`numeric vector`** (default: **`NULL`**). The input space for the regularization parameter in "CV_alpha" and "CV"
-#'                  versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e11 is the input space.
+#'                  versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e10 is the input space.
 #' @param k_vec **`integer vector`** (default: **`NULL`**). The input space for the number of retained PPCs in "CV_k" and "CV" versions.
 #'              If NULL: input space are the integer from 1 up to m.
 #' @param toll **`double`** (default: **`1e-4`**). The cross-validation for the number of retained PPCs continues only if between two parameters, that are checked in increasing order, 
@@ -121,7 +121,7 @@ NULL
 #' @param threshold_ppc **`double`** (default: **`0.95`**). Between 0 and 1. Threshold of requested explanatory power from the retained PPCs. Will be ignored in "CV_k" and "CV" versions,
 #'                      and in "NoCV" and "CV_alpha" if k>0.
 #' @param alpha_vec **`numeric vector`** (default: **`NULL`**). The input space for the regularization parameter in "CV_alpha" and "CV"
-#'                  versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e11 is the input space.
+#'                  versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e10 is the input space.
 #' @param k_vec **`integer vector`** (default: **`NULL`**). The input space for the number of retained PPCs in "CV_k" and "CV" versions.
 #'              If NULL: input space are the integer from 1 up to m.
 #' @param toll **`double`** (default: **`1e-4`**). The cross-validation for the number of retained PPCs continues only if between two parameters, that are checked in increasing order, 

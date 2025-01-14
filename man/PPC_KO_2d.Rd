@@ -30,7 +30,7 @@ Number of retained PPCs. Will be ignored in "CV_k" and "CV" versions. If "NoCV" 
 and in "NoCV" and "CV_alpha" if k>0.}
 
 \item{alpha_vec}{\strong{\verb{numeric vector}} (default: \strong{\code{NULL}}). The input space for the regularization parameter in "CV_alpha" and "CV"
-versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e11 is the input space.}
+versions. If NULL: logarithmic scale with increasing exponent from 1e-10 up to 1e10 is the input space.}
 
 \item{k_vec}{\strong{\verb{integer vector}} (default: \strong{\code{NULL}}). The input space for the number of retained PPCs in "CV_k" and "CV" versions.
 If NULL: input space are the integer from 1 up to m.}
