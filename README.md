@@ -116,7 +116,7 @@ data(data_2d)
 ~~~
 
 
-## Test
+## Unittest
 
 If working on the package with a local copy, to automatically test (unittest) the package's functions correct behavior:
 ~~~
