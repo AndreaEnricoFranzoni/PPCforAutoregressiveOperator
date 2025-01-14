@@ -101,13 +101,6 @@ opens up the **`PPCKO`** documentation. In the section `Examples`, there is one 
 
 
 
-## Test
-
-To automatically test the package installation:
-~~~
-devtools::test()
-~~~
-
 
 
 ## Data
@@ -122,6 +115,18 @@ A time series of surfaces (synthetic data) can be loaded on the global environme
 data(data_2d)
 ~~~
 
+
+## Test
+
+If working on the package with a local copy, to automatically test (unittest) the package's functions correct behavior:
+~~~
+devtools::test()
+~~~
+after having set the R working directory to the root of the local copy of the package
+~~~
+setwd("/Path/to/local/copy/PPCforAutoregressiveOperator")
+
+~~~
 
 
 # Prerequisites: depending on operative system
