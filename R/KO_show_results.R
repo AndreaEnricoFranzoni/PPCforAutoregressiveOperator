@@ -613,7 +613,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   data_lw_wei$z <- ((-1)*results_ko$`Weights of PPCs`[[i]]*results_ko$`Sd scores weights`[i])[cbind(
     match(data_lw_wei$x, results_ko$`Function discrete evaluations points dim1`),  
     match(data_lw_wei$y, results_ko$`Function discrete evaluations points dim2`))]
-  data_up_wei$z <- (results_ko$`Weights of PPCs`[[i]]*test_2d_algo$`Sd scores weights`[i])[cbind(
+  data_up_wei$z <- (results_ko$`Weights of PPCs`[[i]]*results_ko$`Sd scores weights`[i])[cbind(
     match(data_up_wei$x, results_ko$`Function discrete evaluations points dim1`),  
     match(data_up_wei$y, results_ko$`Function discrete evaluations points dim2`))]
   
