@@ -212,18 +212,18 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
     direction <- ggplot(data_dir, aes(x = x, y = y)) +
                  geom_line( size = 1.2 ) +
                  labs( x = x_lab, y = y_lab ) +
-                 labs( title = "Direction" ) + 
+                 labs( title = paste("Direction a",i) + 
                  theme_minimal() +
                  theme( plot.title = element_text(face = "bold",hjust = 0.5) )
     
     weight <-    ggplot(data_wei, aes(x = x, y = y)) +
                  geom_line( size = 1.2 ) +
                  labs( x = x_lab, y = y_lab ) +
-                 labs(title = "Weight") + 
+                 labs(title = paste("Weight b",i) + 
                  theme_minimal() +
                  theme( plot.title = element_text(face = "bold",hjust = 0.5))
     
-    plot_dir_we <- direction + weight + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
+    plot_dir_we <-  weight + direction + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
     .open_window()
     print(plot_dir_we)}
 
@@ -247,7 +247,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                geom_line(data = subset(data_dir, group != "Mean"), aes(color = group, linetype = group), size = 1, alpha = 0.4) +
                scale_linetype_manual(values = c("dashed", "dashed")) + 
                scale_color_manual(values = c("red", "green")) +        
-               labs(title = "Direction",
+               labs(title = paste("Direction a",i),
                     x = x_lab,
                     y = y_lab,
                     color = "",
@@ -259,14 +259,14 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
             geom_line(data = subset(data_wei, group != "Mean"), aes(color = group, linetype = group), size = 1, alpha = 0.4) +
             scale_linetype_manual(values = c("dashed", "dashed")) + 
             scale_color_manual(values = c("red", "green")) +        
-            labs(title = "Weight",
+            labs(title = paste("Weight b",i),
                  x = x_lab,
                  y = y_lab,
                  color = "",
                  linetype = "") +
             theme_minimal()
   
-  plot_dir_we_mean_pert <- direction + weight + plot_layout(ncol = 2) + plot_annotation( title = paste0(paste("PPC",as.character(i))," as perturbation of the mean"), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
+  plot_dir_we_mean_pert <- weight + direction + plot_layout(ncol = 2) + plot_annotation( title = paste0(paste("PPC",as.character(i))," as perturbation of the mean"), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
   .open_window()
   print(plot_dir_we_mean_pert)}
   
@@ -536,7 +536,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                 geom_tile() +
                 scale_fill_viridis_c( option = "plasma", na.value = "white",limits = c(min(dir$z,na.rm=TRUE), max(dir$z,na.rm=TRUE)) ) +
                 labs( x = x1_lab, y = x2_lab, fill = z_lab ) +
-                labs( title = names(results_ko$`Directions of PPCs`[i]) ) + 
+                labs( title = paste("Direction a",i) ) + 
                 theme_minimal() +
                 theme( plot.title = element_text(face = "bold",hjust = 0.5 ),
                        panel.grid.major = element_blank(),  
@@ -548,7 +548,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                    geom_tile() +
                    scale_fill_viridis_c(option = "viridis", na.value = "white",limits = c(min(wei$z,na.rm=TRUE), max(wei$z,na.rm=TRUE))) +
                    labs( x = x1_lab, y = x2_lab, fill = z_lab ) +
-                   labs(title = names(results_ko$`Weights of PPCs`[i])) + 
+                   labs(title = paste("Weight b",i)) + 
                    theme_minimal() +
                    theme( plot.title = element_text(face = "bold",hjust = 0.5),
                           panel.grid.major = element_blank(),  
@@ -556,7 +556,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
                   geom_hline( yintercept = seq(min(wei$y), max(wei$y), by = (quantile(wei$y)[2]-quantile(wei$y)[1])/2), linetype = "solid", color = "grey", size = 0.1 ) +  
                   geom_vline( xintercept = seq(min(wei$x), max(wei$x), by = (quantile(wei$x)[2]-quantile(wei$x)[1])/2), linetype = "solid", color = "grey", size = 0.1 )  
     
-    plot_dir_we <- dir_plot + weight_plot + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
+    plot_dir_we <-  weight_plot + dir_plot + plot_layout(ncol = 2) + plot_annotation( title = paste("PPC",i), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
     .open_window()
     print(plot_dir_we)}
 
@@ -582,7 +582,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   plot_up_dir <- ggplot(data_up_dir, aes(x = x, y = y, fill = z)) +
     geom_tile() +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
-    labs( title = "Direction, upper mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    labs( title = paste0(paste0("Direction a",i),", upper mean perturbation"), x = x1_lab, y = x2_lab, fill = z_lab ) +
     theme_minimal() +
     theme( plot.title = element_text(face = "bold",hjust = 0.5),
            legend.position = "bottom",
@@ -594,7 +594,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   plot_bw_dir <- ggplot(data_lw_dir, aes(x = x, y = y, fill = z)) +
     geom_tile() +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
-    labs( title = "Direction, lower mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    labs( title = paste0(paste0("Direction a",i),", lower mean perturbation"), x = x1_lab, y = x2_lab, fill = z_lab ) +
     theme_minimal() +
     theme( plot.title = element_text(face = "bold",hjust = 0.5),
            legend.position = "bottom",
@@ -624,7 +624,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   plot_up_wei <- ggplot(data_up_wei, aes(x = x, y = y, fill = z)) +
     geom_tile() +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
-    labs( title = "Weight, upper mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    labs( title = paste0(paste0("Weight b",i),", upper mean perturbation"), x = x1_lab, y = x2_lab, fill = z_lab ) +
     theme_minimal() +
     theme( plot.title = element_text(face = "bold",hjust = 0.5),
            legend.position = "bottom",
@@ -636,7 +636,7 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   plot_bw_wei<- ggplot(data_lw_wei, aes(x = x, y = y, fill = z)) +
     geom_tile() +
     scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) + 
-    labs( title = "Weight, lower mean perturbation", x = x1_lab, y = x2_lab, fill = z_lab ) +
+    labs( title = paste0(paste0("Weight b",i),", lower mean perturbation"), x = x1_lab, y = x2_lab, fill = z_lab ) +
     theme_minimal() +
     theme( plot.title = element_text(face = "bold",hjust = 0.5),
            legend.position = "bottom",
@@ -650,5 +650,5 @@ KO_show_results_2d <- function(results_ko,hp_ko=NULL,x1_lab="x1",x2_lab="x2",z_l
   title_mean_pert <- textGrob(paste0(paste0("PPC",i), " as perturbation of the mean"), gp = gpar(fontsize = 20, fontface = "bold"))
   .open_window()
   # Combinazione dei grafici con titolo complessivo
-  grid.arrange(title_mean_pert,arrangeGrob(plot_up_dir, plot_up_wei,plot_bw_dir, plot_bw_wei, nrow = 2, ncol = 2),nrow = 2,heights = c(1, 10))}
+  grid.arrange(title_mean_pert,arrangeGrob(plot_up_wei, plot_up_dir, plot_bw_wei, plot_bw_dir, nrow = 2, ncol = 2),nrow = 2,heights = c(1, 10))}
 }
