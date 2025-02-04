@@ -266,7 +266,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
                  linetype = "") +
             theme_minimal()
   
-  plot_dir_we_mean_pert <- weight + direction + plot_layout(ncol = 2) + plot_annotation( title = paste0(paste("PPC",as.character(i))," as perturbation of the mean"), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
+  plot_dir_we_mean_pert <- weight + direction + plot_layout(ncol = 2) + plot_annotation( title = paste0(paste0("PPC",as.character(i))," as perturbation of the mean"), theme = theme(plot.title = element_text(face = "bold",hjust = 0.5)) )
   .open_window()
   print(plot_dir_we_mean_pert)}
   
