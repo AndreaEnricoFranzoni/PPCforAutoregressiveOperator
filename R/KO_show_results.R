@@ -212,7 +212,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
     direction <- ggplot(data_dir, aes(x = x, y = y)) +
                  geom_line( size = 1.2 ) +
                  labs( x = x_lab, y = y_lab ) +
-                 labs( title = paste("Direction a",i) + 
+                 labs( title = paste("Direction a",i)) + 
                  theme_minimal() +
                  theme( plot.title = element_text(face = "bold",hjust = 0.5) )
     
