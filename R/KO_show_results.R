@@ -219,7 +219,7 @@ KO_show_results <- function( results_ko, hp_ko=NULL, x_lab="x", y_lab="y", true_
     weight <-    ggplot(data_wei, aes(x = x, y = y)) +
                  geom_line( size = 1.2 ) +
                  labs( x = x_lab, y = y_lab ) +
-                 labs(title = paste("Weight b",i) + 
+                 labs(title = paste("Weight b",i)) + 
                  theme_minimal() +
                  theme( plot.title = element_text(face = "bold",hjust = 0.5))
     
