@@ -17,6 +17,10 @@ where:
 - $a_i$ are the directions along which the prediction is approximated (directions that have the most predictive power) (predictive loadings);
 - $b_i$ weights the prediction along the $i$-th PPC: $\langle f_n, b_i \rangle$ is the projection along it (predictive factors).
 
+
+> ❗️ **N.B.:** Cite this package as indicated in `CITATION.cff`. DOI: [![DOI](https://zenodo.org/badge/doi.org/10.5281/zenodo.14962404.svg)](https://doi.org/10.5281/zenodo.14962404)
+
+
 > ❗️ **N.B.:** The repository contains only the development of the algorithm through C++ its interface on R using RcppEigen and documentation. More detailed analysis about statistical properties of the predictor and implementation performances can be found [here](https://github.com/AndreaEnricoFranzoni/Functional_time_series_forecasting).
 
 
